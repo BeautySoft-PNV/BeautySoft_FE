@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const Timeline = () => {
+const ArchiveBox = () => {
   return (
     <View>
-      <Text>Timeline</Text>
+      <Text>ArchiveBox</Text>
     </View>
   );
 };
 
-export default Timeline;
+export default ArchiveBox;

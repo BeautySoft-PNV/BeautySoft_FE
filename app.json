@@ -1,33 +1,41 @@
 {
   "expo": {
-    "name": "gv_mobile",
-    "slug": "gv_mobile",
+    "name": "beauty_soft",
+    "slug": "beauty_soft",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "GreenVision",
+    "icon": "./assets/images/logo.png",
+    "scheme": "BeautySoft",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "permissions": ["CAMERA"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.beauty_soft"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo.png"
     },
     "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo.png",
           "imageWidth": 200,
           "resizeMode": "cover",
           "enableFullScreenImage_legacy": true
@@ -51,6 +59,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "07d8e01e-7439-4def-8bf3-81fbc59a3818"
+      }
+    },
+    "owner": "amhii"
   }
 }

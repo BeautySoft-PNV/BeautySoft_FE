@@ -1,11 +1,9 @@
-import home from "@/assets/icons/Home.png";
-import scan from "@/assets/icons/Scanner.png";
-import timeline from "@/assets/icons/Calendar.png";
-import garden from "@/assets/icons/Leaf.png";
 
+import home from "@/assets/icons/home.png";
+import scan from "@/assets/icons/scan.png";
+import box from "@/assets/icons/box.png";
 export default {
   home,
   scan,
-  timeline,
-  garden,
+  box
 };

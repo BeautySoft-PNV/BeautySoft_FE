@@ -50,21 +50,7 @@ const TabsLayout = () => {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.home} title="Trang chủ" />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="timeline"
-        options={{
-          title: "Timeline",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              focused={focused}
-              icon={icons.timeline}
-              title="Lịch trình"
-            />
+            <TabIcon focused={focused} icon={icons.home} title="Home" />
           ),
         }}
       />
@@ -74,17 +60,21 @@ const TabsLayout = () => {
           title: "Scan",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.scan} title="Scan" />
+            <TabIcon
+              focused={focused}
+              icon={icons.scan}
+              title="Scan"
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="garden"
+        name="storage-box"
         options={{
-          title: "Garden",
+          title: "Storage",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.garden} title="Vườn cây" />
+            <TabIcon focused={focused} icon={icons.box} title="Storage" />
           ),
         }}
       />

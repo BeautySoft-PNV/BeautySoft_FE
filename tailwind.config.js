@@ -6,14 +6,14 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        inter: ["Inter-Regular", "sans-serif"],
-        "inter-bold": ["Inter-Bold", "sans-serif"],
-        "inter-extrabold": ["Inter-ExtraBold", "sans-serif"],
-        "inter-semibold": ["Inter-SemiBold", "sans-serif"],
-        "inter-medium": ["Inter-Medium", "sans-serif"],
-        "inter-light": ["Inter-Light", "sans-serif"],
-        "inter-extralight": ["Inter-ExtraLight", "sans-serif"],
-        "inter-black": ["Inter-Black", "sans-serif"],
+        inter: ["Inter-Regular", "Playfair Display"],
+        "inter-bold": ["Inter-Bold", "Playfair Display"],
+        "inter-extrabold": ["Inter-ExtraBold", "Playfair Display"],
+        "inter-semibold": ["Inter-SemiBold", "Playfair Display"],
+        "inter-medium": ["Inter-Medium", "Playfair Display"],
+        "inter-light": ["Inter-Light", "Playfair Display"],
+        "inter-extralight": ["Inter-ExtraLight", "Playfair Display"],
+        "inter-black": ["Inter-Black", "Playfair Display"],
       },
     },
     colors: {
@@ -22,7 +22,7 @@ module.exports = {
         200: "#B4F8CA",
         300: "#8AECB3",
         400: "#69D9A3",
-        DEFAULT: "#3CC18E",
+        DEFAULT: "#ED1E51",
         600: "#2BA583",
         700: "#1E8A76",
         800: "#136F67",
