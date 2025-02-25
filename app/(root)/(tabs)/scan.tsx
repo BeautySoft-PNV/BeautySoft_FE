@@ -4,6 +4,3 @@ const Scan = () => {
   return (
     <View>Scan</View>
   )
-};
-
-export default Scan;
