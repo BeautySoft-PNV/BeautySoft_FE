@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Platform } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const SignUp = ({ navigation }: any) => {
     const [username, setUsername] = useState('');
@@ -9,6 +10,7 @@ const SignUp = ({ navigation }: any) => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const router = useRouter();
 
     const handleSignUp = async () => {
         if (password !== confirmPassword) {
@@ -87,7 +89,7 @@ const SignUp = ({ navigation }: any) => {
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Đăng ký</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+            <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-in')}>
                 <Text style={styles.link}>Đã có tài khoản? Đăng nhập</Text>
             </TouchableOpacity>
         </View>

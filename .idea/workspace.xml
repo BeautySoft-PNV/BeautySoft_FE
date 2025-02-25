@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="01157028-6cc6-41e6-ad34-5b5dc9baf473" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/(root)/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/scan.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/scan.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants/icons.ts" beforeDir="false" afterPath="$PROJECT_DIR$/constants/icons.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,23 +65,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Sinh/BeautySoft_FE&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.externalResources&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\Sinh\\BeautySoft_FE\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "feature/110",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Sinh/BeautySoft_FE",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.externalResources",
+    "ts.external.directory.path": "C:\\Users\\Sinh\\BeautySoft_FE\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -104,7 +101,7 @@
       <workItem from="1740378777951" duration="9976000" />
       <workItem from="1740450188448" duration="1029000" />
       <workItem from="1740451244972" duration="90000" />
-      <workItem from="1740451347849" duration="2967000" />
+      <workItem from="1740451347849" duration="4775000" />
     </task>
     <servers />
   </component>
