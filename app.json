@@ -8,11 +8,19 @@
     "scheme": "BeautySoft",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "permissions": ["CAMERA"],
+    "permissions": [
+      "CAMERA"
+    ],
     "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need access to your camera to scan your face."
+      },
       "supportsTablet": true
     },
     "android": {
+      "permissions": [
+        "CAMERA"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
@@ -31,7 +39,6 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
         }
       ],
-      "expo-router",
       [
         "expo-splash-screen",
         {
