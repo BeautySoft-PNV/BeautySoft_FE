@@ -7,15 +7,20 @@ import "./global.css";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    "Inter-Bold": require("../assets/fonts/Inter-Bold.ttf"),
-    "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
-    "Inter-SemiBold": require("../assets/fonts/Inter-SemiBold.ttf"),
-    "Inter-ExtraBold": require("../assets/fonts/Inter-ExtraBold.ttf"),
-    "Inter-Medium": require("../assets/fonts/Inter-Medium.ttf"),
-    "Inter-Light": require("../assets/fonts/Inter-Light.ttf"),
-    "Inter-Black": require("../assets/fonts/Inter-Black.ttf"),
-    "Inter-ExtraLight": require("../assets/fonts/Inter-ExtraLight.ttf"),
+    "PlayfairDisplay-Black": require("../assets/fonts/PlayfairDisplay-Black.ttf"),
+    "PlayfairDisplay-BlackItalic": require("../assets/fonts/PlayfairDisplay-BlackItalic.ttf"),
+    "PlayfairDisplay-Bold": require("../assets/fonts/PlayfairDisplay-Bold.ttf"),
+    "PlayfairDisplay-BoldItalic": require("../assets/fonts/PlayfairDisplay-BoldItalic.ttf"),
+    "PlayfairDisplay-ExtraBold": require("../assets/fonts/PlayfairDisplay-ExtraBold.ttf"),
+    "PlayfairDisplay-ExtraBoldItalic": require("../assets/fonts/PlayfairDisplay-ExtraBoldItalic.ttf"),
+    "PlayfairDisplay-Italic": require("../assets/fonts/PlayfairDisplay-Italic.ttf"),
+    "PlayfairDisplay-Medium": require("../assets/fonts/PlayfairDisplay-Medium.ttf"),
+    "PlayfairDisplay-MediumItalic": require("../assets/fonts/PlayfairDisplay-MediumItalic.ttf"),
+    "PlayfairDisplay-Regular": require("../assets/fonts/PlayfairDisplay-Regular.ttf"),
+    "PlayfairDisplay-SemiBold": require("../assets/fonts/PlayfairDisplay-SemiBold.ttf"),
+    "PlayfairDisplay-SemiBoldItalic": require("../assets/fonts/PlayfairDisplay-SemiBoldItalic.ttf"),
   });
+
 
   useEffect(() => {
     if (fontsLoaded) {

@@ -1,3 +1,4 @@
+
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import {
@@ -192,7 +193,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-
-
-
