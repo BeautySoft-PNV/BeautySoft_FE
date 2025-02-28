@@ -8,11 +8,19 @@
     "scheme": "BeautySoft",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "permissions": ["CAMERA"],
+    "permissions": [
+      "CAMERA"
+    ],
     "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need access to your camera to scan your face."
+      },
       "supportsTablet": true
     },
     "android": {
+      "permissions": [
+        "CAMERA"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
@@ -25,7 +33,12 @@
       "favicon": "./assets/images/logo.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ],
       [
         "expo-splash-screen",
         {
