@@ -3,57 +3,51 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const SignIn = ({ navigation }: any) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
+    const [error, setError] = useState(''); 
     const router = useRouter();
 
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validatePassword = (password: string) => {
-        return password.length >= 6; 
-    };
-
     const handleSignIn = async () => {
-        if (!validateEmail(email)) {
-            setMessage({ text: 'Invalid email format, ex: ex@gmail.com', type: 'error' });
-            return;
-        }
+        const API_URL = "http://192.168.99.183:5280/api/auth/login";
 
-        if (!validatePassword(password)) {
-            setMessage({ text: 'Password must be at least 6 characters long', type: 'error' });
-            return;
-        }
-
-        const API_URL = "http://localhost:3000/users";
         try {
-            const response = await fetch(API_URL); 
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const responseData = await response.json();
+
             if (!response.ok) {
-                throw new Error('Failed to fetch users!');
+                if (responseData.errors) {
+                    const errorMessages = Object.values(responseData.errors).flat();
+                    throw new Error(errorMessages.join("\n"));
+                }
+                throw new Error(responseData.title || "Login failed! Please check your credentials.");
+            }
+            if (responseData.token) {
+                await AsyncStorage.setItem('token', responseData.token);
             }
 
-            const data = await response.json();
+            await AsyncStorage.setItem('user', JSON.stringify(responseData));
 
-            if (!Array.isArray(data) || data.length === 0) {
-                throw new Error('No users found!');
-            }
-            const user = data.find((user: any) => user.email === email && user.password === password);
-
-            if (!user) {
-                throw new Error('Login failed! Invalid email or password.');
-            }
-            await AsyncStorage.setItem('user', JSON.stringify(user));
             setMessage({ text: 'Login successful!', type: 'success' });
+            setError(''); 
+
             setTimeout(() => {
                 router.push('/(root)/(tabs)/home');
             }, 2000);
         } catch (error: any) {
-            setMessage({ text: error.message, type: 'error' });
+            setMessage({ text: '', type: '' }); 
+            setError(error.message); 
         }
     };
 
@@ -98,11 +92,15 @@ const SignIn = ({ navigation }: any) => {
                 </TouchableOpacity>
             </View>
 
+            {error ? (
+                <Text style={styles.errorText}>{error}</Text> 
+            ) : null}
+
             <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                 <Text style={styles.buttonText}>Sign in</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-up')}>
-                <Text style={styles.link}>Do you have not an account, please sign up?</Text>
+                <Text style={styles.link}>Don't have an account? Sign up!</Text>
             </TouchableOpacity>
         </View>
     );
@@ -140,7 +138,6 @@ const styles = StyleSheet.create({
         fontSize: 60,
         fontFamily: 'PlayfairDisplay-Bold',
         color: '#ED1E51',
-        marginBottom: 50,
         textShadowColor: '#c1a6b3',
         textShadowOffset: { width: 9, height: 3 },
         textShadowRadius: 5,
@@ -197,10 +194,11 @@ const styles = StyleSheet.create({
     },
     link: {
         marginTop: 20,
+        fontSize: 20,
         color: '#007bff',
     },
     message: {
-        marginTop: 20,
+        marginTop: 2,
         fontSize: 20,
         fontWeight: 'bold',
         fontFamily: "PlayfairDisplay-Bold",
@@ -210,6 +208,16 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         color: 'red',
+        fontSize: 15,
+        fontFamily: "PlayfairDisplay-Bold",
+        marginBottom: 20,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 15,
+        fontFamily: "PlayfairDisplay-Bold",
+        marginBottom: 10,
+        alignSelf: 'flex-start', // Align error message to the left
     },
 });
 

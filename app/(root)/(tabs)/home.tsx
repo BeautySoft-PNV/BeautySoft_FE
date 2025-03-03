@@ -11,7 +11,7 @@ const Home = () => {
         <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
                     <Image
-                        source={{ uri: "https://cdn.phamkha.edu.vn/wp-content/uploads/2024/12/makeup-trung-quoc-1.jpg" }}
+                        source={{ uri: "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
                         style={styles.avatar}
                     />
                 </TouchableOpacity>
@@ -30,13 +30,17 @@ const Home = () => {
         </ScrollView>
 
         <View style={styles.scanContainer}>
-          <Image source={{ uri: "https://veridas.com/wp-content/uploads/2025/01/Captura-de-pantalla-2025-01-14-a-las-10.47.58.png.webp" }} style={styles.scanImage} />
-          <TouchableOpacity style={styles.scanButton}>
+          <Image 
+            source={{ uri: "https://veridas.com/wp-content/uploads/2025/01/Captura-de-pantalla-2025-01-14-a-las-10.47.58.png.webp" }} 
+            style={styles.scanImage} 
+          />
+          <TouchableOpacity 
+            style={styles.scanButton} 
+            onPress={() => router.push('/(root)/tabs/scan')}
+          >
             <Text style={styles.scanButtonText}>Tap to scan</Text>
           </TouchableOpacity>
         </View>
-
-
         <Text style={styles.sectionTitle1}>Face Shape Styles</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {[
@@ -54,8 +58,6 @@ const Home = () => {
             </View>
           ))}
         </ScrollView>
-
-
         <Text style={styles.sectionTitle2}>Favorite Makeup Item Storage</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {[
