@@ -39,8 +39,8 @@ const SignUp = ({ navigation }: any) => {
         }
 
         const API_URL = "http://localhost:3000/users";
- // const API_URL = "http://192.168.68.131:5280/api/auth/register";
-        try {
+        // const API_URL = "http://192.168.53.183:5280/api/auth/register";
+try {
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -61,7 +61,7 @@ const SignUp = ({ navigation }: any) => {
             setMessage({ text: 'Account created successfully! Redirecting to Sign In...', type: 'success' });
             setTimeout(() => {
                 router.push('/(root)/(auth)/sign-in');
-            }, 4000);
+            }, 2000);
         } catch (error: any) {
             setMessage({ text: error.message, type: 'error' });
         }
@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     },
     link: {
         marginTop: 20,
+        fontSize: 20,
         color: '#007bff',
     },
     message: {

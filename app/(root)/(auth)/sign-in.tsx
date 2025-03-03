@@ -31,24 +31,24 @@ const SignIn = ({ navigation }: any) => {
         }
 
         const API_URL = "http://localhost:3000/users";
+        // const API_URL = "http://192.168.53.183:5280/api/auth/login";
         try {
-            const response = await fetch(API_URL); 
-            if (!response.ok) {
-                throw new Error('Failed to fetch users!');
-            }
-
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            });
+    
             const data = await response.json();
-
-            if (!Array.isArray(data) || data.length === 0) {
-                throw new Error('No users found!');
+    
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed! Invalid email or password.');
             }
-            const user = data.find((user: any) => user.email === email && user.password === password);
-
-            if (!user) {
-                throw new Error('Login failed! Invalid email or password.');
-            }
-            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('user', JSON.stringify(data));
             setMessage({ text: 'Login successful!', type: 'success' });
+    
             setTimeout(() => {
                 router.push('/(root)/(tabs)/home');
             }, 2000);
@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
     },
     link: {
         marginTop: 20,
+        fontSize: 20,
         color: '#007bff',
     },
     message: {
