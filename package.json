@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@heroicons/react": "^2.2.0",
     "@mediapipe/face_detection": "^0.4.1646425229",
     "@mediapipe/face_mesh": "^0.4.1633559619",
@@ -38,6 +39,7 @@
     "expo-gl-cpp": "^11.4.0",
     "expo-haptics": "~14.0.1",
     "expo-image-manipulator": "~13.0.6",
+    "expo-image-picker": "^16.0.6",
     "expo-linking": "~7.0.5",
     "expo-modules-core": "^2.2.2",
     "expo-router": "^4.0.17",

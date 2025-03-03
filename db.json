@@ -48,27 +48,16 @@
       "email": "hiloan@gmail.com",
       "password": "hiloan@gmail",
       "roleId": 1
+    },
+    {
+      "id": "9756",
+      "username": "loansss",
+      "email": "loaqqqn@gmail.com",
+      "password": "loaqqqn@gmail.com",
+      "roleId": 1
     }
   ],
   "makeupStyles": [
-    {
-      "id": "2",
-      "name": "Asian Style",
-      "description": "A subtle and elegant look that enhances natural beauty.",
-      "time": "11:30 02/01/2024",
-      "steps": [
-        "Begin with a clean and hydrated face.",
-        "Apply a lightweight foundation to even out the skin tone.",
-        "Use a soft pink blush on the apples of the cheeks.",
-        "Define the eyebrows with a brow pencil or powder for a natural look.",
-        "Apply a light beige eyeshadow all over the eyelids.",
-        "Use a soft brown eyeshadow in the crease for subtle definition.",
-        "Apply a thin line of brown eyeliner along the upper lash line.",
-        "Finish the eyes with a coat of mascara on the upper lashes.",
-        "Choose a nude lip color and apply it evenly on the lips."
-      ],
-      "image": "https://images2.thanhnien.vn/528068263637045248/2023/6/20/anh-2-16872439278051198533264.jpg"
-    },
     {
       "id": "3",
       "name": "Glam Night Look",

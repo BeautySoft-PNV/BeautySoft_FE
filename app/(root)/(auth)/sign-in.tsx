@@ -47,6 +47,7 @@ const SignIn = ({ navigation }: any) => {
             if (!user) {
                 throw new Error('Login failed! Invalid email or password.');
             }
+            localStorage.setItem('user', JSON.stringify(user));
             setMessage({ text: 'Login successful!', type: 'success' });
             setTimeout(() => {
                 router.push('/(root)/(tabs)/home');
@@ -171,10 +172,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        paddingHorizontal: 10,
         backgroundColor: 'white',
-        marginBottom: 10,
-        padding: 7,
+        marginBottom: 10, 
     },
     inputPassword: {
         flex: 1,

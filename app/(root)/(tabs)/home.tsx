@@ -1,17 +1,20 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useRouter } from 'expo-router';
 
 const Home = () => {
+  const router = useRouter();
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
-          <Image
-            source={{ uri: "https://cdn.phamkha.edu.vn/wp-content/uploads/2024/12/makeup-trung-quoc-1.jpg" }}
-            style={styles.avatar}
-          />
+        <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
+                    <Image
+                        source={{ uri: "https://cdn.phamkha.edu.vn/wp-content/uploads/2024/12/makeup-trung-quoc-1.jpg" }}
+                        style={styles.avatar}
+                    />
+                </TouchableOpacity>
         </View>
         <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} style={styles.carouselContainer}>
           {[
