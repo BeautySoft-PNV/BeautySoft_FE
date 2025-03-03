@@ -131,10 +131,10 @@ const EditProfile = () => {
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 20, backgroundColor: 'white' },
     headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-    header: { fontSize: 24, fontWeight: 'bold', color: 'black', marginLeft: 100 },
+    header: { color: 'black', marginLeft: 100, fontSize: 24,fontWeight: "bold",fontFamily: "PlayfairDisplay-Bold" },
     avatarContainer: { justifyContent: "center", alignItems: "center", marginBottom: 20, position: "relative" },
     editIcon: { position: "absolute", borderRadius: 20, width: 30, height: 30, justifyContent: "center", alignItems: "center", marginLeft: 90, bottom: -15 },
-    avatar: { width: 100, height: 100, borderRadius: 50 },
+    avatar: { width: 90, height: 90, borderRadius: 50 },
     title: { fontSize: 20,fontWeight: "bold",fontFamily: "PlayfairDisplay-Bold", color: "black", marginBottom: 5, alignSelf: "flex-start" },
     input: {fontSize: 20,fontWeight: "bold",fontFamily: "PlayfairDisplay-Bold", width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', color: "black", marginBottom: 10 },
     inputContainer: {fontSize: 20,fontWeight: "bold",fontFamily: "PlayfairDisplay-Bold",flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', paddingHorizontal: 10, marginBottom: 10 },
