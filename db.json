@@ -43,21 +43,48 @@
       "roleId": 1
     },
     {
-      "id": "040f",
-      "username": "hiLoann",
-      "email": "hiloan@gmail.com",
-      "password": "hiloan@gmail",
-      "roleId": 1
-    },
-    {
-      "id": "9756",
-      "username": "loansss",
-      "email": "loaqqqn@gmail.com",
-      "password": "loaqqqn@gmail.com",
-      "roleId": 1
+      "id": "e89f",
+      "email": "loan@gmail333.com",
+      "password": "loan@gmail333.com"
     }
   ],
   "makeupStyles": [
+    {
+      "id": "1",
+      "name": "Cute Eyes Makeup",
+      "description": "A playful and vibrant look focusing on the eyes.",
+      "time": "10:00 01/01/2024",
+      "steps": [
+        "Start with a clean and moisturized face.",
+        "Apply a bright eyeshadow base on the eyelids.",
+        "Use a light pink eyeshadow on the inner corners of the eyes.",
+        "Apply a medium purple eyeshadow on the center of the eyelid.",
+        "Blend a darker purple into the outer corners for depth.",
+        "Use eyeliner to create a winged effect, extending it slightly beyond the outer corner.",
+        "Add a coat of volumizing mascara to the upper lashes.",
+        "Apply a light coat of mascara to the lower lashes.",
+        "Finish with a pop of color on the lips using a bright pink lipstick."
+      ],
+      "image": "https://cdn.eva.vn/upload/2-2023/images/2023-04-15/ta-hoa-lop-trang-diem-chua-chen-filter-cua-gai-trung-chi-em-bao-nhau-dung-tin-lua-ca-day-makeup-tone-trung-quoc-1-1681543471-133-width800height1016.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Asian Style",
+      "description": "A subtle and elegant look that enhances natural beauty.",
+      "time": "11:30 02/01/2024",
+      "steps": [
+        "Begin with a clean and hydrated face.",
+        "Apply a lightweight foundation to even out the skin tone.",
+        "Use a soft pink blush on the apples of the cheeks.",
+        "Define the eyebrows with a brow pencil or powder for a natural look.",
+        "Apply a light beige eyeshadow all over the eyelids.",
+        "Use a soft brown eyeshadow in the crease for subtle definition.",
+        "Apply a thin line of brown eyeliner along the upper lash line.",
+        "Finish the eyes with a coat of mascara on the upper lashes.",
+        "Choose a nude lip color and apply it evenly on the lips."
+      ],
+      "image": "https://images2.thanhnien.vn/528068263637045248/2023/6/20/anh-2-16872439278051198533264.jpg"
+    },
     {
       "id": "3",
       "name": "Glam Night Look",

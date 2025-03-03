@@ -3,16 +3,23 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = () => {
     const [user, setUser] = useState<any>(null);
     const router = useRouter();
-    const [avatar, setAvatar] = useState<string>('');
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
+        const loadUserData = async () => {
+            try {
+                const storedUser = await AsyncStorage.getItem('user');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+            } catch (error) {
+                console.error("Error loading user data:", error);
+            }
+        };
+        loadUserData();
     }, []);
 
     return (
@@ -24,10 +31,12 @@ const Profile = () => {
                 <Text style={styles.header}>My Account</Text>
             </View>
             <View style={styles.avatarContainer}>
-                <Image
-                    source={avatar ? { uri: avatar } : require("@/assets/images/banner1.jpg")}
-                    style={styles.avatar}
-                />
+            <Image
+                source={{ uri: user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png" }}
+                style={styles.avatar}
+            />
+
+
                 <TouchableOpacity 
                     style={styles.editIcon} 
                     onPress={() => router.push('/(root)/(auth)/edit-profile')}
