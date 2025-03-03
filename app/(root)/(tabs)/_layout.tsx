@@ -45,39 +45,36 @@ const TabsLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.home} title="Home" />
+            <TabIcon focused={focused} icon={icons.home} title="" />
           ),
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
-          title: "Scan",
+          title: "Storage",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon
-              focused={focused}
-              icon={icons.scan}
-              title="Scan"
-            />
+            <TabIcon focused={focused} icon={icons.box} title="" />
           ),
         }}
       />
       <Tabs.Screen
-        name="storage-box"
+        name="collection"
         options={{
-          title: "Storage",
+          title: "storage",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.box} title="Storage" />
+            <TabIcon focused={focused} icon={icons.history} title="" />
           ),
         }}
       />
+      
     </Tabs>
   );
 };

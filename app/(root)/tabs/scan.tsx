@@ -1,4 +1,3 @@
-
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import {
