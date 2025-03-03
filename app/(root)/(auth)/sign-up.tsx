@@ -14,34 +14,10 @@ const SignUp = ({ navigation }: any) => {
     const [message, setMessage] = useState({ text: '', type: '' });
     const router = useRouter();
 
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validatePassword = (password: string) => {
-        return password.length >= 6;
-    };
-
     const handleSignUp = async () => {
-        if (!validateEmail(email)) {
-            setMessage({ text: 'Invalid email format, ex: ex@gmail.com', type: 'error' });
-            return;
-        }
-
-        if (!validatePassword(password)) {
-            setMessage({ text: 'Password must be at least 6 characters long', type: 'error' });
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            setMessage({ text: 'Passwords do not match', type: 'error' });
-            return;
-        }
-
-        const API_URL = "http://localhost:3000/users";
-        // const API_URL = "http://192.168.53.183:5280/api/auth/register";
-try {
+        const API_URL = "http://192.168.99.183:5280/api/auth/register";
+    
+        try {
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -52,14 +28,24 @@ try {
                     roleId: 1,
                 }),
             });
-
-            const newUser  = await response.json();
-
+            const responseData = await response.json();
             if (!response.ok) {
-                throw new Error(newUser .message || 'Registration failed');
+                if (responseData.errors) {
+                    const errorMessages = Object.values(responseData.errors)
+                        .flat()
+                        .join('\n');
+    
+                    throw new Error(errorMessages);
+                }
+                throw new Error(responseData.message || 'Registration failed');
             }
-            await AsyncStorage.setItem('user', JSON.stringify(newUser));
+            if (responseData.token) {
+                await AsyncStorage.setItem('token', responseData.token);
+            }
+    
+            await AsyncStorage.setItem('user', JSON.stringify(responseData));
             setMessage({ text: 'Account created successfully! Redirecting to Sign In...', type: 'success' });
+    
             setTimeout(() => {
                 router.push('/(root)/(auth)/sign-in');
             }, 2000);
@@ -212,7 +198,7 @@ const styles = StyleSheet.create({
         color: '#007bff',
     },
     message: {
-        marginTop: 20,
+        marginTop: 10,
         fontSize: 20,
         fontWeight: 'bold',
         fontFamily: "PlayfairDisplay-Bold",
@@ -224,9 +210,9 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         color: 'red',
-        fontSize: 20,
+        fontSize: 15,
         fontFamily: "PlayfairDisplay-Bold",
-    },
+        marginBottom: 4    },
 });
 
 export default SignUp;

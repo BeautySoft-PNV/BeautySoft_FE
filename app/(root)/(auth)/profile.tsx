@@ -4,23 +4,50 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native';
 
 const Profile = () => {
     const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
     useEffect(() => {
-        const loadUserData = async () => {
+        const fetchUserProfile = async () => {
             try {
-                const storedUser = await AsyncStorage.getItem('user');
-                if (storedUser) {
-                    setUser(JSON.parse(storedUser));
+                const token = await AsyncStorage.getItem('token'); 
+                if (!token) {
+                    console.error("No token found!");
+                    setLoading(false);
+                    return;
                 }
+
+                const response = await fetch("http://192.168.99.183:5280/api/users/me", {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`  
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch user profile");
+                }
+
+                const responseData = await response.json();
+                await AsyncStorage.setItem('user', JSON.stringify(responseData)); 
+                setUser(responseData);
             } catch (error) {
-                console.error("Error loading user data:", error);
+                console.error("Error fetching profile:", error);
+            } finally {
+                setLoading(false);
             }
         };
-        loadUserData();
+
+        fetchUserProfile();
     }, []);
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0000ff" />;
+    }
 
     return (
         <View style={styles.container}>
@@ -31,12 +58,10 @@ const Profile = () => {
                 <Text style={styles.header}>My Account</Text>
             </View>
             <View style={styles.avatarContainer}>
-            <Image
-                source={{ uri: user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png" }}
-                style={styles.avatar}
+            <Image 
+                source={{ uri: "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }} 
+                style={styles.avatar} 
             />
-
-
                 <TouchableOpacity 
                     style={styles.editIcon} 
                     onPress={() => router.push('/(root)/(auth)/edit-profile')}
@@ -47,7 +72,7 @@ const Profile = () => {
             <Text style={styles.title}>Full Name*</Text>
             <TextInput
                 style={styles.input}
-                value={user?.username || ''}
+                value={user?.name || ''}
                 editable={false}
             />
             <Text style={styles.title}>Email*</Text>
@@ -59,7 +84,7 @@ const Profile = () => {
 
           <TouchableOpacity style={styles.upgradeButton}>
             <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
-            <Text style={styles.buttonText}>Upgrade for experts</Text>
+            <Text onPress={() => router.push('/(root)/tabs/makeup-artist-upgrade')} style={styles.buttonText}>Upgrade for experts</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.upgradeButton}>
             <FontAwesome name="diamond" size={20} color="gold" style={styles.icon} />

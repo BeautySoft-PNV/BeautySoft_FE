@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 const EditProfile = () => {
     const [user, setUser ] = useState<any>(null);
     const [avatar, setAvatar] = useState<string>('');
-    const [username, setUsername] = useState<string>('');
+    const [name, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -26,7 +26,7 @@ const EditProfile = () => {
                     const parsedUser  = JSON.parse(storedUser );
                     setUser (parsedUser );
                     setAvatar(parsedUser .avatar || '');
-                    setUsername(parsedUser .username || '');
+                    setUsername(parsedUser .name || '');
                     setEmail(parsedUser .email || '');
                     setPassword(parsedUser .password || '');
                     setConfirmPassword(parsedUser .password || '');
@@ -86,7 +86,7 @@ const EditProfile = () => {
 
         const updatedUser  = {
             ...user,
-            username,
+            name,
             email,
             password,
             avatar,
@@ -110,7 +110,7 @@ const EditProfile = () => {
                 <Text style={styles.header}>My Account</Text>
             </View>
             <View style={styles.avatarContainer}>
-                <Image source={{ uri: avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png" }} style={styles.avatar} />
+                <Image source={{ uri: avatar || "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }} style={styles.avatar} />
                 <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
                     <FontAwesome5 name="camera" size={18} color="#ED1E51" />
                 </TouchableOpacity>
@@ -121,10 +121,10 @@ const EditProfile = () => {
                 </Text>
             ) : null}
             <Text style={styles.title}>Full Name*</Text>
-            <TextInput style={styles.input} value={username} onChangeText={setUsername} />
+            <TextInput style={styles.input} value={name} onChangeText={setUsername} />
 
             <Text style={styles.title}>Email*</Text>
-            <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
+            <TextInput style={styles.input} value={email} onChangeText={setEmail} editable={false} keyboardType="email-address" />
 
             <Text style={styles.title}>Password*</Text>
             <View style={styles.inputContainer}>
@@ -174,7 +174,19 @@ const styles = StyleSheet.create({
     input: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', color: "black", marginBottom: 10 },
     inputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', paddingHorizontal: 10, marginBottom: 10 },
     inputPassword: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", flex: 1, padding: 10 },
-    button: { backgroundColor: "#ED1E51", padding: 15, borderRadius: 5, alignItems: "center", marginTop: 20 },
+    button: {  flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#ED1E51",
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 15,
+        marginVertical: 10,
+        justifyContent: "center",
+        width: "100%",
+        fontSize: 20,
+        fontWeight: "bold", 
+        fontFamily: "PlayfairDisplay-Bold"},
+        
     buttonText: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", color: "white" },
     message: {
         marginTop: 20,
