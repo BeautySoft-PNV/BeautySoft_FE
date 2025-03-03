@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({ navigation }: any) => {
     const [username, setUsername] = useState('');
@@ -57,7 +58,7 @@ try {
             if (!response.ok) {
                 throw new Error(newUser .message || 'Registration failed');
             }
-
+            await AsyncStorage.setItem('user', JSON.stringify(newUser));
             setMessage({ text: 'Account created successfully! Redirecting to Sign In...', type: 'success' });
             setTimeout(() => {
                 router.push('/(root)/(auth)/sign-in');
