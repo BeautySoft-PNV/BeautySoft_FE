@@ -1,4 +1,3 @@
-
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import {
@@ -10,8 +9,11 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import Ionicons from '@expo/vector-icons/Ionicons';
-
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function Scan() {
   const [facing, setFacing] = useState<"front" | "back">("back");
@@ -20,6 +22,9 @@ export default function Scan() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [imageDescription, setImageDescription] = useState<string>("");
 
+  type NavigationProps = StackNavigationProp<any>;
+
+  const navigation = useNavigation<NavigationProps>();
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -31,26 +36,25 @@ export default function Scan() {
     );
   }
 
-
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
-
   async function takePicture() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      if (photo) setCapturedImage(photo.uri);
+      if (photo) {
+        setCapturedImage(photo.uri);
+      }
     }
   }
-
 
   function retakePicture() {
     setCapturedImage(null);
     setImageDescription("");
   }
 
-
+  console.log("capturedImage: ", capturedImage)
   return (
     <View style={styles.container}>
       {!capturedImage ? (
@@ -74,7 +78,7 @@ export default function Scan() {
       ) : (
         <View style={styles.previewContainer}>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: capturedImage }} style={styles.preview} />
+            <Image source={{ uri:capturedImage  }} style={styles.preview} />
             <TouchableOpacity
               style={styles.retakeButton}
               onPress={retakePicture}
@@ -83,7 +87,6 @@ export default function Scan() {
             </TouchableOpacity>
           </View>
 
-
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
@@ -91,17 +94,22 @@ export default function Scan() {
               value={imageDescription}
               onChangeText={setImageDescription}
             />
-            <Image
-              source={require("@/assets/icons/uploadimage.png")}
-              style={styles.uploadImage}
-            />
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/generate",
+                  params: { imageUri: capturedImage, request: imageDescription },
+                })
+              }
+            >
+              <AntDesign name="upload" size={24} color="black" style={styles.iconStyle} />
+            </TouchableOpacity>
           </View>
         </View>
       )}
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -178,9 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   uploadImage: {
-    width: 24,
-    height: 24,
-    marginLeft: 10,
+    marginLeft: 20,
   },
   retakeButton: {
     position: "absolute",
@@ -191,5 +197,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 5,
     alignItems: "center",
+  },
+  iconStyle: {
+    marginLeft: 10, // Khoảng cách bên trái
   },
 });
