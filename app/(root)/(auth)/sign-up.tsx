@@ -4,20 +4,41 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SignUp = ({ navigation }: any) => {
+const SignUp = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [message, setMessage] = useState({ text: '', type: '' });
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const router = useRouter();
 
     const handleSignUp = async () => {
+      /*  // const Errors: { [key: string]: string } = {};
+        // if (!confirmPassword) {
+        //     Errors.confirmPassword = "Confirm password is required.";
+        // } else if (confirmPassword !== password) {
+        //     Errors.confirmPassword = "Passwords do not match.";
+        // }
+        // if (Object.keys(Errors).length > 0) {
+        //     setErrors(Errors);
+        //     return;
+        // }*/
         const API_URL = "http://192.168.99.183:5280/api/auth/register";
-    
+
         try {
+            const newErrors: { [key: string]: string } = {};
+            if(username.trim() != "" && email.trim() != "" && password.trim()!= "" && confirmPassword.trim() == "" ){
+                newErrors.confirmPassword = "confirmPassword is null"
+                setErrors(newErrors);
+                return
+            }
+            if(username.trim() != "" && email.trim() != "" && password.trim()!= "" && confirmPassword != password){
+                newErrors.confirmPassword = "passwords are not the same"
+                setErrors(newErrors);
+                return
+            }
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -29,47 +50,52 @@ const SignUp = ({ navigation }: any) => {
                 }),
             });
             const responseData = await response.json();
+
             if (!response.ok) {
                 if (responseData.errors) {
-                    const errorMessages = Object.values(responseData.errors)
-                        .flat()
-                        .join('\n');
-    
-                    throw new Error(errorMessages);
+                    if (responseData.errors.Email) {
+                        newErrors.email = responseData.errors.Email.join('\n');
+                    }
+                    if (responseData.errors.Password) {
+                        newErrors.password = responseData.errors.Password.join('\n');
+                    }
+                    if (responseData.errors.Username) {
+                        newErrors.username = responseData.errors.Username.join('\n');
+                    }
+
+                    setErrors(newErrors);
+                    return;
                 }
                 throw new Error(responseData.message || 'Registration failed');
             }
+
             if (responseData.token) {
                 await AsyncStorage.setItem('token', responseData.token);
             }
-    
+
             await AsyncStorage.setItem('user', JSON.stringify(responseData));
-            setMessage({ text: 'Account created successfully! Redirecting to Sign In...', type: 'success' });
-    
-            setTimeout(() => {
-                router.push('/(root)/(auth)/sign-in');
-            }, 2000);
+            router.push('/(root)/(auth)/sign-in');
         } catch (error: any) {
-            setMessage({ text: error.message, type: 'error' });
+            setErrors({ general: error.message });
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.logo}>BeautySoft</Text>
-            {message.text ? (
-                <Text style={[styles.message, message.type === 'success' ? styles.successMessage : styles.errorMessage]}>
-                    {message.text}
-                </Text>
-            ) : null}
+
             <Text style={styles.title}>Full Name*</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Tố Loan..."
                 placeholderTextColor="#C4C4C4"
                 value={username}
-                onChangeText={setUsername}
+                onChangeText={(text) => {
+                    setUsername(text);
+                    setErrors((prev) => ({ ...prev, username: '' })); // Xóa lỗi khi người dùng nhập lại
+                }}
             />
+            {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
             <Text style={styles.title}>Email*</Text>
             <TextInput
@@ -79,8 +105,12 @@ const SignUp = ({ navigation }: any) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => {
+                    setEmail(text);
+                    setErrors((prev) => ({ ...prev, email: '' }));
+                }}
             />
+            {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
             <Text style={styles.title}>Password*</Text>
             <View style={styles.inputContainer}>
@@ -90,12 +120,16 @@ const SignUp = ({ navigation }: any) => {
                     placeholderTextColor="#C4C4C4"
                     secureTextEntry={!passwordVisible}
                     value={password}
-                    onChangeText={setPassword}
+                    onChangeText={(text) => {
+                        setPassword(text);
+                        setErrors((prev) => ({ ...prev, password: '' }));
+                    }}
                 />
                 <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
                     <FontAwesome name={passwordVisible ? "eye" : "eye-slash"} size={20} color="gray" />
                 </TouchableOpacity>
             </View>
+            {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
             <Text style={styles.title}>Confirm Password*</Text>
             <View style={styles.inputContainer}>
@@ -105,12 +139,16 @@ const SignUp = ({ navigation }: any) => {
                     placeholderTextColor="#C4C4C4"
                     secureTextEntry={!confirmPasswordVisible}
                     value={confirmPassword}
-                    onChangeText={setConfirmPassword}
+                    onChangeText={(text) => {
+                        setConfirmPassword(text);
+                        setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+                    }}
                 />
                 <TouchableOpacity onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
                     <FontAwesome name={confirmPasswordVisible ? "eye" : "eye-slash"} size={20} color="gray" />
                 </TouchableOpacity>
             </View>
+            {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
 
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Sign up</Text>
@@ -158,7 +196,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         fontFamily: "PlayfairDisplay-Bold",
         fontSize: 20,
-        color: "black"
+        color: "black",
     },
     inputContainer: {
         flexDirection: 'row',
@@ -177,7 +215,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         fontFamily: "PlayfairDisplay-Bold",
         fontSize: 20,
-        color: "black"
+        color: "black",
     },
     button: {
         backgroundColor: '#e91e63',
@@ -197,22 +235,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#007bff',
     },
-    message: {
-        marginTop: 10,
-        fontSize: 20,
-        fontWeight: 'bold',
-        fontFamily: "PlayfairDisplay-Bold",
-    },
-    successMessage: {
-        color: 'green',
-        fontSize: 20,
-        fontFamily: "PlayfairDisplay-Bold",
-    },
-    errorMessage: {
+    errorText: {
         color: 'red',
-        fontSize: 15,
-        fontFamily: "PlayfairDisplay-Bold",
-        marginBottom: 4    },
+        fontSize: 14,
+        alignSelf: 'flex-start',
+        marginBottom: 10,
+    },
 });
 
 export default SignUp;

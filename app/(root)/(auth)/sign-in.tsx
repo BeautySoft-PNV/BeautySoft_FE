@@ -9,7 +9,7 @@ const SignIn = ({ navigation }: any) => {
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
-    const [error, setError] = useState(''); 
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const router = useRouter();
 
     const handleSignIn = async () => {
@@ -27,9 +27,23 @@ const SignIn = ({ navigation }: any) => {
             const responseData = await response.json();
 
             if (!response.ok) {
+                if (responseData.message) {
+                    setErrors({ message: responseData.message });
+                    return;
+                }
                 if (responseData.errors) {
-                    const errorMessages = Object.values(responseData.errors).flat();
-                    throw new Error(errorMessages.join("\n"));
+                    const newErrors: { [key: string]: string } = {};
+                    if (responseData.errors.Email) {
+                        newErrors.email = responseData.errors.Email.join('\n');
+                    }
+                    if (responseData.errors.Password) {
+                        newErrors.password = responseData.errors.Password.join('\n');
+                    }
+                    if (responseData.errors.message) {
+                        newErrors.message = responseData.errors.message.join('\n');
+                    }
+                    setErrors(newErrors);
+                    return;
                 }
                 throw new Error(responseData.title || "Login failed! Please check your credentials.");
             }
@@ -40,14 +54,12 @@ const SignIn = ({ navigation }: any) => {
             await AsyncStorage.setItem('user', JSON.stringify(responseData));
 
             setMessage({ text: 'Login successful!', type: 'success' });
-            setError(''); 
 
             setTimeout(() => {
                 router.push('/(root)/(tabs)/home');
             }, 2000);
         } catch (error: any) {
-            setMessage({ text: '', type: '' }); 
-            setError(error.message); 
+            setMessage({ text: '', type: '' });
         }
     };
 
@@ -61,11 +73,6 @@ const SignIn = ({ navigation }: any) => {
                 />
             </View>
             <Text style={styles.logo}>BeautySoft</Text>
-            {message.text ? (
-                <Text style={[styles.message, message.type === 'success' ? styles.successMessage : styles.errorMessage]}>
-                    {message.text}
-                </Text>
-            ) : null}
             <Text style={styles.title}>Email*</Text>
             <TextInput
                 style={styles.input}
@@ -76,6 +83,7 @@ const SignIn = ({ navigation }: any) => {
                 value={email}
                 onChangeText={setEmail}
             />
+            {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
             <Text style={styles.title}>Password*</Text>
             <View style={styles.inputContainer}>
@@ -91,11 +99,10 @@ const SignIn = ({ navigation }: any) => {
                     <FontAwesome name={passwordVisible ? "eye" : "eye-slash"} size={20} color="gray" />
                 </TouchableOpacity>
             </View>
-
-            {error ? (
-                <Text style={styles.errorText}>{error}</Text> 
-            ) : null}
-
+            {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
+            <View style={styles.message}>
+                {errors.message && <Text style={styles.errorText}>{errors.message}</Text>}
+            </View>
             <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                 <Text style={styles.buttonText}>Sign in</Text>
             </TouchableOpacity>

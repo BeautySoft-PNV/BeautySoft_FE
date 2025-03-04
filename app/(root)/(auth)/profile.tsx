@@ -13,7 +13,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const token = await AsyncStorage.getItem('token'); 
+                const token = await AsyncStorage.getItem('token');
                 if (!token) {
                     console.error("No token found!");
                     setLoading(false);
@@ -24,7 +24,7 @@ const Profile = () => {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`  
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -33,7 +33,7 @@ const Profile = () => {
                 }
 
                 const responseData = await response.json();
-                await AsyncStorage.setItem('user', JSON.stringify(responseData)); 
+                await AsyncStorage.setItem('user', JSON.stringify(responseData));
                 setUser(responseData);
             } catch (error) {
                 console.error("Error fetching profile:", error);
@@ -48,6 +48,7 @@ const Profile = () => {
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
+    console.log(user)
 
     return (
         <View style={styles.container}>
@@ -58,12 +59,16 @@ const Profile = () => {
                 <Text style={styles.header}>My Account</Text>
             </View>
             <View style={styles.avatarContainer}>
-            <Image 
-                source={{ uri: "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }} 
-                style={styles.avatar} 
-            />
-                <TouchableOpacity 
-                    style={styles.editIcon} 
+                <Image
+                    source={{
+                        uri: user.avatar
+                            ? "http://192.168.99.183:5280" + user.avatar
+                            : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
+                    }}
+                    style={styles.avatar}
+                />
+                <TouchableOpacity
+                    style={styles.editIcon}
                     onPress={() => router.push('/(root)/(auth)/edit-profile')}
                 >
                       <FontAwesome name="pencil" size={18} color="#ED1E51" />
@@ -114,7 +119,7 @@ const styles = StyleSheet.create({
             justifyContent: "center",
             width: "100%",
             fontSize: 20,
-            fontWeight: "bold", 
+            fontWeight: "bold",
             fontFamily: "PlayfairDisplay-Bold",
         },
         icon: {
@@ -126,7 +131,7 @@ const styles = StyleSheet.create({
           fontFamily: "PlayfairDisplay-Bold",
           color: "white",
         },
-        
+
 });
 
 export default Profile;

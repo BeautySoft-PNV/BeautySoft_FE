@@ -60,7 +60,7 @@ const TabsLayout = () => {
           title: "Storage",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.box} title="" />
+            <TabIcon focused={focused} icon={icons.scan} title="" />
           ),
         }}
       />
@@ -70,7 +70,7 @@ const TabsLayout = () => {
           title: "storage",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.history} title="" />
+            <TabIcon focused={focused} icon={icons.box} title="" />
           ),
         }}
       />

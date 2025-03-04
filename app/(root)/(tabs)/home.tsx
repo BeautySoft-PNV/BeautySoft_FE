@@ -36,9 +36,9 @@ const Home = () => {
           />
           <TouchableOpacity 
             style={styles.scanButton} 
-            onPress={() => router.push('/(root)/tabs/scan')}
+            onPress={() => router.push('/scan')}
           >
-            <Text style={styles.scanButtonText}>Tap to scan</Text>
+            <Text style={styles.scanButtonText}>Take photo</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.sectionTitle1}>Face Shape Styles</Text>
