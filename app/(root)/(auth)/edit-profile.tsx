@@ -114,7 +114,6 @@
             }
 
 
-
             try {
                 const token = await AsyncStorage.getItem('token');
                 if (!token) {
@@ -123,7 +122,7 @@
                     return;
                 }
                 console.log(token)
-                const response = await fetch('http://192.168.99.183:5280/api/users/me', {
+                const response = await fetch('http://192.168.175.183:5280/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -131,7 +130,6 @@
                     body: formData,
                 });
                 console.log(token)
-                console.log("wqeqwe")
                 if (response.status == 204) {
                     setMessage({ text: 'Profile updated successfully!', type: 'success' });
                     router.push('/(root)/(auth)/profile');
@@ -165,11 +163,11 @@
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.99.183:5280" + avatar
+                                    ? "http://192.168.175.183:5280" + avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.99.183:5280" + user.avatar
+                                        ? "http://192.168.175.183:5280" + user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}
