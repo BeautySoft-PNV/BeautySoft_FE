@@ -114,7 +114,6 @@
             }
 
 
-
             try {
                 const token = await AsyncStorage.getItem('token');
                 if (!token) {
@@ -164,11 +163,11 @@
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.99.183:5280" + avatar
+                                    ? "http://192.168.175.183:5280" + avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.99.183:5280" + user.avatar
+                                        ? "http://192.168.175.183:5280" + user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}

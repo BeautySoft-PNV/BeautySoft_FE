@@ -15,6 +15,16 @@ const SignUp = () => {
     const router = useRouter();
 
     const handleSignUp = async () => {
+      /*  // const Errors: { [key: string]: string } = {};
+        // if (!confirmPassword) {
+        //     Errors.confirmPassword = "Confirm password is required.";
+        // } else if (confirmPassword !== password) {
+        //     Errors.confirmPassword = "Passwords do not match.";
+        // }
+        // if (Object.keys(Errors).length > 0) {
+        //     setErrors(Errors);
+        //     return;
+        // }*/
         const API_URL = "http://192.168.175.183:5280/api/auth/register";
 
         try {
