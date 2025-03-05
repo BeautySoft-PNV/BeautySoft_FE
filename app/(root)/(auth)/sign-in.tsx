@@ -80,7 +80,7 @@ const SignIn = ({ navigation }: any) => {
                 placeholder="loan@gmail.com..."
                 placeholderTextColor="#C4C4C4"
                 keyboardType="email-address"
-                
+                autoCapitalize="none"
                 value={email}
                 onChangeText={setEmail}
             />
