@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,7 @@ const SignIn = ({ navigation }: any) => {
     const router = useRouter();
 
     const handleSignIn = async () => {
-        const API_URL = "http://192.168.99.183:5280/api/auth/login";
+        const API_URL = "http://192.168.175.183:5280/api/auth/login";
 
         try {
             const response = await fetch(API_URL, {
@@ -64,6 +64,7 @@ const SignIn = ({ navigation }: any) => {
     };
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <View style={styles.backgroundContainer}>
                 <Text style={styles.welcomeText}>Welcome to BeautySoft</Text>
@@ -79,7 +80,7 @@ const SignIn = ({ navigation }: any) => {
                 placeholder="loan@gmail.com..."
                 placeholderTextColor="#C4C4C4"
                 keyboardType="email-address"
-                autoCapitalize="none"
+                
                 value={email}
                 onChangeText={setEmail}
             />
@@ -110,6 +111,7 @@ const SignIn = ({ navigation }: any) => {
                 <Text style={styles.link}>Don't have an account? Sign up!</Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 
@@ -120,6 +122,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         backgroundColor: 'white',
+        width: '100%',
     },
     backgroundContainer: {
         width: 413,
@@ -129,6 +132,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         marginBottom: 20,
+        flex: 1,
     },
     welcomeText: {
         fontSize: 32,
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         fontFamily: "PlayfairDisplay-Bold",
         fontSize: 20,
-        color: "black"
+        color: "black",
     },
     inputContainer: {
         flexDirection: 'row',
@@ -184,21 +188,26 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         fontFamily: "PlayfairDisplay-Bold",
         fontSize: 20,
-        color: "black"
+        color: "black",
+        marginBottom: 10 ,
     },
     button: {
-        backgroundColor: '#e91e63',
-        padding: 10,
-        borderRadius: 5,
-        width: '100%',
+        backgroundColor: '#ED1E51',
+        paddingVertical: 15,
+        borderRadius: 10,
         alignItems: 'center',
-        marginTop: 12,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
+        fontSize: 20, 
+        fontWeight: "bold", 
+        fontFamily: "PlayfairDisplay-Bold",
+        width: '100%',
+        marginTop: 15
+      },
+      buttonText: {
+        color: '#ffffff',
+        fontSize: 20, 
+        fontWeight: "bold", 
+        fontFamily: "PlayfairDisplay-Bold"
+      },
     link: {
         marginTop: 20,
         fontSize: 20,
@@ -224,7 +233,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 10,
-        alignSelf: 'flex-start', // Align error message to the left
+        alignSelf: 'flex-start', 
     },
 });
 

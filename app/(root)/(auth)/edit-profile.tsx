@@ -1,5 +1,5 @@
     import React, { useState, useEffect } from 'react';
-    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , ScrollView} from 'react-native';
     import * as ImagePicker from 'expo-image-picker';
     import AsyncStorage from '@react-native-async-storage/async-storage';
     import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
@@ -123,15 +123,13 @@
                     return;
                 }
                 console.log(token)
-                const response = await fetch('http://192.168.99.183:5280/api/users/me', {
+                const response = await fetch('http://192.168.175.183:5280/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
                     },
                     body: formData,
                 });
-                console.log(token)
-                console.log("wqeqwe")
                 if (response.status == 204) {
                     setMessage({ text: 'Profile updated successfully!', type: 'success' });
                     router.push('/(root)/(auth)/profile');
@@ -146,13 +144,14 @@
         };
         const defaultAvatar = "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg";
         const avatarUri = avatar
-            ? avatar  // Avatar mới upload thành công
+            ? avatar  
             : user?.avatar
-                ? `http://192.168.99.183:5280${user.avatar}`  // Avatar có sẵn từ server
-                : defaultAvatar; // Nếu không có gì thì dùng ảnh mặc định
+                ? `http://192.168.99.183:5280${user.avatar}`  
+                : defaultAvatar; 
 
 
         return (
+            <ScrollView>
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
@@ -237,6 +236,7 @@
                     <Text style={styles.buttonText}>Update</Text>
                 </TouchableOpacity>
             </View>
+            </ScrollView>
         );
     };
     
@@ -251,20 +251,24 @@
         input: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', color: "black", marginBottom: 10 },
         inputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', paddingHorizontal: 10, marginBottom: 10 },
         inputPassword: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", flex: 1, padding: 10 },
-        button: {  flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: "#ED1E51",
-            paddingVertical: 12,
-            paddingHorizontal: 20,
-            borderRadius: 15,
-            marginVertical: 10,
-            justifyContent: "center",
-            width: "100%",
-            fontSize: 20,
-            fontWeight: "bold",
-            fontFamily: "PlayfairDisplay-Bold"},
-    
-        buttonText: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", color: "white" },
+        button: {
+            backgroundColor: '#ED1E51',
+            flexDirection: "row",
+            paddingVertical: 15,
+            borderRadius: 10,
+            alignItems: 'center',
+            fontSize: 20, 
+            fontWeight: "bold", 
+            fontFamily: "PlayfairDisplay-Bold",
+            width: '100%',
+            justifyContent: "center"
+          },
+          buttonText: {
+            color: '#ffffff',
+            fontSize: 20, 
+            fontWeight: "bold", 
+            fontFamily: "PlayfairDisplay-Bold"
+          },
         message: {
             marginTop: 20,
             fontSize: 20,

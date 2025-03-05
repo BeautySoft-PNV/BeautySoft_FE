@@ -1,20 +1,49 @@
-import React from "react";
+import React, { useState, useEffect }from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from 'expo-router';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FontAwesome5 } from '@expo/vector-icons';
 const Home = () => {
   const router = useRouter();
+  const [avatar, setAvatar] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchAvatar = async () => {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+            const parsedUser = JSON.parse(userData);
+            setAvatar(parsedUser.avatar ? `http://192.168.175.183:5280${parsedUser.avatar}` : null);
+        }
+    };
+    fetchAvatar();
+}, []);
+useEffect(() => {
+  const fetchAvatar = async () => {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setAvatar(parsedUser.avatar ? `http://192.168.175.183:5280${parsedUser.avatar}` : null);
+      }
+  };
+  fetchAvatar();
+}, []);
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => router.push("/(root)/tabs/notifications")}>
+            <View style={styles.bellContainer}>
+            <FontAwesome5 name="bell" size={24} color="#ED1E51" style={styles.bellIcon} />
+            </View>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
-                    <Image
-                        source={{ uri: "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
-                        style={styles.avatar}
-                    />
-                </TouchableOpacity>
+          <Image
+          source={{ uri: avatar || "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
+          style={styles.avatar}
+          />
+        </TouchableOpacity>
         </View>
         <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} style={styles.carouselContainer}>
           {[
@@ -36,7 +65,7 @@ const Home = () => {
           />
           <TouchableOpacity 
             style={styles.scanButton} 
-            onPress={() => router.push('/scan')}
+            onPress={() => router.push('/(root)/(tabs)/scan')}
           >
             <Text style={styles.scanButtonText}>Take photo</Text>
           </TouchableOpacity>
@@ -82,10 +111,22 @@ const styles = StyleSheet.create({
   safeContainer: { flex: 1, backgroundColor: "#F3F4F6" },
   scrollContainer: { paddingHorizontal: 16, paddingBottom: 20 },
   headerContainer: { flexDirection: "row", justifyContent: "flex-end", alignItems: "center", marginVertical: 10 },
-  avatar: { width: 50, height: 50, borderRadius: 25 , marginBottom: 20, marginTop:5},
+  avatar: { width: 50, height: 50, borderRadius: 25 , marginBottom: 20, marginTop:5, marginLeft:12},
   bannerWrapper: {
     position: "relative",
   },
+  bellContainer: {
+    position: "relative",
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+},
+bellIcon: {
+    position: "absolute",
+    zIndex: 1, 
+    top:1 
+},
   newOfferText: {
     position: "absolute",
     right: 15,

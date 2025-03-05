@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet,ScrollView  } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,17 +15,7 @@ const SignUp = () => {
     const router = useRouter();
 
     const handleSignUp = async () => {
-      /*  // const Errors: { [key: string]: string } = {};
-        // if (!confirmPassword) {
-        //     Errors.confirmPassword = "Confirm password is required.";
-        // } else if (confirmPassword !== password) {
-        //     Errors.confirmPassword = "Passwords do not match.";
-        // }
-        // if (Object.keys(Errors).length > 0) {
-        //     setErrors(Errors);
-        //     return;
-        // }*/
-        const API_URL = "http://192.168.99.183:5280/api/auth/register";
+        const API_URL = "http://192.168.175.183:5280/api/auth/register";
 
         try {
             const newErrors: { [key: string]: string } = {};
@@ -81,6 +71,7 @@ const SignUp = () => {
     };
 
     return (
+        <ScrollView >
         <View style={styles.container}>
             <Text style={styles.logo}>BeautySoft</Text>
 
@@ -92,7 +83,7 @@ const SignUp = () => {
                 value={username}
                 onChangeText={(text) => {
                     setUsername(text);
-                    setErrors((prev) => ({ ...prev, username: '' })); // Xóa lỗi khi người dùng nhập lại
+                    setErrors((prev) => ({ ...prev, username: '' })); 
                 }}
             />
             {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
@@ -158,6 +149,7 @@ const SignUp = () => {
                 <Text style={styles.link}>Already have an account? Log in</Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 
@@ -217,19 +209,24 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: "black",
     },
-    button: {
-        backgroundColor: '#e91e63',
-        padding: 10,
-        borderRadius: 5,
-        width: '100%',
-        alignItems: 'center',
-        marginTop: 12,
-    },
     buttonText: {
-        color: '#fff',
+        color: '#ffffff',
         fontSize: 20,
         fontWeight: 'bold',
+         fontFamily: "PlayfairDisplay-Bold"
     },
+
+    button: {
+        backgroundColor: '#ED1E51',
+        paddingVertical: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        fontSize: 40, 
+        fontWeight: "bold", 
+        fontFamily: "PlayfairDisplay-Bold",
+        width: '100%',
+        marginTop: 15,
+      },
     link: {
         marginTop: 20,
         fontSize: 20,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image,ScrollView  } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -20,7 +20,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await fetch("http://192.168.99.183:5280/api/users/me", {
+                const response = await fetch("http://192.168.175.183:5280/api/users/me", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -51,6 +51,7 @@ const Profile = () => {
     console.log(user)
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={() => router.push('/(root)/(tabs)/home')}>
@@ -62,7 +63,7 @@ const Profile = () => {
                 <Image
                     source={{
                         uri: user.avatar
-                            ? "http://192.168.99.183:5280" + user.avatar
+                            ? "http://192.168.175.183:5280" + user.avatar
                             : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                     }}
                     style={styles.avatar}
@@ -87,34 +88,34 @@ const Profile = () => {
                 editable={false}
             />
 
-          <TouchableOpacity style={styles.upgradeButton}>
-            <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
-            <Text onPress={() => router.push('/(root)/tabs/makeup-artist-upgrade')} style={styles.buttonText}>Upgrade for experts</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.upgradeButton}>
-            <FontAwesome name="diamond" size={20} color="gold" style={styles.icon} />
-            <Text style={styles.buttonText}>Get Unlimited Access</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => router.push('/(root)/tabs/unlimited-storage')}
+            >
+                <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
+                <Text style={styles.buttonText}>Get Unlimited Access</Text>
+            </TouchableOpacity>
+
         </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 20, backgroundColor: 'white' },
     headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-    header: { fontSize: 24, fontWeight: 'bold', color: 'black', marginLeft: 100, fontFamily: "PlayfairDisplay-Bold" },
+    header: {  textAlign: 'center',fontSize: 24, fontWeight: 'bold', color: 'black', marginLeft: 100, fontFamily: "PlayfairDisplay-Bold" },
     avatarContainer: { justifyContent: "center", alignItems: "center", marginBottom: 20, position: "relative" },
     editIcon: { position: "absolute", borderRadius: 20, width: 30, height: 30, justifyContent: "center", alignItems: "center", marginLeft: 90, bottom: -15 },
     avatar: { width: 90, height: 90, borderRadius: 50 },
     title: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", color: "black", marginBottom: 5, alignSelf: "flex-start" },
     input: { width: '100%', padding: 15, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', color: "black", marginBottom: 10 , fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold",},
-              upgradeButton: {
+    upgradeButton: {
             flexDirection: "row",
             alignItems: "center",
             backgroundColor: "#ED1E51",
-            paddingVertical: 12,
+            paddingVertical: 15,
             paddingHorizontal: 20,
-            borderRadius: 15,
+            borderRadius: 10,
             marginVertical: 10,
             justifyContent: "center",
             width: "100%",
