@@ -25,7 +25,7 @@ const SignUp = () => {
         //     setErrors(Errors);
         //     return;
         // }*/
-        const API_URL = "http://192.168.99.183:5280/api/auth/register";
+        const API_URL = "http://192.168.126.183:5280/api/auth/register";
 
         try {
             const newErrors: { [key: string]: string } = {};
