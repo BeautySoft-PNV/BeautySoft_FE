@@ -114,7 +114,6 @@
             }
 
 
-
             try {
                 const token = await AsyncStorage.getItem('token');
                 if (!token) {
@@ -131,7 +130,6 @@
                     body: formData,
                 });
                 console.log(token)
-                console.log("wqeqwe")
                 if (response.status == 204) {
                     setMessage({ text: 'Profile updated successfully!', type: 'success' });
                     router.push('/(root)/(auth)/profile');

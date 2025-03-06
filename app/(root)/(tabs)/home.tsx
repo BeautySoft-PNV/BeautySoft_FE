@@ -1,21 +1,82 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from 'expo-router';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {FontAwesome5} from "@expo/vector-icons";
 
 const Home = () => {
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [vip, setVip] = useState(true);
+  useEffect(() => {
+    const fetchUserProfileHome = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          console.error("No token found!");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("http://192.168.175.183:5280/api/users/me", {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const responseData = await response.json();
+        await AsyncStorage.setItem('user', JSON.stringify(responseData));
+        setUser(responseData);
+        console.log(responseData);
+
+        const checkVip = await fetch("http://192.168.175.183:5280/api/managerstorage/check-user", {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (!checkVip.ok) {
+          throw new Error("Lỗi khi gọi API");
+        }
+
+        const datacheckVip = await checkVip.json();
+
+        setVip(datacheckVip.status);
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfileHome();
+  }, []);
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
-                    <Image
-                        source={{ uri: "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
-                        style={styles.avatar}
-                    />
-                </TouchableOpacity>
-        </View>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+          <View style={styles.avatarContainer}>
+            <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
+              <Image
+                  source={{ uri: user?.avatar
+                        ? "http://192.168.175.183:5280" + user.avatar
+                        : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
+                  style={styles.avatar}
+              />
+            </TouchableOpacity>
+            {vip && (
+                <FontAwesome5 name="crown" size={20} color="gold" style={styles.crownIcon} />
+            )}
+          </View>
+        </ScrollView>
         <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} style={styles.carouselContainer}>
           {[
             require("@/assets/images/banner1.jpg"),
@@ -86,6 +147,10 @@ const styles = StyleSheet.create({
   bannerWrapper: {
     position: "relative",
   },
+  scroll:{
+    display:"flex",
+    alignItems:"flex-end",
+  },
   newOfferText: {
     position: "absolute",
     right: 15,
@@ -94,6 +159,10 @@ const styles = StyleSheet.create({
     marginTop:6, 
     fontFamily: "PlayfairDisplay-Medium",
     fontWeight: "bold",
+  },
+  avatarContainer: {
+    position: "relative",
+    right: 0,
   },
   carouselContainer: { height: 200, borderRadius: 10, overflow: "hidden", marginBottom: 16 },
   bannerImage: { width: 300, height: 160, resizeMode: "cover", marginRight: 10, borderRadius: 15 },
@@ -129,6 +198,12 @@ const styles = StyleSheet.create({
     marginBottom:22,
     fontFamily: "PlayfairDisplay-Bold",
   },
+    crownIcon: {
+      position: "absolute",
+      top: 3,
+      left: -10,
+      transform: [{ rotate: "-50deg" }],
+    },
   horizontalScroll: {
     flexDirection: "row",
     marginBottom: 16,

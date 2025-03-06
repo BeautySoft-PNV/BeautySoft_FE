@@ -10,6 +10,7 @@ const Profile = () => {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const [vip, setVip] = useState(true);
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
@@ -35,6 +36,21 @@ const Profile = () => {
                 const responseData = await response.json();
                 await AsyncStorage.setItem('user', JSON.stringify(responseData));
                 setUser(responseData);
+
+                const checkVip = await fetch("http://192.168.175.183:5280/api/managerstorage/check-user", {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!checkVip.ok) {
+                    throw new Error("Lỗi khi gọi API");
+                }
+
+                const datacheckVip = await checkVip.json();
+
+                setVip(datacheckVip.status);
             } catch (error) {
                 console.error("Error fetching profile:", error);
             } finally {
@@ -87,14 +103,15 @@ const Profile = () => {
                 editable={false}
             />
 
-          <TouchableOpacity style={styles.upgradeButton}>
-            <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
-            <Text onPress={() => router.push('/(root)/tabs/makeup-artist-upgrade')} style={styles.buttonText}>Upgrade for experts</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.upgradeButton}>
-            <FontAwesome name="diamond" size={20} color="gold" style={styles.icon} />
-            <Text style={styles.buttonText}>Get Unlimited Access</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.upgradeButton, vip && styles.disabledButton]}
+                onPress={() => router.push('/(root)/tabs/unlimited-storage')}
+                disabled={vip}
+            >
+                <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
+                <Text style={styles.buttonText}>Get Unlimited Access</Text>
+            </TouchableOpacity>
+
         </View>
     );
 };
@@ -122,6 +139,9 @@ const styles = StyleSheet.create({
             fontWeight: "bold",
             fontFamily: "PlayfairDisplay-Bold",
         },
+    disabledButton: {
+        opacity: 0.5,
+    },
         icon: {
             marginRight: 30,
         },
