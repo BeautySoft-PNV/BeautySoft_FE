@@ -63,6 +63,11 @@ const Home = () => {
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => router.push("/(root)/tabs/notifications")}>
+            <View style={styles.bellContainer}>
+            <FontAwesome5 name="bell" size={24} color="#ED1E51" style={styles.bellIcon} />
+            </View>
+        </TouchableOpacity>
           <View style={styles.avatarContainer}>
             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
               <Image
@@ -244,6 +249,18 @@ const styles = StyleSheet.create({
   itemContainer: { alignItems: "center", marginRight: 16, width: 120 },
   itemImage: { width: 100, height: 100, borderRadius: 10 },
   itemText: { marginTop: 8, textAlign: "center", fontSize: 14, fontWeight: "500", marginBottom: 70, fontFamily: "PlayfairDisplay-Medium" },
+  bellContainer: {
+    position: "relative",
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+},
+bellIcon: {
+    position: "absolute",
+    zIndex: 1,
+    top:1
+},
 });
 
 
