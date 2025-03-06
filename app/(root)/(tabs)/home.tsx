@@ -20,7 +20,7 @@ const Home = () => {
           return;
         }
 
-        const response = await fetch("http://192.168.175.183:5280/api/users/me", {
+        const response = await fetch("http://192.168.126.183:5280/api/users/me", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ const Home = () => {
         setUser(responseData);
         console.log(responseData);
 
-        const checkVip = await fetch("http://192.168.175.183:5280/api/managerstorage/check-user", {
+        const checkVip = await fetch("http://192.168.126.183:5280/api/managerstorage/check-user", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const Home = () => {
             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
               <Image
                   source={{ uri: user?.avatar
-                        ? "http://192.168.175.183:5280" + user.avatar
+                        ? "http://192.168.126.183:5280" + user.avatar
                         : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
                   style={styles.avatar}
               />

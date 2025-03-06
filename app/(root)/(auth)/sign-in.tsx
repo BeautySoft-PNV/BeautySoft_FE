@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,7 @@ const SignIn = ({ navigation }: any) => {
     const router = useRouter();
 
     const handleSignIn = async () => {
-        const API_URL = "http://192.168.175.183:5280/api/auth/login";
+        const API_URL = "http://192.168.126.183:5280/api/auth/login";
 
         try {
             const response = await fetch(API_URL, {
@@ -64,6 +64,7 @@ const SignIn = ({ navigation }: any) => {
     };
 
     return (
+    <ScrollView>
         <View style={styles.container}>
             <View style={styles.backgroundContainer}>
                 <Text style={styles.welcomeText}>Welcome to BeautySoft</Text>
@@ -110,6 +111,7 @@ const SignIn = ({ navigation }: any) => {
                 <Text style={styles.link}>Don't have an account? Sign up!</Text>
             </TouchableOpacity>
         </View>
+    </ScrollView>
     );
 };
 

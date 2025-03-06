@@ -1,10 +1,9 @@
     import React, { useState, useEffect } from 'react';
-    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
     import * as ImagePicker from 'expo-image-picker';
     import AsyncStorage from '@react-native-async-storage/async-storage';
     import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
     import { useRouter } from 'expo-router';
-    
     const EditProfile = () => {
         const [user, setUser] = useState<any>(null);
         const [avatar, setAvatar] = useState<string>('');
@@ -122,7 +121,7 @@
                     return;
                 }
                 console.log(token)
-                const response = await fetch('http://192.168.175.183:5280/api/users/me', {
+                const response = await fetch('http://192.168.126.183:5280/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -144,13 +143,12 @@
         };
         const defaultAvatar = "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg";
         const avatarUri = avatar
-            ? avatar  // Avatar mới upload thành công
+            ? avatar  
             : user?.avatar
-                ? `http://192.168.99.183:5280${user.avatar}`  // Avatar có sẵn từ server
-                : defaultAvatar; // Nếu không có gì thì dùng ảnh mặc định
-
-
+                ? `http://192.168.99.183:5280${user.avatar}`  
+                : defaultAvatar; 
         return (
+        <ScrollView>
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
@@ -163,11 +161,11 @@
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.175.183:5280" + avatar
+                                    ? "http://192.168.126.183:5280" + avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.175.183:5280" + user.avatar
+                                        ? "http://192.168.126.183:5280" + user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}
@@ -235,6 +233,7 @@
                     <Text style={styles.buttonText}>Update</Text>
                 </TouchableOpacity>
             </View>
+            </ScrollView>
         );
     };
     

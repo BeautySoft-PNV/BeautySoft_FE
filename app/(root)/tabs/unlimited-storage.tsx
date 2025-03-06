@@ -19,7 +19,7 @@ const UpgradeStorage = () => {
           return;
         }
 
-        const response = await fetch("http://192.168.175.183:5280/api/users/me", {
+        const response = await fetch("http://192.168.126.183:5280/api/users/me", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const UpgradeStorage = () => {
         await AsyncStorage.setItem('user', JSON.stringify(responseData));
         setUser(responseData);
 
-        const responseTypeStorage = await fetch("http://192.168.175.183:5280/api/TypeStorage/1", {
+        const responseTypeStorage = await fetch("http://192.168.126.183:5280/api/TypeStorage/1", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const UpgradeStorage = () => {
 
   const handlePayment = async () => {
     try {
-      const response = await fetch('http://192.168.175.183:5280/api/payment', {
+      const response = await fetch('http://192.168.126.183:5280/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,7 +69,7 @@ const UpgradeStorage = () => {
           Amount: typeStorage?.price,
           OrderDescription: 'Thanh toán qua vnpay',
           OrderType: 'other',
-          returnUrl:`http://192.168.175.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
+          returnUrl:`http://192.168.126.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
         }),
       });
 
