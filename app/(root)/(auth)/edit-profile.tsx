@@ -145,7 +145,7 @@
         const avatarUri = avatar
             ? avatar  
             : user?.avatar
-                ? `http://192.168.99.183:5280${user.avatar}`  
+                ? `http://192.168.126.183:5280${user.avatar}`  
                 : defaultAvatar; 
         return (
         <ScrollView>
