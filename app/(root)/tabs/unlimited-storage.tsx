@@ -10,6 +10,7 @@ const router = useRouter();
 const UpgradeStorage = () => {
   const [user, setUser] = useState<any>(null);
   const [typeStorage, setTypeStorage] = useState<any>(null);
+  const [vip, setVip] = useState(true);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -50,6 +51,7 @@ const UpgradeStorage = () => {
         const responseDataTypeStorage = await responseTypeStorage.json();
         await AsyncStorage.setItem('typeStorage', JSON.stringify(responseDataTypeStorage));
         setTypeStorage(responseDataTypeStorage);
+
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -58,6 +60,42 @@ const UpgradeStorage = () => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const checkVipStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          console.error("No token found!");
+          return;
+        }
+
+        const checkVip = await fetch("http://192.168.175.183:5280/api/managerstorage/check-user", {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!checkVip.ok) {
+          throw new Error("Lỗi khi gọi API");
+        }
+
+        const datacheckVip = await checkVip.json();
+        setVip(datacheckVip.status);
+
+        if (datacheckVip.status) {
+          router.push('/(root)/(tabs)/home');
+        }
+      } catch (error) {
+        console.error("Error checking VIP status:", error);
+      }
+    };
+
+    const intervalId = setInterval(checkVipStatus, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [router]);
 
   const handlePayment = async () => {
     try {

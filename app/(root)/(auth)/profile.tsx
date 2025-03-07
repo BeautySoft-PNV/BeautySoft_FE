@@ -61,6 +61,16 @@ const Profile = () => {
         fetchUserProfile();
     }, []);
 
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('token');
+
+            router.push('/(root)/(auth)/sign-in');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -110,6 +120,9 @@ const Profile = () => {
             >
                 <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
                 <Text style={styles.buttonText}>Get Unlimited Access</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.upgradeButton} onPress={handleLogout}>
+                <Text style={styles.buttonText}>Log out</Text>
             </TouchableOpacity>
 
         </View>

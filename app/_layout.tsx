@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/libs/tanstackQuery";
 import "./global.css";
 
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "PlayfairDisplay-Black": require("../assets/fonts/PlayfairDisplay-Black.ttf"),

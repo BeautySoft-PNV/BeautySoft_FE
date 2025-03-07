@@ -96,22 +96,23 @@
                 formData.append('newPassword', '');
             }
 
-            if (avatar) {
-                const response = await fetch(avatar);
-                const blob = await response.blob();
+                if (avatar) {
+                    const updatedAvatar = avatar.replace("http://localhost:8081", "http://192.168.175.183:5280");
+                    const response = await fetch(updatedAvatar);
+                    const blob = await response.blob();
 
-                const contentType = response.headers.get("Content-Type") || "image/jpeg";
+                    const contentType = response.headers.get("Content-Type") || "image/jpeg";
 
-                const extension = contentType.split("/")[1] || "jpg";
-                const filename = `${Date.now()}.${extension}`;
+                    const extension = contentType.split("/")[1] || "jpg";
+                    const filename = `${Date.now()}.${extension}`;
 
-                const imageFile = new File([blob], filename, {
-                    type: contentType,
-                    lastModified: Date.now()
-                });
+                    const imageFile = new File([blob], filename, {
+                        type: contentType,
+                        lastModified: Date.now()
+                    });
 
-                formData.append('imageFile', imageFile);
-            }
+                    formData.append('imageFile', imageFile);
+                }
 
 
             try {
@@ -122,7 +123,7 @@
                     return;
                 }
                 console.log(token)
-                const response = await fetch('http://192.168.175.183:5280/api/users/me', {
+                const response = await fetch('https://8827-171-255-169-90.ngrok-free.app/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -133,9 +134,10 @@
                 if (response.status == 204) {
                     setMessage({ text: 'Profile updated successfully!', type: 'success' });
                     router.push('/(root)/(auth)/profile');
-                } else {
+                }
+                if (!response.ok) {
                     const text = await response.text();
-                    console.error("Server returned non-JSON response:", text);
+                    throw new Error(`❌ Server Error: ${response.status} - ${text}`);
                 }
             } catch (error) {
                 console.error("Error updating data:", error);
@@ -144,10 +146,10 @@
         };
         const defaultAvatar = "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg";
         const avatarUri = avatar
-            ? avatar  // Avatar mới upload thành công
+            ? avatar
             : user?.avatar
-                ? `http://192.168.99.183:5280${user.avatar}`  // Avatar có sẵn từ server
-                : defaultAvatar; // Nếu không có gì thì dùng ảnh mặc định
+                ? `http://192.168.99.183:5280${user.avatar}`
+                : defaultAvatar;
 
 
         return (
