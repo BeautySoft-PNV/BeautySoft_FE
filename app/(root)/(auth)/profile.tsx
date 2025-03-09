@@ -21,7 +21,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await fetch("http://192.168.126.183:5280/api/users/me", {
+                const response = await fetch("http://192.168.175.183:5280/api/users/me", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ const Profile = () => {
                 <Image
                     source={{
                         uri: user.avatar
-                            ? "http://192.168.126.183:5280" + user.avatar
+                            ? "http://192.168.175.183:5280" + user.avatar
                             : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                     }}
                     style={styles.avatar}

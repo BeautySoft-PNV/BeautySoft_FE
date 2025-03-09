@@ -171,12 +171,13 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
         console.log(key, JSON.stringify(value));
       }
 
+      const token = localStorage.getItem("token");
       const response = await fetch(
-        "http://192.168.126.183:5280/api/combined/generate-and-inpaint",
+        "http://192.168.175.183:5280/api/combined/generate-and-inpaint",
         {
           method: "POST",
           headers: {
-            Authorization: `sk-kyVgdjaxGbxuYT5mWVRpYnHvPP3kwvWXN9OXpVwdVbneOqSu`,
+            Authorization:  `Bearer ${token}`,
             Accept: "application/json",
           },
           body: formData,
@@ -193,6 +194,7 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       console.log("Data: ", data);
       if (data && data.imageData) {
         setGeneratedImage(data.imageData);
+        console.log("data.imageData: ",data.imageData)
         setGenerateStep(data.generatedPrompt);
       } else {
         throw new Error("Invalid response from server");
@@ -242,12 +244,12 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
               {generatedImage && (
                 <Image source={{ uri: generatedImage }} style={styles.image} />
               )}
-              <PaperProvider>
+              {/* <PaperProvider>
                 <ModelAddMakeupStyle
                   generatedImage={generatedImage}
                   generateStep={generateStep}
                 />
-              </PaperProvider>
+              </PaperProvider> */}
               {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
               ) : error ? (
