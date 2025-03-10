@@ -82,7 +82,9 @@ const Profile = () => {
                 <TouchableOpacity onPress={() => router.push('/(root)/(tabs)/home')}>
                     <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
                 </TouchableOpacity>
-                <Text style={styles.header}>My Account</Text>
+                <View style={styles.containerTitle}>
+                    <Text style={styles.header}>My Account</Text>
+                </View>
             </View>
             <View style={styles.avatarContainer}>
                 <Image
@@ -132,7 +134,8 @@ const Profile = () => {
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 20, backgroundColor: 'white' },
     headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-    header: { fontSize: 24, fontWeight: 'bold', color: 'black', marginLeft: 100, fontFamily: "PlayfairDisplay-Bold" },
+    header: { fontSize: 24, fontWeight: 'bold', color: 'black', fontFamily: "PlayfairDisplay-Bold" },
+    containerTitle: { display:'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width:'92%' },
     avatarContainer: { justifyContent: "center", alignItems: "center", marginBottom: 20, position: "relative" },
     editIcon: { position: "absolute", borderRadius: 20, width: 30, height: 30, justifyContent: "center", alignItems: "center", marginLeft: 90, bottom: -15 },
     avatar: { width: 90, height: 90, borderRadius: 50 },

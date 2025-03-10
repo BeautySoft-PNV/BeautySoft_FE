@@ -15,16 +15,6 @@ const SignUp = () => {
     const router = useRouter();
 
     const handleSignUp = async () => {
-      /*  // const Errors: { [key: string]: string } = {};
-        // if (!confirmPassword) {
-        //     Errors.confirmPassword = "Confirm password is required.";
-        // } else if (confirmPassword !== password) {
-        //     Errors.confirmPassword = "Passwords do not match.";
-        // }
-        // if (Object.keys(Errors).length > 0) {
-        //     setErrors(Errors);
-        //     return;
-        // }*/
         const API_URL = "http://192.168.175.183:5280/api/auth/register";
 
         try {
@@ -153,10 +143,14 @@ const SignUp = () => {
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-in')}>
-                <Text style={styles.link}>Already have an account? Log in</Text>
-            </TouchableOpacity>
+            <View style={styles.forgot}>
+                <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-in')}>
+                    <Text style={styles.link}>Log in</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/(root)/(auth)/forgot-password')}>
+                    <Text style={styles.link}>Forgot Password!</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -169,6 +163,14 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
     },
+    forgot: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 20,
+    },
+
     logo: {
         fontSize: 60,
         fontFamily: 'PlayfairDisplay-Bold',
@@ -177,9 +179,10 @@ const styles = StyleSheet.create({
         textShadowColor: '#c1a6b3',
         textShadowOffset: { width: 9, height: 3 },
         textShadowRadius: 5,
+        width:'100%',
     },
     title: {
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: "bold",
         fontFamily: "PlayfairDisplay-Bold",
         color: "black",
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '100%',
-        padding: 15,
+        padding: 10,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
@@ -214,7 +217,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 10,
         fontFamily: "PlayfairDisplay-Bold",
-        fontSize: 20,
+        fontSize: 10,
         color: "black",
     },
     button: {
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
     },
     link: {
         marginTop: 20,
-        fontSize: 20,
+        fontSize: 17,
         color: '#007bff',
     },
     errorText: {
