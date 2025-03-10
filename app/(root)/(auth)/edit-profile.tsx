@@ -158,14 +158,6 @@
                 setMessage({ text: 'An error occurred while updating the profile', type: 'error' });
             }
         };
-        const defaultAvatar = "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg";
-        const avatarUri = avatar
-            ? avatar
-            : user?.avatar
-                ? `http://192.168.99.183:5280${user.avatar}`
-                : defaultAvatar;
-
-
         return (
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
