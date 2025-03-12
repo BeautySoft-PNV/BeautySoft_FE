@@ -63,6 +63,19 @@ const Profile = () => {
 
     const handleLogout = async () => {
         try {
+            const token = await AsyncStorage.getItem('token');
+
+            if (token) {
+                // Gửi yêu cầu logout lên server
+                await fetch('http://192.168.48.183:5280/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
+
             await AsyncStorage.removeItem('token');
 
             router.push('/(root)/(auth)/sign-in');
@@ -90,7 +103,7 @@ const Profile = () => {
                 <Image
                     source={{
                         uri: user.avatar
-                            ? "http://192.168.48.183:5280" + user.avatar
+                            ? user.avatar
                             : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                     }}
                     style={styles.avatar}

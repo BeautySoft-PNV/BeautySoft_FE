@@ -166,11 +166,11 @@
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.48.183:5280" + avatar
+                                    ?  avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.48.183:5280" + user.avatar
+                                        ?  user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}

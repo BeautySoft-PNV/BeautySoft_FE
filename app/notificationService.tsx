@@ -27,7 +27,6 @@ const checkForNewNotifications = async () => {
         const storedData = await AsyncStorage.getItem("notifications");
         const oldNotifications = storedData ? JSON.parse(storedData) : [];
 
-        // Nếu cả hai mảng đều rỗng, không có thông báo mới
         if (newData.length === 0 && oldNotifications.length === 0) {
             await AsyncStorage.setItem("hasNewNotification", "false");
             return;
@@ -38,18 +37,15 @@ const checkForNewNotifications = async () => {
         if (!isSameData) {
             await AsyncStorage.setItem("notifications", JSON.stringify(newData));
             await AsyncStorage.setItem("hasNewNotification", newData.length > 0 ? "true" : "false");
-        } else {
-            await AsyncStorage.setItem("hasNewNotification", "false");
         }
-
     } catch (error) {
         console.error("Error checking notifications:", error);
     }
 };
 
 
-// Hàm bắt đầu kiểm tra thông báo liên tục
+
 export const startNotificationService = () => {
     checkForNewNotifications();
-    return setInterval(checkForNewNotifications, 1000); // Kiểm tra mỗi 10 giây
+    return setInterval(checkForNewNotifications, 1000);
 };
