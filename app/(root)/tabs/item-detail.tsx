@@ -111,7 +111,7 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem8.png")}
+              source={require("../../../assets/images/makeupItem8.png")}
             />
             <Text style={styles.textItem}>Background A12</Text>
           </TouchableOpacity>

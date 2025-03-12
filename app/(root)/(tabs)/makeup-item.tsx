@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -15,11 +16,23 @@ import { MD2Colors, TextInput } from "react-native-paper";
 
 const whiteColor = MD2Colors.white;
 
-const Home = () => {
+interface MakeupItem {
+  id: string;
+  name: string;
+  time: string;
+  description: string;
+  image: string;
+  guidance: string;
+  dateOfManufacture: string;
+  expirationDate: string;
+}
+const MakeupItem = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [vip, setVip] = useState(true);
+  const [makeupItems, setMakeupItems] = useState<MakeupItem[]>([]);
+
   useEffect(() => {
     const fetchUserProfileHome = async () => {
       try {
@@ -76,7 +89,61 @@ const Home = () => {
     fetchUserProfileHome();
   }, []);
 
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const getToken = async () => {
+          try {
+            if (Platform.OS === "web") {
+              return localStorage.getItem("token") || "";
+            } else {
+              return (await AsyncStorage.getItem("token")) || "";
+            }
+          } catch (error) {
+            return "";
+          }
+        };
+
+        const token = await getToken();
+
+        if (!token) throw new Error("No authentication token found");
+
+        const response = await fetch(
+          "http://192.168.48.183:5280/api/MakeupItems/user/me",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          setMakeupItems(data);
+        } else {
+          console.error("Invalid data format ", data);
+        }
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+  const handlePress = (makeupItem: MakeupItem) => {
+    router.push({
+      pathname: "/tabs/collection-details",
+      params: { id: makeupItem.id },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
@@ -111,10 +178,10 @@ const Home = () => {
           <Text style={styles.title}>Item storage</Text>
           <TouchableOpacity
             style={styles.button}
-            // onPress={takePicture}
+            onPress={() => router.push(`/add-makeup-item`)}
           >
             <Text style={styles.text}>
-              ADD <AntDesign name="plus" size={20}></AntDesign>
+              ADD <AntDesign name="plus" size={20} />
             </Text>
           </TouchableOpacity>
         </View>
@@ -130,107 +197,29 @@ const Home = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView style={styles.scrollItem} >
-        <View style={styles.containerItem}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem8.png")}
-            />
-            <Text style={styles.textItem}>Background A12</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem7.png")}
-            />
-            <Text style={styles.textItem}>Eye shadow</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.containerItem}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem9.png")}
-            />
-            <Text style={styles.textItem}>Glitter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem10.png")}
-            />
-            <Text style={styles.textItem}>Makeup brush</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.containerItem}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem11.png")}
-            />
-            <Text style={styles.textItem}>Makeup sponge</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem12.png")}
-            />
-            <Text style={styles.textItem}>Blush</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.containerItem}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem13.png")}
-            />
-            <Text style={styles.textItem}>Foundation</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem14.png")}
-            />
-            <Text style={styles.textItem}>Concearler</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.containerItem}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem15.png")}
-            />
-            <Text style={styles.textItem}>Eyebrow pencil</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem16.png")}
-            />
-            <Text style={styles.textItem}>Eyeliner</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.containerItem}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem17.png")}
-            />
-            <Text style={styles.textItem}>Powder</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem18.png")}
-            />
-            <Text style={styles.textItem}>Lips gloss</Text>
-          </TouchableOpacity>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.verticalScroll}
+      >
+        <View style={styles.gridContainer}>
+          {makeupItems.length > 0 ? (
+            makeupItems.map((makeupItem) => (
+              <TouchableOpacity
+                key={makeupItem.id}
+                style={styles.item}
+                onPress={() => handlePress(makeupItem)}
+              >
+                {/* <Image
+                  source={{
+                    uri: `http://192.168.48.183:5280${makeupItem.image}`,
+                  }}
+                  style={styles.image}
+                /> */}
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No makeup styles available.</Text>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -274,7 +263,7 @@ const styles = StyleSheet.create({
   },
   buttonField: {
     paddingHorizontal: 16, // Thêm khoảng cách 16px ở 2 bên trái/phải
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   scrollItem: {
     paddingBottom: 20,
@@ -317,8 +306,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // Đẩy hai phần tử ra hai đầu
     alignItems: "center", // Căn giữa theo trục dọc
     paddingHorizontal: 30, // Khoảng cách hai bên
-    marginBottom: 30
-    
+    marginBottom: 30,
   },
 
   imageItem: {
@@ -329,6 +317,34 @@ const styles = StyleSheet.create({
   textItem: {
     marginTop: 10,
   },
+
+  verticalScroll: {
+    backgroundColor: "#d8d8d870",
+    borderRadius: 8,
+    padding: 16,
+    width: "100%",
+    marginBottom: 35,
+  },
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  item: {
+    width: "48%",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  image: {
+    width: "100%",
+    height: 150,
+    borderRadius: 8,
+  },
+  noDataText: {
+    color: "black",
+    textAlign: "center",
+    marginTop: 20,
+  },
 });
 
-export default Home;
+export default MakeupItem;
