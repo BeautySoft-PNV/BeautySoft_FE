@@ -5,11 +5,12 @@ import { useRouter } from 'expo-router';
 import { Linking } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const router = useRouter();
 
 const UpgradeStorage = () => {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [typeStorage, setTypeStorage] = useState<any>(null);
+  const [vip, setVip] = useState(true);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -19,7 +20,7 @@ const UpgradeStorage = () => {
           return;
         }
 
-        const response = await fetch("http://192.168.175.183:5280/api/users/me", {
+        const response = await fetch("http://192.168.48.183:5280/api/users/me", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ const UpgradeStorage = () => {
         await AsyncStorage.setItem('user', JSON.stringify(responseData));
         setUser(responseData);
 
-        const responseTypeStorage = await fetch("http://192.168.175.183:5280/api/TypeStorage/1", {
+        const responseTypeStorage = await fetch("http://192.168.48.183:5280/api/TypeStorage/1", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -50,6 +51,7 @@ const UpgradeStorage = () => {
         const responseDataTypeStorage = await responseTypeStorage.json();
         await AsyncStorage.setItem('typeStorage', JSON.stringify(responseDataTypeStorage));
         setTypeStorage(responseDataTypeStorage);
+
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -58,18 +60,54 @@ const UpgradeStorage = () => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const checkVipStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          console.error("No token found!");
+          return;
+        }
+
+        const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!checkVip.ok) {
+          throw new Error("Error calling API");
+        }
+
+        const datacheckVip = await checkVip.json();
+        setVip(datacheckVip.status);
+
+        if (datacheckVip.status) {
+          router.push('/(root)/(tabs)/home');
+        }
+      } catch (error) {
+        console.error("Error checking VIP status:", error);
+      }
+    };
+
+    const intervalId = setInterval(checkVipStatus, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [router]);
 
   const handlePayment = async () => {
     try {
-      const response = await fetch('http://192.168.175.183:5280/api/payment', {
+      const response = await fetch('http://192.168.48.183:5280/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           Name: user?.name,
           Amount: typeStorage?.price,
-          OrderDescription: 'Thanh toán qua vnpay',
+          OrderDescription: 'Payment via vnpay',
           OrderType: 'other',
-          returnUrl:`http://192.168.175.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
+          returnUrl:`http://192.168.48.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
         }),
       });
 
@@ -77,10 +115,10 @@ const UpgradeStorage = () => {
       if (response.ok && data.paymentUrl) {
         Linking.openURL(data.paymentUrl);
       } else {
-        Alert.alert('Lỗi: Không lấy được URL thanh toán.');
+        Alert.alert('Error: Unable to get payment URL.');
       }
     } catch (error) {
-      Alert.alert('Lỗi: Không thể kết nối đến máy chủ.');
+      Alert.alert('Error: Unable to connect to server.');
     }
   };
 
@@ -91,7 +129,10 @@ const UpgradeStorage = () => {
             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
               <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
             </TouchableOpacity>
-            <Text style={styles.title}>Makeup Artist Upgrade</Text>
+            <Text style={styles.title}>Makeup Storage Upgrade</Text>
+            <View style={styles.containerTitle}>
+              <Text style={styles.header}>Makeup Artist Upgrade</Text>
+            </View>
           </View>
           <Image
               source={{ uri: 'https://jibitoo.com/wp-content/uploads/2025/01/%D8%AA%D8%B1%D9%81%D9%86%D8%AF%D9%87%D8%A7%DB%8C-%D8%A2%D8%B1%D8%A7%DB%8C%D8%B4%DB%8C.jpg' }}
@@ -142,6 +183,7 @@ const styles = StyleSheet.create({
   backButton: {
     marginRight: 10,
   },
+  containerTitle: { display:'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width:'92%' },
   backButtonText: {
     color: '#ED1E51',
     fontSize: 20,
@@ -153,11 +195,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
-    textAlign: 'center',
+    marginLeft: 20,
   },
   image: {
     borderRadius: 10,
-    height: 200,
+    height: 165,
     width: '100%',
     marginBottom: 20,
   },
@@ -166,21 +208,24 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
+    width: '100%',
   },
   subtitle: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
+    width: '100%',
   },
   price: {
     textAlign: 'center',
     color: '#ED1E51',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
+    width: '100%',
   },
   bulletPoints: {
     marginBottom: 10,
@@ -191,14 +236,14 @@ const styles = StyleSheet.create({
   description: {
     textAlign: 'center',
     marginBottom: 10,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },
   contact: {
     textAlign: 'center',
     marginBottom: 20,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },
@@ -218,9 +263,10 @@ const styles = StyleSheet.create({
     fontFamily: "PlayfairDisplay-Bold"
   },
   textPoints: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "PlayfairDisplay-Bold"
+    fontFamily: "PlayfairDisplay-Bold",
+    width:'100%',
   }
 
 });

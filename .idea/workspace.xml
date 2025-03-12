@@ -5,14 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0aa7f4e7-d833-403f-a3c1-b244346aba09" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/notificationService.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/forgot-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/forgot-password.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/tabs/makeup-artist-upgrade.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +30,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
       </list>
     </option>
   </component>
@@ -120,7 +125,19 @@
       <workItem from="1741069829537" duration="8490000" />
       <workItem from="1741099351665" duration="9359000" />
       <workItem from="1741136338484" duration="15503000" />
-      <workItem from="1741164556571" duration="1209000" />
+      <workItem from="1741164556571" duration="3309000" />
+      <workItem from="1741224142109" duration="12853000" />
+      <workItem from="1741273197456" duration="5267000" />
+      <workItem from="1741331481206" duration="7963000" />
+      <workItem from="1741354497330" duration="5526000" />
+      <workItem from="1741407907636" duration="8968000" />
+      <workItem from="1741446846138" duration="3028000" />
+      <workItem from="1741534520309" duration="1774000" />
+      <workItem from="1741568617530" duration="14268000" />
+      <workItem from="1741654848981" duration="4333000" />
+      <workItem from="1741659992329" duration="16080000" />
+      <workItem from="1741707349672" duration="4756000" />
+      <workItem from="1741743220503" duration="1852000" />
     </task>
     <servers />
   </component>
@@ -134,6 +151,15 @@
           <url>file://$PROJECT_DIR$/app/(root)/(auth)/profile.tsx</url>
           <line>13</line>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx</url>
+          <line>212</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx</url>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

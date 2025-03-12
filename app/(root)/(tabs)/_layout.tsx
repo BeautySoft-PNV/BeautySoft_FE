@@ -1,6 +1,9 @@
 import { Tabs } from "expo-router";
 import { Image, ImageSourcePropType, Text, View } from "react-native";
 import icons from "@/constants/icons";
+import history from "@/assets/icons/history.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useEffect, useState} from "react";
 
 const TabIcon = ({
   focused,
@@ -31,6 +34,15 @@ const TabIcon = ({
 );
 
 const TabsLayout = () => {
+    const [hasNewNotification, setHasNewNotification] = useState(false);
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const hasNew = await AsyncStorage.getItem('hasNewNotification');
+            setHasNewNotification(hasNew === 'true');
+        });
+
+        return () => clearInterval(interval);
+    }, []);
   return (
     <Tabs
       screenOptions={{
@@ -74,7 +86,35 @@ const TabsLayout = () => {
           ),
         }}
       />
-      
+        <Tabs.Screen
+            name="notifications"
+            options={{
+                title: "notifications",
+                headerShown: false,
+                tabBarIcon: ({ focused }) => (
+                    <View>
+                        <TabIcon focused={focused} icon={icons.history} title="" />
+                        {hasNewNotification && (
+                            <View style={{
+                                position: 'absolute',
+                                top: 5,
+                                right: 0,
+                                width: 10,
+                                height: 10,
+                                backgroundColor: 'red',
+                                borderRadius: 5
+                            }} />
+                        )}
+                    </View>
+                ),
+            }}
+            listeners={{
+                focus: async () => {
+                    await AsyncStorage.setItem('hasNewNotification', 'false');
+                    setHasNewNotification(false);
+                }
+            }}
+        />
     </Tabs>
   );
 };

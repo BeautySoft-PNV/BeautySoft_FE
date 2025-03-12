@@ -21,7 +21,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await fetch("http://192.168.175.183:5280/api/users/me", {
+                const response = await fetch("http://192.168.48.183:5280/api/users/me", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const Profile = () => {
                 await AsyncStorage.setItem('user', JSON.stringify(responseData));
                 setUser(responseData);
 
-                const checkVip = await fetch("http://192.168.175.183:5280/api/managerstorage/check-user", {
+                const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -61,25 +61,36 @@ const Profile = () => {
         fetchUserProfile();
     }, []);
 
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('token');
+
+            router.push('/(root)/(auth)/sign-in');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
-    console.log(user)
 
     return (
-    <ScrollView>
+        <ScrollView>
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={() => router.push('/(root)/(tabs)/home')}>
                     <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
                 </TouchableOpacity>
-                <Text style={styles.header}>My Account</Text>
+                <View style={styles.containerTitle}>
+                    <Text style={styles.header}>My Account</Text>
+                </View>
             </View>
             <View style={styles.avatarContainer}>
                 <Image
                     source={{
-                        uri: user?.avatar
-                            ? "http://192.168.175.183:5280" + user.avatar
+                        uri: user.avatar
+                            ? "http://192.168.48.183:5280" + user.avatar
                             : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                     }}
                     style={styles.avatar}
@@ -112,16 +123,20 @@ const Profile = () => {
                 <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
                 <Text style={styles.buttonText}>Get Unlimited Access</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.upgradeButton} onPress={handleLogout}>
+                <Text style={styles.buttonText}>Log out</Text>
+            </TouchableOpacity>
 
         </View>
-    </ScrollView>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 20, backgroundColor: 'white' },
     headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-    header: { fontSize: 24, fontWeight: 'bold', color: 'black', marginLeft: 100, fontFamily: "PlayfairDisplay-Bold" },
+    header: { fontSize: 24, fontWeight: 'bold', color: 'black', fontFamily: "PlayfairDisplay-Bold" },
+    containerTitle: { display:'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width:'92%' },
     avatarContainer: { justifyContent: "center", alignItems: "center", marginBottom: 20, position: "relative" },
     editIcon: { position: "absolute", borderRadius: 20, width: 30, height: 30, justifyContent: "center", alignItems: "center", marginLeft: 90, bottom: -15 },
     avatar: { width: 90, height: 90, borderRadius: 50 },
