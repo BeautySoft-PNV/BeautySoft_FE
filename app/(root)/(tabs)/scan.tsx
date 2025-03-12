@@ -41,6 +41,7 @@ export default function Scan() {
         if (cameraRef.current) {
             const photo = await cameraRef.current.takePictureAsync();
             if (photo) {
+                console.log("photo.uri ", photo.uri)
                 setCapturedImage(photo.uri);
             }
         }

@@ -8,19 +8,17 @@ import {
   Platform,
   Image,
   TouchableOpacity,
-  Button,
-  Modal,
   ScrollView,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Avatar from "@/components/avatar";
 import * as FileSystem from "expo-file-system"; // For native platforms
 import { Asset } from "expo-asset";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Portal, Dialog } from "react-native-paper";
 import ModelAddMakeupStyle from "@/components/model-add-makeupstyle";
 import { Provider as PaperProvider } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Generate() {
   const params = useLocalSearchParams();
@@ -31,13 +29,19 @@ export default function Generate() {
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [makeupStyle, setMakeupStyle] = useState("");
+  const [imageDescription, setImageDescription] = useState<string>("");
+  const router = useRouter();
 
+  const correctedUri = (params.imageUri as string)
+  .replace(/%40/g, "%2540") // Encode '@' thành '%2540'
+  .replace(/%2F/g, "%252F"); // Encode '/' thành '%252F'
+
+  console.log("✅ correctedUri:", correctedUri);
   useEffect(() => {
-    if (params.imageUri) {
-      setImageUri(params.imageUri);
+    if (correctedUri) {
+      setImageUri(correctedUri);
     }
-  }, [params.imageUri]);
+  }, [correctedUri]);
 
   useEffect(() => {
     if (imageUri) {
@@ -49,13 +53,11 @@ export default function Generate() {
     if (!imageUri) return;
     setLoading(true);
     setError(null);
-
-    let formData = new FormData();
-
+    // 🛠️ Tạo FormData và thêm các param bắt buộc
+    const formData = new FormData();
     const textPrompt = Array.isArray(params.request)
       ? params.request[0]
       : params.request;
-
     formData.append(
       "TextPrompt",
       ` ${textPrompt} Apply a soft, natural Asian-style makeup look while preserving my natural facial features. Follow these detailed steps to ensure a professional, elegant, and effortless beauty suitable for everyday wear and special occasions:
@@ -71,22 +73,12 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
     );`
     );
 
-    // Kiểm tra FormData trước khi gửi
-    for (let pair of formData.entries()) {
-      console.log(`📌 ${pair[0]}: ${pair[1]}`);
-    }
-
-    formData.append("OutputFormat", "webp");
-
     try {
       const copyAssetToTemp = async () => {
         try {
           const asset = Asset.fromModule(
             require("../(root)/assets/face_oval_mask.png")
           );
-          await asset.downloadAsync();
-
-          let fileUri;
 
           if (Platform.OS === "web") {
             const response = await fetch(asset.uri);
@@ -101,122 +93,153 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
               lastModified: Date.now(),
             });
 
-            console.log("Image File (Web):", maskFile);
+            console.log("📌 Mask File (Web):", maskFile);
             return { file: maskFile, uri: null };
           } else {
-            fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
-            await FileSystem.copyAsync({
-              from: asset.localUri || asset.uri,
-              to: fileUri,
+            await asset.downloadAsync();
+            if (!asset.localUri) {
+              throw new Error("Tải asset thất bại");
+            }
+
+            const fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
+            await FileSystem.copyAsync({ from: asset.localUri, to: fileUri });
+
+            // Đọc file dưới dạng Base64
+            const base64 = await FileSystem.readAsStringAsync(fileUri, {
+              encoding: FileSystem.EncodingType.Base64,
             });
 
-            console.log("File copied to:", fileUri);
-            return { file: null, uri: fileUri };
+            // Ghi lại file để đảm bảo tồn tại
+            const finalFileUri = `${FileSystem.documentDirectory}face_oval_mask.png`;
+            await FileSystem.writeAsStringAsync(finalFileUri, base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            console.log("📌 Mask File (Mobile):", finalFileUri);
+
+            const maskFile = {
+              uri: finalFileUri,
+              name: "face_oval_mask.png",
+              type: "image/png",
+            };
+
+            return maskFile;
           }
         } catch (error) {
           console.error("Lỗi copy file:", error);
+          throw error;
         }
       };
 
-      const { file, uri } = await copyAssetToTemp();
+      const maskFile = await copyAssetToTemp();
 
-      if (file || uri) {
-        if (Platform.OS === "web") {
-          formData.append("Mask", file);
-        } else {
-          formData.append("Mask", {
-            uri: uri,
-            type: "image/png",
-            name: "face_oval_mask.png",
-          });
-        }
-      }
+      console.log("🎯 File tạo thành công:", maskFile);
 
-      let fileBlob;
+      formData.append("Mask", {
+        uri: maskFile.uri, // Đường dẫn file hợp lệ
+        name: maskFile.name, // Tên file
+        type: maskFile.type, // Loại MIME type
+      });
 
+      let imageFile;
       if (Platform.OS === "web") {
         const response = await fetch(imageUri);
-        fileBlob = await response.blob();
-      } else {
-        const fileInfo = await FileSystem.getInfoAsync(imageUri);
-        if (!fileInfo.exists) {
-          throw new Error("File does not exist");
-        }
-
-        const fileBase64 = await FileSystem.readAsStringAsync(imageUri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        fileBlob = await fetch(`data:image/jpeg;base64,${fileBase64}`).then(
-          (res) => res.blob()
-        );
-      }
-
-      if (imageUri) {
-        const response = await fetch(imageUri);
         const blob = await response.blob();
-        const contentType = response.headers.get("Content-Type") || "image/png";
+        const contentType =
+          response.headers.get("Content-Type") || "image/jpeg";
         const extension = contentType.split("/")[1] || "jpg";
-        const filename = `${Date.now()}.${extension}`;
-        const imageFile = new File([blob], filename, {
+        const filename = `uploaded_${Date.now()}.${extension}`;
+        imageFile = new File([blob], filename, {
           type: contentType,
           lastModified: Date.now(),
         });
-
-        formData.append("Image", imageFile);
-        console.log("Image: ", imageFile);
+      } else {
+        imageFile = {
+          uri: correctedUri,
+          type: "image/jpeg",
+          name: `uploaded_${Date.now()}.jpg`,
+        };
       }
+
+      formData.append("Image", imageFile);
+      formData.append("OutputFormat", "webp"); // ✅ Thêm OutputFormat
+      
+      const maskFileInfo = await FileSystem.getInfoAsync(maskFile.uri);
+      const imageFileInfo = await FileSystem.getInfoAsync(imageFile.uri);
+
+      console.log("📌 Mask file info:", maskFileInfo);
+      console.log("📌 Image file info:", imageFileInfo);
+
+      const getToken = async () => {
+        try {
+          if (Platform.OS === "web") {
+            return localStorage.getItem("token") || "";
+          } else {
+            return (await AsyncStorage.getItem("token")) || "";
+          }
+        } catch (error) {
+          console.error("Lỗi lấy token:", error);
+          return "";
+        }
+      };
+      const token = await getToken();
 
       for (let [key, value] of formData.entries()) {
-        console.log(key, JSON.stringify(value));
+        console.log(`Key: ${key}, Value:`, typeof value);
       }
 
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://192.168.175.183:5280/api/combined/generate-and-inpaint",
-        {
-          method: "POST",
-          headers: {
-            Authorization:  `Bearer ${token}`,
-            Accept: "application/json",
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
-        throw new Error("Failed to generate image");
-      }
-
-      const data = await response.json();
-      console.log("Data: ", data);
-      if (data && data.imageData) {
-        setGeneratedImage(data.imageData);
-        console.log("data.imageData: ",data.imageData)
-        setGenerateStep(data.generatedPrompt);
-      } else {
-        throw new Error("Invalid response from server");
-      }
+      fetch("http://192.168.48.183:5280/api/combined/generate-and-inpaint", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            const errorData = await response.text();
+            console.error("❌ API Error:", errorData);
+            throw new Error(`Failed to generate image: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("✅ API Response:", data.generatedPrompt);
+        })
+        .catch((error) => {
+          console.error("⚠️ Fetch error:", error);
+        });
     } catch (error) {
-      setError(error.message);
-      console.error("Error generating image:", error);
+      console.error("⚠️ Error generating image:", error);
     }
     setLoading(false);
   };
+
   const handleConfirm = () => {
     setConfirmVisible(false);
     setModalVisible(false);
-    // Add logic to save the makeup style
   };
+  console.log("📌 Đường dẫn params.imageUri:", params.imageUri);
+  console.log(
+    "📌 Đường dẫn fix cứng:",
+    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540amhii%252Fbeauty_soft/Camera/43f91307-c93a-42df-8f03-4dc95467e93c.jpg"
+  );
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollView}>
+      <TouchableOpacity onPress={() => router.push("/(root)/(tabs)/scan")}>
+        <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
+      </TouchableOpacity>
       <View style={styles.container}>
         <View style={styles.row}>
           <View style={styles.photoAndRequest}>
-            <Image source={{ uri: params.imageUri }} style={styles.image} />
+            <Image
+              source={{
+                uri: correctedUri,
+              }}
+              style={styles.image}
+            />
+
             <TextInput
               style={styles.input}
               value={
@@ -236,7 +259,7 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
           <View style={styles.row}>
             <View>
               <Image
-                source={require("../../assets/icons/chatbox.jpg")}
+                source={require("../../assets/images/beautysoftlogo.png")}
                 style={styles.chatboxavatar}
               />
             </View>
@@ -244,12 +267,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
               {generatedImage && (
                 <Image source={{ uri: generatedImage }} style={styles.image} />
               )}
-              {/* <PaperProvider>
-                <ModelAddMakeupStyle
-                  generatedImage={generatedImage}
-                  generateStep={generateStep}
-                />
-              </PaperProvider> */}
               {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
               ) : error ? (
@@ -267,11 +284,45 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
           </View>
         </View>
       </View>
+
+      {/* Input request */}
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Input request"
+          value={imageDescription}
+          onChangeText={setImageDescription}
+        />
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/generate",
+              params: {
+                imageUri: imageUri,
+                request: imageDescription,
+              },
+            })
+          }
+        >
+          <AntDesign
+            name="upload"
+            size={24}
+            color="black"
+            style={styles.iconStyle}
+          />
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: "#fff",
+    paddingTop: 10,
+    paddingHorizontal: 8,
+  },
   container: {
     backgroundColor: "#fff",
     padding: 10,
@@ -313,5 +364,25 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginTop: 10,
+  },
+  inputContainer: {
+    position: "absolute", // Cố định vị trí
+    bottom: -300, // Điều chỉnh khoảng cách đến tab (tùy chỉnh số này)
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: "white",
+    width: "100%",
+    paddingVertical: 10, // Thêm padding dọc nếu cần
+  },
+
+  iconStyle: {
+    marginLeft: 10, // Khoảng cách bên trái
   },
 });
