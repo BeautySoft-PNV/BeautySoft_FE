@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -71,6 +71,7 @@ const SignUp = () => {
     };
 
     return (
+        <ScrollView> 
         <View style={styles.container}>
             <Text style={styles.logo}>BeautySoft</Text>
 
@@ -82,7 +83,7 @@ const SignUp = () => {
                 value={username}
                 onChangeText={(text) => {
                     setUsername(text);
-                    setErrors((prev) => ({ ...prev, username: '' })); // Xóa lỗi khi người dùng nhập lại
+                    setErrors((prev) => ({ ...prev, username: '' }));
                 }}
             />
             {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
@@ -152,6 +153,7 @@ const SignUp = () => {
                 </TouchableOpacity>
             </View>
         </View>
+        </ScrollView>
     );
 };
 

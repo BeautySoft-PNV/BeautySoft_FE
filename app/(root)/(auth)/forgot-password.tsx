@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ForgotPasswordScreen = () => {
@@ -70,6 +70,7 @@ const ForgotPasswordScreen = () => {
     };
 
     return (
+        <ScrollView> 
         <View style={styles.container}>
             <Text style={styles.title}>Forgot Password</Text>
             <Text style={styles.description}>
@@ -93,6 +94,7 @@ const ForgotPasswordScreen = () => {
                 </Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 

@@ -1,5 +1,5 @@
     import React, { useState, useEffect } from 'react';
-    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
     import * as ImagePicker from 'expo-image-picker';
     import AsyncStorage from '@react-native-async-storage/async-storage';
     import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
@@ -68,7 +68,6 @@
         };
     
         const handleUpdateProfile = async () => {
-            console.log("hmsfehbhsihfhkehkjf")
             setMessage({ text: '', type: 'error' });
     
             if (!validateEmail(email)) {
@@ -130,12 +129,9 @@
                 if (!response.ok) {
                     const responseData = await response.json();
                     if (responseData.message) {
-                        console.log(responseData.message )
                         setErrors({ message: responseData.message });
                         return;
                     }
-                    console.log(responseData.errors["user.Name"]);
-
                     if (responseData.errors) {
                         const newErrors: { [key: string]: string } = {};
                         if (responseData.errors["user.Name"]) {
@@ -159,6 +155,7 @@
             }
         };
         return (
+        <ScrollView>
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
@@ -180,7 +177,6 @@
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}
                         style={styles.avatar}
-                        onError={() => console.log("Lỗi tải ảnh!")}
                     />
                     <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
                         <FontAwesome5 name="camera" size={18} color="#ED1E51" />
@@ -239,6 +235,7 @@
                     <Text style={styles.buttonText}>Update</Text>
                 </TouchableOpacity>
             </View>
+        </ScrollView>
         );
     };
     

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -74,9 +74,9 @@ const Profile = () => {
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
-    console.log(user)
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={() => router.push('/(root)/(tabs)/home')}>
@@ -128,6 +128,7 @@ const Profile = () => {
             </TouchableOpacity>
 
         </View>
+        </ScrollView>
     );
 };
 
