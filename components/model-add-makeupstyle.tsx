@@ -30,7 +30,7 @@ export default function ModelAddMakeupStyle({ generatedImage, generateStep }: Mo
       } as any);
   
       const response = await fetch(
-        "http://192.168.126.183:5280/api/MakeupStyles",
+        "http://192.168.48.183:5280/api/MakeupStyles",
         {
           method: "POST",
           headers: {

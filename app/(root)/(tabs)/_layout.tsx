@@ -74,7 +74,17 @@ const TabsLayout = () => {
           ),
         }}
       />
-      
+
+      <Tabs.Screen
+        name="makeup-item"
+        options={{
+          title: "makeup-item",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} icon={icons.makeupitem} title="" />
+          ),
+        }}
+      />
     </Tabs>
   );
 };

@@ -31,7 +31,7 @@ const Home = () => {
         }
 
         const response = await fetch(
-          "http://192.168.175.183:5280/api/users/me",
+          "http://192.168.48.183:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -47,7 +47,7 @@ const Home = () => {
         console.log(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.175.183:5280/api/managerstorage/check-user",
+          "http://192.168.48.183:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -88,7 +88,7 @@ const Home = () => {
             <Image
               source={{
                 uri: user?.avatar
-                  ? "http://192.168.175.183:5280" + user.avatar
+                  ? "http://192.168.48.183:5280" + user.avatar
                   : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
               }}
               style={styles.avatar}
@@ -133,14 +133,14 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem8.png")}
+              source={require("../../../assets/images/makeupItem8.png")}
             />
             <Text style={styles.textItem}>Background A12</Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem7.png")}
+              source={require("../../../assets/images/makeupItem7.png")}
             />
             <Text style={styles.textItem}>Eye shadow</Text>
           </TouchableOpacity>
@@ -150,14 +150,14 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem9.png")}
+              source={require("../../../assets/images/makeupItem9.png")}
             />
             <Text style={styles.textItem}>Glitter</Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem10.png")}
+              source={require("../../../assets/images/makeupItem10.png")}
             />
             <Text style={styles.textItem}>Makeup brush</Text>
           </TouchableOpacity>
@@ -167,14 +167,14 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem11.png")}
+              source={require("../../../assets/images/makeupItem11.png")}
             />
             <Text style={styles.textItem}>Makeup sponge</Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem12.png")}
+              source={require("../../../assets/images/makeupItem12.png")}
             />
             <Text style={styles.textItem}>Blush</Text>
           </TouchableOpacity>
@@ -184,14 +184,14 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem13.png")}
+              source={require("../../../assets/images/makeupItem13.png")}
             />
             <Text style={styles.textItem}>Foundation</Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem14.png")}
+              source={require("../../../assets/images/makeupItem14.png")}
             />
             <Text style={styles.textItem}>Concearler</Text>
           </TouchableOpacity>
@@ -201,14 +201,14 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem15.png")}
+              source={require("../../../assets/images/makeupItem15.png")}
             />
             <Text style={styles.textItem}>Eyebrow pencil</Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem16.png")}
+              source={require("../../../assets/images/makeupItem16.png")}
             />
             <Text style={styles.textItem}>Eyeliner</Text>
           </TouchableOpacity>
@@ -218,14 +218,14 @@ const Home = () => {
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem17.png")}
+              source={require("../../../assets/images/makeupItem17.png")}
             />
             <Text style={styles.textItem}>Powder</Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Image
               style={styles.imageItem}
-              source={require("../../assets/images/makeupItem18.png")}
+              source={require("../../../assets/images/makeupItem18.png")}
             />
             <Text style={styles.textItem}>Lips gloss</Text>
           </TouchableOpacity>
