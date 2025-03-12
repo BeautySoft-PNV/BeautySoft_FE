@@ -50,26 +50,6 @@
   ],
   "makeupStyles": [
     {
-      "id": "3",
-      "name": "Glam Night Look",
-      "description": "Creating a bold and dramatic evening look with smoky eyes and a flawless base.",
-      "time": "19:45 20/07/2024",
-      "steps": [
-        "Start with a clean and moisturized face.",
-        "Apply a hydrating primer to create a smooth base.",
-        "Use a full-coverage foundation to achieve a flawless complexion.",
-        "Apply concealer under the eyes and on any blemishes.",
-        "Set the foundation with a translucent powder.",
-        "Use a dark eyeshadow (black or deep gray) on the eyelids.",
-        "Blend a medium gray eyeshadow into the crease for depth.",
-        "Apply a shimmery silver eyeshadow on the center of the eyelid.",
-        "Use a black eyeliner to create a dramatic winged effect.",
-        "Add false lashes for extra volume and drama.",
-        "Finish with a bold red or deep nude lipstick."
-      ],
-      "image": "https://chothuestudio.com/wp-content/uploads/2023/11/makeup-tone-trung-quoc.jpeg"
-    },
-    {
       "id": "4",
       "name": "Soft Nude Look",
       "description": "Achieving a fresh and natural everyday look with nude shades and a radiant glow.",

@@ -121,7 +121,7 @@
                     return;
                 }
                 console.log(token)
-                const response = await fetch('http://192.168.126.183:5280/api/users/me', {
+                const response = await fetch('http://192.168.175.183:5280/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -145,7 +145,7 @@
         const avatarUri = avatar
             ? avatar  
             : user?.avatar
-                ? `http://192.168.126.183:5280${user.avatar}`  
+                ? `http://192.168.175.183:5280${user.avatar}`  
                 : defaultAvatar; 
         return (
         <ScrollView>
@@ -161,11 +161,11 @@
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.126.183:5280" + avatar
+                                    ? "http://192.168.175.183:5280" + avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.126.183:5280" + user.avatar
+                                        ? "http://192.168.175.183:5280" + user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}
