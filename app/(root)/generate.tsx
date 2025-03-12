@@ -33,10 +33,8 @@ export default function Generate() {
   const router = useRouter();
 
   const correctedUri = (params.imageUri as string)
-  .replace(/%40/g, "%2540") // Encode '@' thành '%2540'
-  .replace(/%2F/g, "%252F"); // Encode '/' thành '%252F'
-
-  console.log("✅ correctedUri:", correctedUri);
+    .replace(/%40/g, "%2540") // Encode '@' thành '%2540'
+    .replace(/%2F/g, "%252F"); // Encode '/' thành '%252F'
   useEffect(() => {
     if (correctedUri) {
       setImageUri(correctedUri);
@@ -115,7 +113,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
               encoding: FileSystem.EncodingType.Base64,
             });
 
-            console.log("📌 Mask File (Mobile):", finalFileUri);
 
             const maskFile = {
               uri: finalFileUri,
@@ -132,8 +129,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       };
 
       const maskFile = await copyAssetToTemp();
-
-      console.log("🎯 File tạo thành công:", maskFile);
 
       formData.append("Mask", {
         uri: maskFile.uri, // Đường dẫn file hợp lệ
@@ -163,12 +158,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
 
       formData.append("Image", imageFile);
       formData.append("OutputFormat", "webp"); // ✅ Thêm OutputFormat
-      
-      const maskFileInfo = await FileSystem.getInfoAsync(maskFile.uri);
-      const imageFileInfo = await FileSystem.getInfoAsync(imageFile.uri);
-
-      console.log("📌 Mask file info:", maskFileInfo);
-      console.log("📌 Image file info:", imageFileInfo);
 
       const getToken = async () => {
         try {
@@ -184,31 +173,22 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       };
       const token = await getToken();
 
-      for (let [key, value] of formData.entries()) {
-        console.log(`Key: ${key}, Value:`, typeof value);
+      const response = await fetch(
+        "http://192.168.48.183:5280/api/combined/generate-and-inpaint",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+      if (!response.ok) {
+        const errorText = await response.text(); // Lấy nội dung lỗi
+        throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+      } else {
+        console.log("Generate successfullly: ", response.data);
       }
-
-      fetch("http://192.168.48.183:5280/api/combined/generate-and-inpaint", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      })
-        .then(async (response) => {
-          if (!response.ok) {
-            const errorData = await response.text();
-            console.error("❌ API Error:", errorData);
-            throw new Error(`Failed to generate image: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("✅ API Response:", data.generatedPrompt);
-        })
-        .catch((error) => {
-          console.error("⚠️ Fetch error:", error);
-        });
     } catch (error) {
       console.error("⚠️ Error generating image:", error);
     }
@@ -219,12 +199,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
     setConfirmVisible(false);
     setModalVisible(false);
   };
-  console.log("📌 Đường dẫn params.imageUri:", params.imageUri);
-  console.log(
-    "📌 Đường dẫn fix cứng:",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540amhii%252Fbeauty_soft/Camera/43f91307-c93a-42df-8f03-4dc95467e93c.jpg"
-  );
-
   return (
     <ScrollView style={styles.scrollView}>
       <TouchableOpacity onPress={() => router.push("/(root)/(tabs)/scan")}>
