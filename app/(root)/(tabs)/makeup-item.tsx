@@ -75,6 +75,8 @@ const Home = () => {
 
     fetchUserProfileHome();
   }, []);
+
+  
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
