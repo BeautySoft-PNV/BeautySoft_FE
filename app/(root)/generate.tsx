@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Avatar from "@/components/avatar";
-import * as FileSystem from "expo-file-system";s
+import * as FileSystem from "expo-file-system"; // For native platforms
 import { Asset } from "expo-asset";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
