@@ -78,7 +78,7 @@ const UpgradeStorage = () => {
         });
 
         if (!checkVip.ok) {
-          throw new Error("Lỗi khi gọi API");
+          throw new Error("Error calling API");
         }
 
         const datacheckVip = await checkVip.json();
@@ -105,7 +105,7 @@ const UpgradeStorage = () => {
         body: JSON.stringify({
           Name: user?.name,
           Amount: typeStorage?.price,
-          OrderDescription: 'Thanh toán qua vnpay',
+          OrderDescription: 'Payment via vnpay',
           OrderType: 'other',
           returnUrl:`http://192.168.48.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
         }),
@@ -115,10 +115,10 @@ const UpgradeStorage = () => {
       if (response.ok && data.paymentUrl) {
         Linking.openURL(data.paymentUrl);
       } else {
-        Alert.alert('Lỗi: Không lấy được URL thanh toán.');
+        Alert.alert('Error: Unable to get payment URL.');
       }
     } catch (error) {
-      Alert.alert('Lỗi: Không thể kết nối đến máy chủ.');
+      Alert.alert('Error: Unable to connect to server.');
     }
   };
 

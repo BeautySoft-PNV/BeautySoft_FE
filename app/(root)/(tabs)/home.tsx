@@ -46,7 +46,6 @@ const Home = () => {
         const responseData = await response.json();
         await AsyncStorage.setItem('user', JSON.stringify(responseData));
         setUser(responseData);
-        console.log(responseData);
 
         const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
           method: "GET",
@@ -115,9 +114,7 @@ const Home = () => {
         }
 
         const data = await response.json();
-
-        console.log("Fetched data:", data); // Debug để kiểm tra dữ liệu trả về
-        setMakeupStyles(data); // Giả sử data là một mảng hợp lệ
+        setMakeupStyles(data); 
       } catch (error) {
         console.error("Error fetching makeup styles:", error);
       }
@@ -132,7 +129,6 @@ const Home = () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
-          console.log("No token found");
           return;
         }
         const response = await fetch("http://192.168.48.183:5280/api/MakeupItems/user/me", {
@@ -149,7 +145,7 @@ const Home = () => {
         }
 
         const data = await response.json();
-        setItems(data); // Lưu dữ liệu vào state
+        setItems(data); 
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -166,7 +162,7 @@ const Home = () => {
             useNativeDriver: true,
           }),
           Animated.timing(fadeAnim, {
-            toValue: 1, // Tăng opacity trở lại
+            toValue: 1,
             duration: 500,
             useNativeDriver: true,
           }),

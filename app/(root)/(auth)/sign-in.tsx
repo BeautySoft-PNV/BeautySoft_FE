@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -64,6 +64,7 @@ const SignIn = ({ navigation }: any) => {
     };
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <View style={styles.backgroundContainer}>
                 <Text style={styles.welcomeText}>Welcome to BeautySoft</Text>
@@ -115,6 +116,7 @@ const SignIn = ({ navigation }: any) => {
                 </TouchableOpacity>
             </View>
         </View>
+        </ScrollView>
     );
 };
 
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 10,
-        alignSelf: 'flex-start', // Align error message to the left
+        alignSelf: 'flex-start',
     },
 });
 
