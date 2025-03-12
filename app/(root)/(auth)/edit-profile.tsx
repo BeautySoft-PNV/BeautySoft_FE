@@ -95,7 +95,8 @@
             } else {
                 formData.append('newPassword', '');
             }
-            if (avatar) {
+            console.log(avatar)
+            if (avatar && !avatar.includes('/uploads')) {
                 const file = {
                     uri: avatar,
                     name:'photo.jpg',
@@ -105,9 +106,6 @@
                 formData.append('imageFile', file as any);
             }
 
-            if (typeof formData.get('imageFile') === 'object') {
-                formData.delete('imageFile');
-            }
             try {
                 const token = await AsyncStorage.getItem('token');
                 if (!token) {
@@ -116,7 +114,7 @@
                     return;
                 }
 
-                const response = await fetch('http://192.168.175.183:5280/api/users/me', {
+                const response = await fetch('http://192.168.48.183:5280/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -171,11 +169,11 @@
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.175.183:5280" + avatar
+                                    ? "http://192.168.48.183:5280" + avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.175.183:5280" + user.avatar
+                                        ? "http://192.168.48.183:5280" + user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}

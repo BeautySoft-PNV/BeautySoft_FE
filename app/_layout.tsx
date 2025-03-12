@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/libs/tanstackQuery";
 import "./global.css";
+import { startNotificationService } from "@/app/notificationService";
 
 
 export default function RootLayout() {
@@ -28,6 +29,11 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    const intervalId = startNotificationService(); // Bắt đầu kiểm tra thông báo
+    return () => clearInterval(intervalId); // Dừng khi component unmount
+  }, []);
 
   if (!fontsLoaded) {
     return null;

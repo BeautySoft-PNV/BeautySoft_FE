@@ -35,7 +35,7 @@ const Home = () => {
           return;
         }
 
-        const response = await fetch("http://192.168.175.183:5280/api/users/me", {
+        const response = await fetch("http://192.168.48.183:5280/api/users/me", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const Home = () => {
         setUser(responseData);
         console.log(responseData);
 
-        const checkVip = await fetch("http://192.168.175.183:5280/api/managerstorage/check-user", {
+        const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -96,13 +96,19 @@ const Home = () => {
           setLoading(false);
           return;
         }
-        const response = await fetch("http://192.168.175.183:5280/api/MakeupStyles/user/me", {
+        const response = await fetch("http://192.168.48.183:5280/api/MakeupStyles/user/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
+
+        if (response.status === 404) {
+          console.warn("No makeup styles found (404)");
+          setMakeupStyles([]);
+          return;
+        }
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -129,13 +135,19 @@ const Home = () => {
           console.log("No token found");
           return;
         }
-        const response = await fetch("http://192.168.175.183:5280/api/MakeupItems/user/me", {
+        const response = await fetch("http://192.168.48.183:5280/api/MakeupItems/user/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
+        if (response.status === 404) {
+          console.warn("No makeup styles found (404)");
+          setMakeupStyles([]);
+          return;
+        }
+
         const data = await response.json();
         setItems(data); // Lưu dữ liệu vào state
       } catch (error) {
@@ -169,7 +181,7 @@ const Home = () => {
             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
               <Image
                   source={{ uri: user?.avatar
-                        ? "http://192.168.175.183:5280" + user.avatar
+                        ? "http://192.168.48.183:5280" + user.avatar
                         : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
                   style={styles.avatar}
               />
@@ -216,7 +228,7 @@ const Home = () => {
                   </Text>
                 </View>
                 <View style={styles.imageContainer}>
-                  <Image source={{ uri: `http://192.168.175.183:5280${item.image}` }} style={styles.faceImage} />
+                  <Image source={{ uri: `http://192.168.48.183:5280${item.image}` }} style={styles.faceImage} />
                 </View>
               </View>
           ))}
@@ -225,12 +237,11 @@ const Home = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {items.map((item) => (
               <View key={item.id} style={styles.itemContainer}>
-                <Image source={{ uri: `http://192.168.175.183:5280${item.image}` }} style={styles.itemImage} />
+                <Image source={{ uri: `http://192.168.48.183:5280${item.image}` }} style={styles.itemImage} />
                 <Text style={styles.itemText}>{item.name}</Text>
               </View>
           ))}
         </ScrollView>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -246,9 +257,21 @@ const styles = StyleSheet.create({
     position: "relative",
 
   },
+  bellContainer: {
+    position: "relative",
+    width: 50,
+    height: 40,
+  },
+  bellIcon: {
+    position: "absolute",
+    zIndex: 1,
+    top:1
+  },
   scroll:{
-    display:"flex",
-    alignItems:"flex-end",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingVertical: 10,
   },
   newOfferText: {
     position: "absolute",
