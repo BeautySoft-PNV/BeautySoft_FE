@@ -21,7 +21,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await fetch("http://192.168.48.183:5280/api/users/me", {
+                const response = await fetch("http://192.168.11.183:5280/api/users/me", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const Profile = () => {
                 await AsyncStorage.setItem('user', JSON.stringify(responseData));
                 setUser(responseData);
 
-                const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
+                const checkVip = await fetch("http://192.168.11.183:5280/api/managerstorage/check-user", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const Profile = () => {
                 <Image
                     source={{
                         uri: user.avatar
-                            ? "http://192.168.48.183:5280" + user.avatar
+                            ? "http://192.168.11.183:5280" + user.avatar
                             : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                     }}
                     style={styles.avatar}

@@ -13,7 +13,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Avatar from "@/components/avatar";
-import * as FileSystem from "expo-file-system"; // For native platforms
+import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
 import { AntDesign } from "@expo/vector-icons";
 import ModelAddMakeupStyle from "@/components/model-add-makeupstyle";
@@ -33,8 +33,8 @@ export default function Generate() {
   const router = useRouter();
 
   const correctedUri = (params.imageUri as string)
-    .replace(/%40/g, "%2540") // Encode '@' thành '%2540'
-    .replace(/%2F/g, "%252F"); // Encode '/' thành '%252F'
+    .replace(/%40/g, "%2540")
+    .replace(/%2F/g, "%252F"); 
   useEffect(() => {
     if (correctedUri) {
       setImageUri(correctedUri);
@@ -51,23 +51,13 @@ export default function Generate() {
     if (!imageUri) return;
     setLoading(true);
     setError(null);
-    // 🛠️ Tạo FormData và thêm các param bắt buộc
     const formData = new FormData();
     const textPrompt = Array.isArray(params.request)
       ? params.request[0]
       : params.request;
     formData.append(
       "TextPrompt",
-      ` ${textPrompt} Apply a soft, natural Asian-style makeup look while preserving my natural facial features. Follow these detailed steps to ensure a professional, elegant, and effortless beauty suitable for everyday wear and special occasions:
-Base Makeup (Foundation & Powder): Use a lightweight, hydrating foundation or BB cream that evens out my skin tone while maintaining a natural, dewy glow. Apply a thin layer and blend well for a second-skin effect. Set with a light dusting of finely milled translucent powder, focusing on the T-zone to control shine while keeping the skin luminous.
-Eyebrows: Shape and fill my eyebrows with a soft brown or taupe shade, following my natural brow shape. Keep the brows slightly straight or gently arched for a youthful, delicate Asian-inspired look. Avoid overly defined or harsh lines.
-Eyeshadow: Apply soft, neutral tones (such as champagne, peach, or light brown) on the eyelids for a subtle, fresh appearance. Blend seamlessly for a natural gradient effect, ensuring the eyes look bright and lively without heavy pigmentation.
-Eyeliner & Lashes: Use a fine brown or dark brown eyeliner to create a subtle, natural enhancement to my lash line. Draw a thin line along the upper lash line, slightly extending at the outer corners for a soft lifting effect. Apply a light coat of lengthening mascara or natural-looking curled false lashes to enhance my eyes without looking overly dramatic.
-Blush: Sweep a sheer, soft pink or peach blush onto the apples of my cheeks, blending outward toward the temples for a natural flush that mimics a healthy glow. The application should be airy and diffused.
-Lips: Choose a soft coral, rosy pink, or MLBB (My Lips But Better) shade for the lips. Apply in a gradient style by focusing color on the center and blending outward for a soft, diffused, youthful effect, or use a sheer tint for a naturally fresh look.
-Final Touches (Highlighting & Setting): Apply a subtle liquid or cream highlighter to the high points of my face (cheekbones, nose bridge, and cupid bow) for a soft, natural glow. Finish with a light mist of dewy setting spray to lock in hydration and freshness without making the skin look heavy or overly matte.
-Ensure the final look embodies the soft, effortless beauty of Asian-style makeup. The makeup should appear professionally applied, realistic, and perfect for enhancing my natural features without altering my identity.
-Create a gentle and refined Asian-inspired makeup look that captures elegance and minimalism while preserving my individuality.
+      ` ${textPrompt} For a soft, natural Asian-style makeup look, start with a lightweight, hydrating foundation or BB cream for an even, dewy finish, setting lightly with translucent powder on the T-zone to control shine. Shape and fill your eyebrows with a soft brown or taupe shade, keeping them slightly straight or gently arched for a youthful effect. Apply soft neutral eyeshadows like champagne, peach, or light brown for a fresh, bright appearance, blending seamlessly. Use fine brown eyeliner along the upper lash line, subtly extending the outer corners, and finish with lengthening mascara or natural false lashes. Sweep a sheer pink or peach blush on the apples of your cheeks, blending outward for a healthy glow. For the lips, choose a soft coral, rosy pink, or MLBB shade, applying in a gradient for a fresh, youthful effect. Complete the look with a subtle highlight on the high points of your face and a dewy setting mist for a luminous, natural finish that enhances your beauty with elegance and minimalism..
     );`
     );
 
@@ -102,17 +92,16 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
             const fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
             await FileSystem.copyAsync({ from: asset.localUri, to: fileUri });
 
-            // Đọc file dưới dạng Base64
+
             const base64 = await FileSystem.readAsStringAsync(fileUri, {
               encoding: FileSystem.EncodingType.Base64,
             });
 
-            // Ghi lại file để đảm bảo tồn tại
+
             const finalFileUri = `${FileSystem.documentDirectory}face_oval_mask.png`;
             await FileSystem.writeAsStringAsync(finalFileUri, base64, {
               encoding: FileSystem.EncodingType.Base64,
             });
-
 
             const maskFile = {
               uri: finalFileUri,
@@ -131,9 +120,9 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       const maskFile = await copyAssetToTemp();
 
       formData.append("Mask", {
-        uri: maskFile.uri, // Đường dẫn file hợp lệ
-        name: maskFile.name, // Tên file
-        type: maskFile.type, // Loại MIME type
+        uri: maskFile.uri,
+        name: maskFile.name, 
+        type: maskFile.type, 
       });
 
       let imageFile;
@@ -157,7 +146,7 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       }
 
       formData.append("Image", imageFile);
-      formData.append("OutputFormat", "webp"); // ✅ Thêm OutputFormat
+      formData.append("OutputFormat", "webp"); 
 
       const getToken = async () => {
         try {
@@ -174,7 +163,7 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       const token = await getToken();
 
       const response = await fetch(
-        "http://192.168.48.183:5280/api/combined/generate-and-inpaint",
+        "http://192.168.11.183:5280/api/combined/generate-and-inpaint",
         {
           method: "POST",
           headers: {
@@ -184,10 +173,12 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
         }
       );
       if (!response.ok) {
-        const errorText = await response.text(); // Lấy nội dung lỗi
+        const errorText = await response.text(); 
         throw new Error(`HTTP Error ${response.status}: ${errorText}`);
       } else {
-        console.log("Generate successfullly: ", response.data);
+        const data = await response.json();
+        setGeneratedImage(data.imageData);
+        setGenerateStep(data.generatedPrompt);
       }
     } catch (error) {
       console.error("⚠️ Error generating image:", error);
@@ -258,8 +249,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
           </View>
         </View>
       </View>
-
-      {/* Input request */}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -340,8 +329,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   inputContainer: {
-    position: "absolute", // Cố định vị trí
-    bottom: -300, // Điều chỉnh khoảng cách đến tab (tùy chỉnh số này)
+    position: "absolute",
+    bottom: -300, 
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -353,10 +342,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "white",
     width: "100%",
-    paddingVertical: 10, // Thêm padding dọc nếu cần
+    paddingVertical: 10, 
   },
 
   iconStyle: {
-    marginLeft: 10, // Khoảng cách bên trái
+    marginLeft: 10, 
   },
 });

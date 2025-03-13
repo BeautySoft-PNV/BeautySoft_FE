@@ -19,8 +19,8 @@ interface StyleData {
   id: string;
   name: string;
   description: string;
-  time: string;
-  steps: string[];
+  date: string;
+  guidance: string[];
   image: string;
 }
 
@@ -53,7 +53,7 @@ const CollectionDetails = () => {
         
 
         const response = await fetch(
-          `http://192.168.48.183:5280/api/MakeupStyles/${id}`,
+          `http://192.168.11.183:5280/api/MakeupStyles/${id}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -65,6 +65,7 @@ const CollectionDetails = () => {
 
         const data = await response.json();
         setStyleData(data);
+        console.log("data: ", data)
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -92,7 +93,7 @@ const CollectionDetails = () => {
       const token = await getToken();
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
-        `http://192.168.48.183:5280/api/MakeupStyles/${id}`,
+        `http://192.168.11.183:5280/api/MakeupStyles/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -137,7 +138,7 @@ const CollectionDetails = () => {
       {styleData.image && (
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: `http://192.168.48.183:5280${styleData.image}` }}
+            source={{ uri: styleData.image }}
             style={styles.image}
           />
         </View>

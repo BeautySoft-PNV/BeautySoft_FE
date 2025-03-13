@@ -13,7 +13,7 @@ const SignIn = ({ navigation }: any) => {
     const router = useRouter();
 
     const handleSignIn = async () => {
-        const API_URL = "http://192.168.48.183:5280/api/auth/login";
+        const API_URL = "http://192.168.11.183:5280/api/auth/login";
 
         try {
             const response = await fetch(API_URL, {

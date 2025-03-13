@@ -44,7 +44,7 @@ const Collection = () => {
         const token = await getToken();
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
-          "http://192.168.48.183:5280/api/MakeupStyles/user/me",
+          "http://192.168.11.183:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -107,7 +107,7 @@ const Collection = () => {
                 onPress={() => handlePress(style)}
               >
                 <Image
-                  source={{ uri: `http://192.168.48.183:5280${style.image}` }}
+                  source={{ uri: style.image }}
                   style={styles.image}
                 />
               </TouchableOpacity>

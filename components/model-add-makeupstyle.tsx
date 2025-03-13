@@ -15,6 +15,9 @@ interface ModelAddMakeupStyleProps {
   generatedImage: string | null;
   generateStep: string | null;
 }
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNFS from "react-native-fs";
+import { router } from "expo-router";
 
 export default function ModelAddMakeupStyle({
   generatedImage,
@@ -25,78 +28,40 @@ export default function ModelAddMakeupStyle({
   const [guidance, setGuidance] = useState(generateStep || "Step guidance");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
 
-  const handleAddMakeupStyle = async () => {
+  const saveBase64AsFile = async (base64: string | null, filename: string) => {
     try {
-      if (!generatedImage) {
-        console.log("generatedImage: ", generatedImage);
-        Alert.alert("Lỗi", "Vui lòng nhập tên và chọn ảnh.");
+      // Định dạng đường dẫn file
+      const filePath = FileSystem.cacheDirectory + filename;
+      if (!base64) {
+        console.error("Base64 string is null or empty!");
         return;
       }
-      console.log("add ");
 
+      await FileSystem.writeAsStringAsync(filePath, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      console.log("File saved at:", filePath);
+      return filePath;
+    } catch (error) {
+      console.error("Lỗi lưu file:", error);
+      return null;
+    }
+  };
+
+  const handleAddMakeupStyle = async () => {
+    try {
       const formData = new FormData();
-      // formData.append("UserId", userId);
+      formData.append("imageFile", {
+        uri: generatedImage,
+        name: "generated-image.jpg",
+        type: "image/jpeg",
+      });
 
-      console.log("Generated Image Type:", generatedImage);
-      console.log("Generated Image Type:", typeof generatedImage);
-
-      let fileBlob;
-
-      if (Platform.OS === "web") {
-        const response = await fetch(generatedImage);
-        fileBlob = await response.blob();
-      } else {
-        const fileInfo = await FileSystem.getInfoAsync(generatedImage);
-        if (!fileInfo.exists) {
-          throw new Error("File does not exist");
-        }
-
-        const fileBase64 = await FileSystem.readAsStringAsync(generatedImage, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        fileBlob = await fetch(`data:image/jpeg;base64,${fileBase64}`).then(
-          (res) => res.blob()
-        );
-      }
-
-      if (generatedImage) {
-        const response = await fetch(generatedImage);
-        const blob = await response.blob();
-        const contentType = response.headers.get("Content-Type") || "image/png";
-        const extension = contentType.split("/")[1] || "jpg";
-        const filename = `${Date.now()}.${extension}`;
-        const imageFile = new File([blob], filename, {
-          type: contentType,
-          lastModified: Date.now(),
-        });
-
-        formData.append("imageFile", imageFile);
-        console.log("imageFile: ", imageFile);
-      }
-
-      if (Platform.OS === "web") {
-        const response = await fetch(generatedImage);
-        const blob = await response.blob();
-        formData.append(
-          "imageFile",
-          new File([blob], "image.jpg", {
-            type: "image/jpeg",
-            lastModified: Date.now(),
-          })
-        );
-      } else {
-        formData.append("imageFile", {
-          uri: generatedImage,
-          name: "image.jpg",
-          type: "image/jpeg",
-        } as any);
-      }
-      // parse user information
       const parseJwt = (token: string): { [key: string]: any } | null => {
         try {
-          const base64Url = token.split(".")[1]; // Lấy phần payload
-          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); // Chuẩn hóa base64
+          const base64Url = token.split(".")[1]; 
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); 
           const jsonPayload = decodeURIComponent(
             atob(base64)
               .split("")
@@ -104,49 +69,54 @@ export default function ModelAddMakeupStyle({
               .join("")
           );
 
-          return JSON.parse(jsonPayload); // Trả về object JSON
+          return JSON.parse(jsonPayload);
         } catch (e) {
           console.error("Lỗi khi parse token:", e);
           return null;
         }
       };
 
-      const token = localStorage.getItem("token");
+      const getToken = async () => {
+        try {
+          if (Platform.OS === "web") {
+            return localStorage.getItem("token") || "";
+          } else {
+            const token = await AsyncStorage.getItem("token");
+            return token || "";
+          }
+        } catch (error) {
+          console.error("🚨 Lỗi lấy token:", error);
+          return "";
+        }
+      };
+      const token = await getToken();
       const decodedToken = parseJwt(token);
 
       console.log("decodedToken: ", decodedToken);
       if (decodedToken && decodedToken.id) {
-        formData.append("userId", String(decodedToken.id)); // Đảm bảo kiểu string
+        formData.append("userId", String(decodedToken.id)); 
       } else {
         console.error("Không tìm thấy userId trong token!");
       }
 
-      // formData.append("userId", 44);
-
       formData.append("guidance", guidance);
 
-      for (let pair of formData.entries()) {
-        console.log(`📌 ${pair[0]}: ${pair[1]}`);
-      }
-
       const response = await fetch(
-        "http://192.168.48.183:5280/api/MakeupStyles",
+        "http://192.168.11.183:5280/api/MakeupStyles",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }
       );
-
-      // 🛠️ Kiểm tra response có nội dung hay không trước khi parse JSON
       if (!response.ok) {
-        const errorText = await response.text(); // Lấy nội dung lỗi
+        const errorText = await response.text(); 
         throw new Error(`HTTP Error ${response.status}: ${errorText}`);
       } else {
         console.log("add successfully!");
-        // ✅ Hiển thị modal thành công
+
         setSuccessModalVisible(true);
       }
     } catch (error) {
@@ -166,7 +136,6 @@ export default function ModelAddMakeupStyle({
         />
       </View>
 
-      {/* Modal xác nhận thêm phong cách */}
       <Modal visible={modalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -196,7 +165,6 @@ export default function ModelAddMakeupStyle({
         </View>
       </Modal>
 
-      {/* Modal thông báo thành công */}
       <Modal visible={successModalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
