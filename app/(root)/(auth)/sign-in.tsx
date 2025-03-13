@@ -27,10 +27,15 @@ const SignIn = ({ navigation }: any) => {
             const responseData = await response.json();
 
             if (!response.ok) {
+                if (response.status === 403) {
+                    setErrors({ message: "Your account has been locked." });
+                    return;
+                }
                 if (responseData.message) {
                     setErrors({ message: responseData.message });
                     return;
                 }
+                
                 if (responseData.errors) {
                     const newErrors: { [key: string]: string } = {};
                     if (responseData.errors.Email) {
@@ -67,14 +72,14 @@ const SignIn = ({ navigation }: any) => {
         <ScrollView>
         <View style={styles.container}>
             <View style={styles.backgroundContainer}>
-                <Text style={styles.welcomeText}>Welcome to BeautySoft</Text>
+                <Text style={styles.welcomeText}>Welcome To </Text>
                 <Image 
                     source={require('@/assets/images/signIn.png')} 
                     style={styles.image}
                 />
             </View>
             <Text style={styles.logo}>BeautySoft</Text>
-            <Text style={styles.title}>Email*</Text>
+            <Text style={styles.title}>Email <Text style ={styles.noticed}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="loan@gmail.com..."
@@ -86,7 +91,7 @@ const SignIn = ({ navigation }: any) => {
             />
             {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-            <Text style={styles.title}>Password*</Text>
+            <Text style={styles.title}>Password <Text style ={styles.noticed}>*</Text></Text>
             <View style={styles.inputContainer}>
                 <TextInput
                     style={styles.inputPassword}
@@ -139,6 +144,9 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 20,
     },
+    noticed: {
+        color: "red"
+    },
     backgroundContainer: {
         width: 350,
         height: 250,
@@ -170,9 +178,10 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 9, height: 3 },
         textShadowRadius: 5,
         width: '100%',
+        marginBottom: 10,
     },
     title: {
-        fontSize: 15,
+        fontSize: 18,
         fontWeight: "bold",
         fontFamily: "PlayfairDisplay-Bold",
         color: "black",
@@ -188,7 +197,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         backgroundColor: 'white',
         fontFamily: "PlayfairDisplay-Bold",
-        fontSize: 20,
+        fontSize: 18,
         color: "black"
     },
     inputContainer: {
@@ -206,7 +215,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 10,
         fontFamily: "PlayfairDisplay-Bold",
-        fontSize: 20,
+        fontSize: 18,
         color: "black"
     },
     button: {
@@ -219,7 +228,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     link: {
@@ -229,7 +238,7 @@ const styles = StyleSheet.create({
     },
     message: {
         marginTop: 2,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         fontFamily: "PlayfairDisplay-Bold",
     },
@@ -238,13 +247,13 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         color: 'red',
-        fontSize: 15,
+        fontSize: 18,
         fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 20,
     },
     errorText: {
         color: 'red',
-        fontSize: 15,
+        fontSize: 18,
         fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 10,
         alignSelf: 'flex-start',

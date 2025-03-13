@@ -101,7 +101,7 @@ const Notifications = () => {
                     notifications.map((item) => (
                         <View key={item.id} style={styles.card}>
                             <TouchableOpacity onPress={() => deleteNotification(item.notificationId)} style={styles.closeButton}>
-                                <FontAwesome name="times" size={18} color="white" />
+                                <FontAwesome name="times" size={18} color="black" />
                             </TouchableOpacity>
                             <Text style={styles.cardTitle}>{item.title}</Text>
                             <View style={styles.cardContent}>
@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         padding: 8,
         marginTop: 20,
+        backgroundColor: "#B3B3B3"
     },
     headerContainer: {
         flexDirection: "row",
@@ -147,12 +148,12 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: 'black',
+        color: "#ED1E51" ,
         fontFamily: "PlayfairDisplay-Bold",
         marginRight: "30%"
     },
     card: {
-        backgroundColor: '#ED1E51',
+        backgroundColor: 'white',
         borderRadius: 8,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -161,11 +162,12 @@ const styles = StyleSheet.create({
         padding: 16,
         marginBottom: 20,
         width: '95%',
+
     },
     cardTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'white',
+        color: 'black',
         marginBottom: 8,
     },
     cardContent: {
@@ -174,13 +176,13 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     cardText: {
-        color: 'white',
+        color: 'black',
         fontSize: 18,
         width: '100%',
     },
     cardDate: {
         fontSize: 14,
-        color: 'white',
+        color: 'black',
         marginTop: 10,
         fontStyle: 'italic',
     },

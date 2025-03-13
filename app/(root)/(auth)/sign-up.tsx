@@ -95,10 +95,11 @@ const SignUp = () => {
                     <View style={styles.container}>
                         <Text style={styles.logo}>BeautySoft</Text>
 
-                        <Text style={styles.title}>Full Name*</Text>
+                        <Text style={styles.title}>Full Name <Text style ={styles.noticed}>*</Text> </Text>
+                        
                         <TextInput
                             style={styles.input}
-                            placeholder="Tố Loan..."
+                            placeholder="To Loan..."
                             placeholderTextColor="#C4C4C4"
                             value={username}
                             onChangeText={(text) => {
@@ -108,7 +109,7 @@ const SignUp = () => {
                         />
                         {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
-                        <Text style={styles.title}>Email*</Text>
+                        <Text style={styles.title}>Email <Text style ={styles.noticed}>*</Text></Text>
                         <TextInput
                             style={styles.input}
                             placeholder="loan@gmail.com..."
@@ -123,7 +124,7 @@ const SignUp = () => {
                         />
                         {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-                        <Text style={styles.title}>Password*</Text>
+                        <Text style={styles.title}>Password <Text style ={styles.noticed}>*</Text></Text>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.inputPassword}
@@ -142,7 +143,7 @@ const SignUp = () => {
                         </View>
                         {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
-                        <Text style={styles.title}>Confirm Password*</Text>
+                        <Text style={styles.title}>Confirm Password <Text style ={styles.noticed}>*</Text></Text>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.inputPassword}
@@ -189,6 +190,9 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
     },
+    noticed: {
+        color: "red"
+    }, 
     forgot: {
         display: 'flex',
         flexDirection: 'row',
@@ -207,7 +211,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     title: {
-        fontSize: 15,
+        fontSize: 18,
         fontWeight: 'bold',
         fontFamily: 'PlayfairDisplay-Bold',
         color: 'black',
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         backgroundColor: 'white',
         fontFamily: 'PlayfairDisplay-Bold',
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
     },
     inputContainer: {
@@ -240,10 +244,10 @@ const styles = StyleSheet.create({
     },
     inputPassword: {
         flex: 1,
-        paddingVertical: 10,
-        fontFamily: 'PlayfairDisplay-Bold',
-        fontSize: 10,
-        color: 'black',
+        paddingVertical: 3,
+        fontFamily: "PlayfairDisplay-Bold",
+        fontSize: 18,
+        color: "black"
     },
     button: {
         backgroundColor: '#e91e63',
@@ -255,7 +259,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     link: {
