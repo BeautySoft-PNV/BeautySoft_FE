@@ -96,7 +96,7 @@ const SignIn = ({ navigation }: any) => {
                     value={password}
                     onChangeText={setPassword}
                 />
-                <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+                <TouchableOpacity style={styles.iconEye} onPress={() => setPasswordVisible(!passwordVisible)}>
                     <FontAwesome name={passwordVisible ? "eye" : "eye-slash"} size={20} color="gray" />
                 </TouchableOpacity>
             </View>
@@ -107,15 +107,24 @@ const SignIn = ({ navigation }: any) => {
             <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                 <Text style={styles.buttonText}>Sign in</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-up')}>
-                <Text style={styles.link}>Don't have an account? Sign up!</Text>
-            </TouchableOpacity>
+            <View style={styles.forgot}>
+                <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-up')}>
+                    <Text style={styles.link}>Sign up!</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/(root)/(auth)/forgot-password')}>
+                    <Text style={styles.link}>Forgot Password!</Text>
+                </TouchableOpacity>
+            </View>
         </View>
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    iconEye:{
+    position: 'absolute',
+        right: 10,
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -123,9 +132,16 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
     },
+    forgot: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 20,
+    },
     backgroundContainer: {
-        width: 413,
-        height: 343,
+        width: 350,
+        height: 250,
         backgroundColor: '#F4F6FF',
         justifyContent: 'center',
         alignItems: 'center',
@@ -135,11 +151,14 @@ const styles = StyleSheet.create({
     welcomeText: {
         fontSize: 32,
         fontFamily: 'PlayfairDisplay-Bold',
-        color: 'black',
+        color: '#ED1E51',
+        textShadowColor: '#c1a6b3',
+        textShadowOffset: { width: 9, height: 3 },
+        textShadowRadius: 5,
         marginBottom: 10,
     },
     image: {
-        width: 341,
+        width: '100%',
         height: 184,
         borderRadius: 10,
     },
@@ -150,9 +169,10 @@ const styles = StyleSheet.create({
         textShadowColor: '#c1a6b3',
         textShadowOffset: { width: 9, height: 3 },
         textShadowRadius: 5,
+        width: '100%',
     },
     title: {
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: "bold",
         fontFamily: "PlayfairDisplay-Bold",
         color: "black",
@@ -161,7 +181,7 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '100%',
-        padding: 15,
+        padding: 10,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
@@ -172,6 +192,7 @@ const styles = StyleSheet.create({
         color: "black"
     },
     inputContainer: {
+        position: 'relative',
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
@@ -203,7 +224,7 @@ const styles = StyleSheet.create({
     },
     link: {
         marginTop: 20,
-        fontSize: 20,
+        fontSize: 17,
         color: '#007bff',
     },
     message: {
@@ -226,7 +247,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 10,
-        alignSelf: 'flex-start', // Align error message to the left
+        alignSelf: 'flex-start',
     },
 });
 

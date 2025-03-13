@@ -1,5 +1,5 @@
     import React, { useState, useEffect } from 'react';
-    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+    import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
     import * as ImagePicker from 'expo-image-picker';
     import AsyncStorage from '@react-native-async-storage/async-storage';
     import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
@@ -17,9 +17,9 @@
         const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
         const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false);
         const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' }>({ text: '', type: 'error' });
-    
+        const [errors, setErrors] = useState<{ [key: string]: string }>({});
         const router = useRouter();
-    
+
         useEffect(() => {
             const loadUserData = async () => {
                 try {
@@ -84,7 +84,6 @@
                 setMessage({ text: 'New passwords do not match', type: 'error' });
                 return;
             }
-    
             const formData = new FormData();
             formData.append('user.Name', name);
             formData.append('user.Email', email);
@@ -95,24 +94,16 @@
             } else {
                 formData.append('newPassword', '');
             }
+            console.log(avatar)
+            if (avatar && !avatar.includes('/uploads')) {
+                const file = {
+                    uri: avatar,
+                    name:'photo.jpg',
+                    type:'image/jpeg',
+                };
 
-            if (avatar) {
-                const response = await fetch(avatar);
-                const blob = await response.blob();
-
-                const contentType = response.headers.get("Content-Type") || "image/jpeg";
-
-                const extension = contentType.split("/")[1] || "jpg";
-                const filename = `${Date.now()}.${extension}`;
-
-                const imageFile = new File([blob], filename, {
-                    type: contentType,
-                    lastModified: Date.now()
-                });
-
-                formData.append('imageFile', imageFile);
+                formData.append('imageFile', file as any);
             }
-
 
             try {
                 const token = await AsyncStorage.getItem('token');
@@ -129,63 +120,70 @@
                     },
                     body: formData,
                 });
-                console.log(token)
                 if (response.status == 204) {
                     setMessage({ text: 'Profile updated successfully!', type: 'success' });
                     router.push('/(root)/(auth)/profile');
-                } else {
+                }
+                if (!response.ok) {
+                    const responseData = await response.json();
+                    if (responseData.message) {
+                        setErrors({ message: responseData.message });
+                        return;
+                    }
+                    if (responseData.errors) {
+                        const newErrors: { [key: string]: string } = {};
+                        if (responseData.errors["user.Name"]) {
+                            newErrors.name = responseData.errors["user.Name"].join('\n');
+                        }
+                        if (responseData.errors.message) {
+                            newErrors.message = responseData.errors.message.join('\n');
+                        }
+                        setErrors(newErrors);
+                        return;
+                    }
+                    throw new Error(responseData.title || "Login failed! Please check your credentials.");
+                }
+                if (!response.ok) {
                     const text = await response.text();
-                    console.error("Server returned non-JSON response:", text);
+                    throw new Error(`❌ Server Error: ${response.status} - ${text}`);
                 }
             } catch (error) {
                 console.error("Error updating data:", error);
                 setMessage({ text: 'An error occurred while updating the profile', type: 'error' });
             }
         };
-        const defaultAvatar = "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg";
-        const avatarUri = avatar
-            ? avatar  // Avatar mới upload thành công
-            : user?.avatar
-                ? `http://192.168.11.183:5280${user.avatar}`  // Avatar có sẵn từ server
-                : defaultAvatar; // Nếu không có gì thì dùng ảnh mặc định
-
-
         return (
+        <ScrollView>
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
                         <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
                     </TouchableOpacity>
-                    <Text style={styles.header}>My Account</Text>
+                    <View style={styles.containerTitle}><Text style={styles.header}>My Account</Text></View>
                 </View>
                 <View style={styles.avatarContainer}>
                     <Image
                         source={{
                             uri: avatar && avatar.trim() !== "" && avatar !== null
                                 ? avatar.startsWith("/uploads/")
-                                    ? "http://192.168.11.183:5280" + avatar
+                                    ?  avatar
                                     : avatar
                                 : user?.avatar && user.avatar.trim() !== ""
                                     ? user.avatar.startsWith("/uploads/")
-                                        ? "http://192.168.11.183:5280" + user.avatar
+                                        ?  user.avatar
                                         : user.avatar
                                     : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                         }}
                         style={styles.avatar}
-                        onError={() => console.log("Lỗi tải ảnh!")}
                     />
                     <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
                         <FontAwesome5 name="camera" size={18} color="#ED1E51" />
                     </TouchableOpacity>
                 </View>
-                {message.text ? (
-                    <Text style={[styles.message, message.type === 'success' ? styles.successMessage : styles.errorMessage]}>
-                        {message.text}
-                    </Text>
-                ) : null}
                 <Text style={styles.title}>Full Name*</Text>
                 <TextInput style={styles.input} value={name} onChangeText={setUsername} />
-    
+                {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
+
                 <Text style={styles.title}>Email*</Text>
                 <TextInput style={styles.input} value={email} onChangeText={setEmail} editable={false} keyboardType="email-address" />
     
@@ -235,17 +233,19 @@
                     <Text style={styles.buttonText}>Update</Text>
                 </TouchableOpacity>
             </View>
+        </ScrollView>
         );
     };
     
     const styles = StyleSheet.create({
         container: { flex: 1, padding: 20, backgroundColor: 'white' },
         headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-        header: { color: 'black', marginLeft: 100, fontSize: 24, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold" },
+        containerTitle: { display:'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width:'92%' },
+        header: { color: 'black', fontSize: 24, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold" },
         avatarContainer: { justifyContent: "center", alignItems: "center", marginBottom: 20, position: "relative" },
         editIcon: { position: "absolute", borderRadius: 20, width: 30, height: 30, justifyContent: "center", alignItems: "center", marginLeft: 90, bottom: -15 },
         avatar: { width: 90, height: 90, borderRadius: 50 },
-        title: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", color: "black", marginBottom: 5, alignSelf: "flex-start" },
+        title: { fontSize: 15, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", color: "black", marginBottom: 5, alignSelf: "flex-start" },
         input: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', color: "black", marginBottom: 10 },
         inputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ccc', borderRadius: 5, backgroundColor: 'white', paddingHorizontal: 10, marginBottom: 10 },
         inputPassword: { fontSize: 20, fontWeight: "bold", fontFamily: "PlayfairDisplay-Bold", flex: 1, padding: 10 },
@@ -279,6 +279,13 @@
             color: 'red',
             fontSize: 20,
             fontFamily: "PlayfairDisplay-Bold",
+        },
+        errorText: {
+            color: 'red',
+            fontSize: 15,
+            fontFamily: "PlayfairDisplay-Bold",
+            marginBottom: 10,
+            alignSelf: 'flex-start',
         },
     });
     

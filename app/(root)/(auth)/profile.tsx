@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -61,23 +61,49 @@ const Profile = () => {
         fetchUserProfile();
     }, []);
 
+    const handleLogout = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+
+            if (token) {
+                // Gửi yêu cầu logout lên server
+                await fetch('http://192.168.48.183:5280/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
+
+            await AsyncStorage.removeItem('token');
+
+            router.push('/(root)/(auth)/sign-in');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={() => router.push('/(root)/(tabs)/home')}>
                     <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
                 </TouchableOpacity>
-                <Text style={styles.header}>My Account</Text>
+                <View style={styles.containerTitle}>
+                    <Text style={styles.header}>My Account</Text>
+                </View>
             </View>
             <View style={styles.avatarContainer}>
                 <Image
                     source={{
                         uri: user.avatar
-                            ? "http://192.168.11.183:5280" + user.avatar
+                            ? user.avatar
                             : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg"
                     }}
                     style={styles.avatar}
@@ -110,15 +136,20 @@ const Profile = () => {
                 <FontAwesome5 name="crown" size={20} color="gold" style={styles.icon} />
                 <Text style={styles.buttonText}>Get Unlimited Access</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.upgradeButton} onPress={handleLogout}>
+                <Text style={styles.buttonText}>Log out</Text>
+            </TouchableOpacity>
 
         </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 20, backgroundColor: 'white' },
     headerContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-    header: { fontSize: 24, fontWeight: 'bold', color: 'black', marginLeft: 100, fontFamily: "PlayfairDisplay-Bold" },
+    header: { fontSize: 24, fontWeight: 'bold', color: 'black', fontFamily: "PlayfairDisplay-Bold" },
+    containerTitle: { display:'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width:'92%' },
     avatarContainer: { justifyContent: "center", alignItems: "center", marginBottom: 20, position: "relative" },
     editIcon: { position: "absolute", borderRadius: 20, width: 30, height: 30, justifyContent: "center", alignItems: "center", marginLeft: 90, bottom: -15 },
     avatar: { width: 90, height: 90, borderRadius: 50 },
