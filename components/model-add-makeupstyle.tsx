@@ -1,76 +1,153 @@
 import React, { useState } from "react";
-import { View, Text, Button, Modal, StyleSheet, Pressable, Alert } from "react-native";
-
+import {
+  View,
+  Text,
+  Button,
+  Modal,
+  StyleSheet,
+  Pressable,
+  Alert,
+  Platform,
+} from "react-native";
+import * as FileSystem from "expo-file-system"; // For native platforms
+import { AntDesign } from "@expo/vector-icons";
 interface ModelAddMakeupStyleProps {
   generatedImage: string | null;
   generateStep: string | null;
 }
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function ModelAddMakeupStyle({ generatedImage, generateStep }: ModelAddMakeupStyleProps) {
+export default function ModelAddMakeupStyle({
+  generatedImage,
+  generateStep,
+}: ModelAddMakeupStyleProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [name, setName] = useState("Make yp like Vietnam brial");
   const [guidance, setGuidance] = useState(generateStep || "Step guidance");
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const saveBase64AsFile = async (base64: string | null, filename: string) => {
+    try {
+      // Định dạng đường dẫn file
+      const filePath = FileSystem.cacheDirectory + filename;
+      if (!base64) {
+        console.error("Base64 string is null or empty!");
+        return;
+      }
+
+      await FileSystem.writeAsStringAsync(filePath, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      console.log("File saved at:", filePath);
+      return filePath;
+    } catch (error) {
+      console.error("Lỗi lưu file:", error);
+      return null;
+    }
+  };
 
   const handleAddMakeupStyle = async () => {
     try {
-      if (!name || !generatedImage) {
-        Alert.alert("Lỗi", "Vui lòng nhập tên và chọn ảnh.");
-        return;
-      }
-      console.log("add ")
       const formData = new FormData();
-      formData.append("UserId", "1");
-      formData.append("Name", name);
-      formData.append("Guidance", guidance);
-      formData.append("Image", {
+      formData.append("imageFile", {
         uri: generatedImage,
+        name: "generated-image.jpg",
         type: "image/jpeg",
-        name: "makeup.jpg",
-      } as any);
-  
+      });
+
+      const parseJwt = (token: string): { [key: string]: any } | null => {
+        try {
+          const base64Url = token.split(".")[1];
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split("")
+              .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+              .join("")
+          );
+
+          return JSON.parse(jsonPayload);
+        } catch (e) {
+          console.error("Lỗi khi parse token:", e);
+          return null;
+        }
+      };
+
+      const getToken = async () => {
+        try {
+          if (Platform.OS === "web") {
+            return localStorage.getItem("token") || "";
+          } else {
+            const token = await AsyncStorage.getItem("token");
+            return token || "";
+          }
+        } catch (error) {
+          console.error("🚨 Lỗi lấy token:", error);
+          return "";
+        }
+      };
+      const token = await getToken();
+      const decodedToken = parseJwt(token);
+
+      console.log("decodedToken: ", decodedToken);
+      if (decodedToken && decodedToken.id) {
+        formData.append("userId", String(decodedToken.id));
+      } else {
+        console.error("Không tìm thấy userId trong token!");
+      }
+
+      formData.append("guidance", guidance);
+
       const response = await fetch(
-        "http://192.168.126.183:5280/api/MakeupStyles",
+        "http://192.168.11.183:5280/api/MakeupStyles",
         {
           method: "POST",
           headers: {
-            Authorization: `sk-kyVgdjaxGbxuYT5mWVRpYnHvPP3kwvWXN9OXpVwdVbneOqSu`,
-            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }
       );
-  
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
-        Alert.alert("Lỗi", "Không thể thêm phong cách trang điểm.");
-        return;
+        const errorText = await response.text();
+        throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+      } else {
+        console.log("add successfully!");
+
+        setSuccessModalVisible(true);
+        setIsDisabled(true);
       }
-  
-      const data = await response.json();
-      console.log("Data:", data);
-      Alert.alert("Thành công", "Phong cách trang điểm đã được thêm!");
-      
     } catch (error) {
       console.error("Fetch Error:", error);
       Alert.alert("Lỗi", "Đã có lỗi xảy ra. Vui lòng thử lại!");
     }
   };
-  
 
   return (
     <View style={styles.container}>
-      <Button title="Add Makeup Style" onPress={() => setModalVisible(true)} />
+      <View style={{ position: "absolute", top: 10, right: 0 }}>
+        <AntDesign
+          name="save"
+          style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]} 
+          size={30}
+          onPress={() => !isDisabled && setModalVisible(true)} 
+        />
+      </View>
 
-      {/* Modal xác nhận thêm phong cách */}
       <Modal visible={modalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.text}>Do you want to add this makeup style to your favorite styles?</Text>
+            <Text style={styles.text}>
+              Do you want to add this makeup style to your favorite styles?
+            </Text>
 
             <View style={styles.buttonContainer}>
-              <Pressable style={styles.buttonCancel} onPress={() => setModalVisible(false)}>
+              <Pressable
+                style={styles.buttonCancel}
+                onPress={() => setModalVisible(false)}
+              >
                 <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
 
@@ -88,13 +165,16 @@ export default function ModelAddMakeupStyle({ generatedImage, generateStep }: Mo
         </View>
       </Modal>
 
-      {/* Modal thông báo khi thêm thành công */}
-      <Modal visible={confirmVisible} animationType="fade" transparent>
+      <Modal visible={successModalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.text}>Makeup style has been added successfully!</Text>
-            <Pressable style={styles.buttonConfirm} onPress={() => setConfirmVisible(false)}>
-              <Text style={styles.buttonText}>OK</Text>
+            <Text style={styles.text}>Makeup style added successfully!</Text>
+
+            <Pressable
+              style={styles.buttonConfirm}
+              onPress={() => setSuccessModalVisible(false)}
+            >
+              <Text style={styles.buttonText}>Close</Text>
             </Pressable>
           </View>
         </View>
@@ -115,6 +195,7 @@ const styles = StyleSheet.create({
 
   modalContent: {
     width: 300,
+    height: 120,
     padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
@@ -136,10 +217,11 @@ const styles = StyleSheet.create({
 
   buttonConfirm: {
     backgroundColor: "#4CAF50",
-    padding: 10,
+    padding: 5,
     borderRadius: 5,
     flex: 1,
     alignItems: "center",
+    width: 100,
   },
 
   buttonCancel: {
@@ -151,5 +233,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 
-  buttonText: { color: "white", fontWeight: "bold" },
+  buttonText: { fontSize: 16, color: "white", fontWeight: "bold" },
+
+  saveIcon: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
 });

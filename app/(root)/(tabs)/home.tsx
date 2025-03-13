@@ -1,7 +1,14 @@
-import React, {useEffect, useRef, useState} from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Dimensions, Animated } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet, Dimensions, Animated,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {FontAwesome5} from "@expo/vector-icons";
 
@@ -28,32 +35,38 @@ const Home = () => {
   useEffect(() => {
     const fetchUserProfileHome = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await AsyncStorage.getItem("token");
         if (!token) {
           console.error("No token found!");
           setLoading(false);
           return;
         }
 
-        const response = await fetch("http://192.168.48.183:5280/api/users/me", {
-          method: "GET",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        const response = await fetch(
+          "http://192.168.11.183:5280/api/users/me",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
         const responseData = await response.json();
-        await AsyncStorage.setItem('user', JSON.stringify(responseData));
+        await AsyncStorage.setItem("user", JSON.stringify(responseData));
         setUser(responseData);
 
-        const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
-          method: "GET",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        const checkVip = await fetch(
+          "http://192.168.11.183:5280/api/managerstorage/check-user",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         if (!checkVip.ok) {
           throw new Error("Lỗi khi gọi API");
         }
@@ -95,7 +108,7 @@ const Home = () => {
           setLoading(false);
           return;
         }
-        const response = await fetch("http://192.168.48.183:5280/api/MakeupStyles/user/me", {
+        const response = await fetch("http://192.168.11.183:5280/api/MakeupStyles/user/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,7 +144,7 @@ const Home = () => {
         if (!token) {
           return;
         }
-        const response = await fetch("http://192.168.48.183:5280/api/MakeupItems/user/me", {
+        const response = await fetch("http://192.168.11.183:5280/api/MakeupItems/user/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -171,10 +184,18 @@ const Home = () => {
   }, []);
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.avatarContainer}>
-            <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
+            <TouchableOpacity
+              onPress={() => router.push("/(root)/(auth)/profile")}
+            >
               <Image
                   source={{ uri: user?.avatar
                         ? user.avatar
@@ -224,7 +245,7 @@ const Home = () => {
                   </Text>
                 </View>
                 <View style={styles.imageContainer}>
-                  <Image source={{ uri: `http://192.168.48.183:5280${item.image}` }} style={styles.faceImage} />
+                  <Image source={{ uri: item.image }} style={styles.faceImage} />
                 </View>
               </View>
           ))}
@@ -233,7 +254,7 @@ const Home = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {items.map((item) => (
               <View key={item.id} style={styles.itemContainer}>
-                <Image source={{ uri: `http://192.168.48.183:5280${item.image}` }} style={styles.itemImage} />
+                <Image source={{ uri: `http://192.168.11.183:5280${item.image}` }} style={styles.itemImage} />
                 <Text style={styles.itemText}>{item.name}</Text>
               </View>
           ))}
@@ -242,7 +263,6 @@ const Home = () => {
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   safeContainer: { flex: 1, backgroundColor: "#F3F4F6", width:'100%'},
@@ -307,13 +327,13 @@ const styles = StyleSheet.create({
   sectionTitle1: {
     fontSize: 18,
     marginTop: 16,
-    marginBottom:22,
+    marginBottom: 22,
     fontFamily: "PlayfairDisplay-Bold",
   },
   sectionTitle2: {
     fontSize: 18,
     marginTop: 16,
-    marginBottom:22,
+    marginBottom: 22,
     fontFamily: "PlayfairDisplay-Bold",
   },
     crownIcon: {
@@ -338,9 +358,9 @@ const styles = StyleSheet.create({
     height: 120,
   },
   textContainer: {
-    flex:1,
+    flex: 1,
     paddingRight: 1,
-    width:"100%",
+    width: "100%",
     fontFamily: "PlayfairDisplay-Medium",
   },
   imageContainer: {
@@ -357,12 +377,18 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#333",
     textAlign: "center",
-    fontFamily: "PlayfairDisplay-Medium"
+    fontFamily: "PlayfairDisplay-Medium",
   },
   itemContainer: { alignItems: "center", marginRight: 16, width: 120 },
   itemImage: { width: 100, height: 100, borderRadius: 10 },
-  itemText: { marginTop: 8, textAlign: "center", fontSize: 14, fontWeight: "500", marginBottom: 70, fontFamily: "PlayfairDisplay-Medium" },
+  itemText: {
+    marginTop: 8,
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 70,
+    fontFamily: "PlayfairDisplay-Medium",
+  },
 });
-
 
 export default Home;

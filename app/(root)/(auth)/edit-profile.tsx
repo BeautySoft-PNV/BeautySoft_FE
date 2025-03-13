@@ -112,8 +112,8 @@
                     setMessage({ text: "Authentication error: No token found", type: "error" });
                     return;
                 }
-
-                const response = await fetch('http://192.168.48.183:5280/api/users/me', {
+                console.log(token)
+                const response = await fetch('http://192.168.11.183:5280/api/users/me', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`

@@ -8,19 +8,17 @@ import {
   Platform,
   Image,
   TouchableOpacity,
-  Button,
-  Modal,
   ScrollView,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Avatar from "@/components/avatar";
-import * as FileSystem from "expo-file-system"; // For native platforms
+import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Portal, Dialog } from "react-native-paper";
 import ModelAddMakeupStyle from "@/components/model-add-makeupstyle";
 import { Provider as PaperProvider } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Generate() {
   const params = useLocalSearchParams();
@@ -31,13 +29,17 @@ export default function Generate() {
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [makeupStyle, setMakeupStyle] = useState("");
+  const [imageDescription, setImageDescription] = useState<string>("");
+  const router = useRouter();
 
+  const correctedUri = (params.imageUri as string)
+    .replace(/%40/g, "%2540")
+    .replace(/%2F/g, "%252F"); 
   useEffect(() => {
-    if (params.imageUri) {
-      setImageUri(params.imageUri);
+    if (correctedUri) {
+      setImageUri(correctedUri);
     }
-  }, [params.imageUri]);
+  }, [correctedUri]);
 
   useEffect(() => {
     if (imageUri) {
@@ -49,34 +51,15 @@ export default function Generate() {
     if (!imageUri) return;
     setLoading(true);
     setError(null);
-
-    let formData = new FormData();
-
+    const formData = new FormData();
     const textPrompt = Array.isArray(params.request)
       ? params.request[0]
       : params.request;
-
     formData.append(
       "TextPrompt",
-      ` ${textPrompt} Apply a soft, natural Asian-style makeup look while preserving my natural facial features. Follow these detailed steps to ensure a professional, elegant, and effortless beauty suitable for everyday wear and special occasions:
-Base Makeup (Foundation & Powder): Use a lightweight, hydrating foundation or BB cream that evens out my skin tone while maintaining a natural, dewy glow. Apply a thin layer and blend well for a second-skin effect. Set with a light dusting of finely milled translucent powder, focusing on the T-zone to control shine while keeping the skin luminous.
-Eyebrows: Shape and fill my eyebrows with a soft brown or taupe shade, following my natural brow shape. Keep the brows slightly straight or gently arched for a youthful, delicate Asian-inspired look. Avoid overly defined or harsh lines.
-Eyeshadow: Apply soft, neutral tones (such as champagne, peach, or light brown) on the eyelids for a subtle, fresh appearance. Blend seamlessly for a natural gradient effect, ensuring the eyes look bright and lively without heavy pigmentation.
-Eyeliner & Lashes: Use a fine brown or dark brown eyeliner to create a subtle, natural enhancement to my lash line. Draw a thin line along the upper lash line, slightly extending at the outer corners for a soft lifting effect. Apply a light coat of lengthening mascara or natural-looking curled false lashes to enhance my eyes without looking overly dramatic.
-Blush: Sweep a sheer, soft pink or peach blush onto the apples of my cheeks, blending outward toward the temples for a natural flush that mimics a healthy glow. The application should be airy and diffused.
-Lips: Choose a soft coral, rosy pink, or MLBB (My Lips But Better) shade for the lips. Apply in a gradient style by focusing color on the center and blending outward for a soft, diffused, youthful effect, or use a sheer tint for a naturally fresh look.
-Final Touches (Highlighting & Setting): Apply a subtle liquid or cream highlighter to the high points of my face (cheekbones, nose bridge, and cupid bow) for a soft, natural glow. Finish with a light mist of dewy setting spray to lock in hydration and freshness without making the skin look heavy or overly matte.
-Ensure the final look embodies the soft, effortless beauty of Asian-style makeup. The makeup should appear professionally applied, realistic, and perfect for enhancing my natural features without altering my identity.
-Create a gentle and refined Asian-inspired makeup look that captures elegance and minimalism while preserving my individuality.
+      ` ${textPrompt} For a soft, natural Asian-style makeup look, start with a lightweight, hydrating foundation or BB cream for an even, dewy finish, setting lightly with translucent powder on the T-zone to control shine. Shape and fill your eyebrows with a soft brown or taupe shade, keeping them slightly straight or gently arched for a youthful effect. Apply soft neutral eyeshadows like champagne, peach, or light brown for a fresh, bright appearance, blending seamlessly. Use fine brown eyeliner along the upper lash line, subtly extending the outer corners, and finish with lengthening mascara or natural false lashes. Sweep a sheer pink or peach blush on the apples of your cheeks, blending outward for a healthy glow. For the lips, choose a soft coral, rosy pink, or MLBB shade, applying in a gradient for a fresh, youthful effect. Complete the look with a subtle highlight on the high points of your face and a dewy setting mist for a luminous, natural finish that enhances your beauty with elegance and minimalism..
     );`
     );
-
-    // Kiểm tra FormData trước khi gửi
-    for (let pair of formData.entries()) {
-      console.log(`📌 ${pair[0]}: ${pair[1]}`);
-    }
-
-    formData.append("OutputFormat", "webp");
 
     try {
       const copyAssetToTemp = async () => {
@@ -84,9 +67,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
           const asset = Asset.fromModule(
             require("../(root)/assets/face_oval_mask.png")
           );
-          await asset.downloadAsync();
-
-          let fileUri;
 
           if (Platform.OS === "web") {
             const response = await fetch(asset.uri);
@@ -101,120 +81,131 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
               lastModified: Date.now(),
             });
 
-            console.log("Image File (Web):", maskFile);
+            console.log("📌 Mask File (Web):", maskFile);
             return { file: maskFile, uri: null };
           } else {
-            fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
-            await FileSystem.copyAsync({
-              from: asset.localUri || asset.uri,
-              to: fileUri,
+            await asset.downloadAsync();
+            if (!asset.localUri) {
+              throw new Error("Tải asset thất bại");
+            }
+
+            const fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
+            await FileSystem.copyAsync({ from: asset.localUri, to: fileUri });
+
+
+            const base64 = await FileSystem.readAsStringAsync(fileUri, {
+              encoding: FileSystem.EncodingType.Base64,
             });
 
-            console.log("File copied to:", fileUri);
-            return { file: null, uri: fileUri };
+
+            const finalFileUri = `${FileSystem.documentDirectory}face_oval_mask.png`;
+            await FileSystem.writeAsStringAsync(finalFileUri, base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            const maskFile = {
+              uri: finalFileUri,
+              name: "face_oval_mask.png",
+              type: "image/png",
+            };
+
+            return maskFile;
           }
         } catch (error) {
           console.error("Lỗi copy file:", error);
+          throw error;
         }
       };
 
-      const { file, uri } = await copyAssetToTemp();
+      const maskFile = await copyAssetToTemp();
 
-      if (file || uri) {
-        if (Platform.OS === "web") {
-          formData.append("Mask", file);
-        } else {
-          formData.append("Mask", {
-            uri: uri,
-            type: "image/png",
-            name: "face_oval_mask.png",
-          });
-        }
-      }
+      formData.append("Mask", {
+        uri: maskFile.uri,
+        name: maskFile.name, 
+        type: maskFile.type, 
+      });
 
-      let fileBlob;
-
+      let imageFile;
       if (Platform.OS === "web") {
         const response = await fetch(imageUri);
-        fileBlob = await response.blob();
-      } else {
-        const fileInfo = await FileSystem.getInfoAsync(imageUri);
-        if (!fileInfo.exists) {
-          throw new Error("File does not exist");
-        }
-
-        const fileBase64 = await FileSystem.readAsStringAsync(imageUri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        fileBlob = await fetch(`data:image/jpeg;base64,${fileBase64}`).then(
-          (res) => res.blob()
-        );
-      }
-
-      if (imageUri) {
-        const response = await fetch(imageUri);
         const blob = await response.blob();
-        const contentType = response.headers.get("Content-Type") || "image/png";
+        const contentType =
+          response.headers.get("Content-Type") || "image/jpeg";
         const extension = contentType.split("/")[1] || "jpg";
-        const filename = `${Date.now()}.${extension}`;
-        const imageFile = new File([blob], filename, {
+        const filename = `uploaded_${Date.now()}.${extension}`;
+        imageFile = new File([blob], filename, {
           type: contentType,
           lastModified: Date.now(),
         });
-
-        formData.append("Image", imageFile);
-        console.log("Image: ", imageFile);
+      } else {
+        imageFile = {
+          uri: correctedUri,
+          type: "image/jpeg",
+          name: `uploaded_${Date.now()}.jpg`,
+        };
       }
 
-      for (let [key, value] of formData.entries()) {
-        console.log(key, JSON.stringify(value));
-      }
+      formData.append("Image", imageFile);
+      formData.append("OutputFormat", "webp"); 
+
+      const getToken = async () => {
+        try {
+          if (Platform.OS === "web") {
+            return localStorage.getItem("token") || "";
+          } else {
+            return (await AsyncStorage.getItem("token")) || "";
+          }
+        } catch (error) {
+          console.error("Lỗi lấy token:", error);
+          return "";
+        }
+      };
+      const token = await getToken();
 
       const response = await fetch(
-        "http://192.168.126.183:5280/api/combined/generate-and-inpaint",
+        "http://192.168.11.183:5280/api/combined/generate-and-inpaint",
         {
           method: "POST",
           headers: {
-            Authorization: `sk-kyVgdjaxGbxuYT5mWVRpYnHvPP3kwvWXN9OXpVwdVbneOqSu`,
-            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }
       );
-
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
-        throw new Error("Failed to generate image");
-      }
-
-      const data = await response.json();
-      console.log("Data: ", data);
-      if (data && data.imageData) {
+        const errorText = await response.text(); 
+        throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+      } else {
+        const data = await response.json();
         setGeneratedImage(data.imageData);
         setGenerateStep(data.generatedPrompt);
-      } else {
-        throw new Error("Invalid response from server");
+        console.log("data.generatedPrompt: ", data.generatedPrompt)
       }
     } catch (error) {
-      setError(error.message);
-      console.error("Error generating image:", error);
+      console.error("⚠️ Error generating image:", error);
     }
     setLoading(false);
   };
+
   const handleConfirm = () => {
     setConfirmVisible(false);
     setModalVisible(false);
-    // Add logic to save the makeup style
   };
-
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollView}>
+      <TouchableOpacity onPress={() => router.push("/(root)/(tabs)/scan")}>
+        <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
+      </TouchableOpacity>
       <View style={styles.container}>
         <View style={styles.row}>
           <View style={styles.photoAndRequest}>
-            <Image source={{ uri: params.imageUri }} style={styles.image} />
+            <Image
+              source={{
+                uri: correctedUri,
+              }}
+              style={styles.image}
+            />
+
             <TextInput
               style={styles.input}
               value={
@@ -234,7 +225,7 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
           <View style={styles.row}>
             <View>
               <Image
-                source={require("../../assets/icons/chatbox.jpg")}
+                source={require("../../assets/images/beautysoftlogo.png")}
                 style={styles.chatboxavatar}
               />
             </View>
@@ -242,12 +233,6 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
               {generatedImage && (
                 <Image source={{ uri: generatedImage }} style={styles.image} />
               )}
-              <PaperProvider>
-                <ModelAddMakeupStyle
-                  generatedImage={generatedImage}
-                  generateStep={generateStep}
-                />
-              </PaperProvider>
               {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
               ) : error ? (
@@ -265,11 +250,43 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
           </View>
         </View>
       </View>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Input request"
+          value={imageDescription}
+          onChangeText={setImageDescription}
+        />
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/generate",
+              params: {
+                imageUri: imageUri,
+                request: imageDescription,
+              },
+            })
+          }
+        >
+          <AntDesign
+            name="upload"
+            size={24}
+            color="black"
+            style={styles.iconStyle}
+          />
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: "#fff",
+    paddingTop: 10,
+    paddingHorizontal: 8,
+  },
   container: {
     backgroundColor: "#fff",
     padding: 10,
@@ -311,5 +328,25 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginTop: 10,
+  },
+  inputContainer: {
+    position: "absolute",
+    bottom: -300, 
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: "white",
+    width: "100%",
+    paddingVertical: 10, 
+  },
+
+  iconStyle: {
+    marginLeft: 10, 
   },
 });

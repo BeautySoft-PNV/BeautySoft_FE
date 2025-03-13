@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , ScrollView} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,7 @@ const SignIn = ({ navigation }: any) => {
     const router = useRouter();
 
     const handleSignIn = async () => {
-        const API_URL = "http://192.168.48.183:5280/api/auth/login";
+        const API_URL = "http://192.168.11.183:5280/api/auth/login";
 
         try {
             const response = await fetch(API_URL, {

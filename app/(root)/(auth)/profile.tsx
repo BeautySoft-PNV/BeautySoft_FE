@@ -21,7 +21,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await fetch("http://192.168.48.183:5280/api/users/me", {
+                const response = await fetch("http://192.168.11.183:5280/api/users/me", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const Profile = () => {
                 await AsyncStorage.setItem('user', JSON.stringify(responseData));
                 setUser(responseData);
 
-                const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
+                const checkVip = await fetch("http://192.168.11.183:5280/api/managerstorage/check-user", {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const Profile = () => {
 
             if (token) {
                 // Gửi yêu cầu logout lên server
-                await fetch('http://192.168.48.183:5280/api/auth/logout', {
+                await fetch('http://192.168.11.183:5280/api/auth/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
