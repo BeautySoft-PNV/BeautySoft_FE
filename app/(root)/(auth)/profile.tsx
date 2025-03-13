@@ -67,7 +67,7 @@ const Profile = () => {
 
             if (token) {
                 // Gửi yêu cầu logout lên server
-                await fetch('http://192.168.48.183:5280/api/auth/logout', {
+                await fetch('http://192.168.11.183:5280/api/auth/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

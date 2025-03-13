@@ -179,6 +179,7 @@ export default function Generate() {
         const data = await response.json();
         setGeneratedImage(data.imageData);
         setGenerateStep(data.generatedPrompt);
+        console.log("data.generatedPrompt: ", data.generatedPrompt)
       }
     } catch (error) {
       console.error("⚠️ Error generating image:", error);

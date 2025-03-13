@@ -16,8 +16,6 @@ interface ModelAddMakeupStyleProps {
   generateStep: string | null;
 }
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNFS from "react-native-fs";
-import { router } from "expo-router";
 
 export default function ModelAddMakeupStyle({
   generatedImage,
@@ -27,6 +25,7 @@ export default function ModelAddMakeupStyle({
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [guidance, setGuidance] = useState(generateStep || "Step guidance");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const saveBase64AsFile = async (base64: string | null, filename: string) => {
     try {
@@ -60,8 +59,8 @@ export default function ModelAddMakeupStyle({
 
       const parseJwt = (token: string): { [key: string]: any } | null => {
         try {
-          const base64Url = token.split(".")[1]; 
-          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); 
+          const base64Url = token.split(".")[1];
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
           const jsonPayload = decodeURIComponent(
             atob(base64)
               .split("")
@@ -94,7 +93,7 @@ export default function ModelAddMakeupStyle({
 
       console.log("decodedToken: ", decodedToken);
       if (decodedToken && decodedToken.id) {
-        formData.append("userId", String(decodedToken.id)); 
+        formData.append("userId", String(decodedToken.id));
       } else {
         console.error("Không tìm thấy userId trong token!");
       }
@@ -112,12 +111,13 @@ export default function ModelAddMakeupStyle({
         }
       );
       if (!response.ok) {
-        const errorText = await response.text(); 
+        const errorText = await response.text();
         throw new Error(`HTTP Error ${response.status}: ${errorText}`);
       } else {
         console.log("add successfully!");
 
         setSuccessModalVisible(true);
+        setIsDisabled(true);
       }
     } catch (error) {
       console.error("Fetch Error:", error);
@@ -127,12 +127,12 @@ export default function ModelAddMakeupStyle({
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+      <View style={{ position: "absolute", top: 10, right: 0 }}>
         <AntDesign
           name="save"
-          style={styles.saveIcon}
+          style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]} 
           size={30}
-          onPress={() => setModalVisible(true)}
+          onPress={() => !isDisabled && setModalVisible(true)} 
         />
       </View>
 
@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
 
   modalContent: {
     width: 300,
+    height: 120,
     padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
@@ -216,10 +217,11 @@ const styles = StyleSheet.create({
 
   buttonConfirm: {
     backgroundColor: "#4CAF50",
-    padding: 10,
+    padding: 5,
     borderRadius: 5,
     flex: 1,
     alignItems: "center",
+    width: 100,
   },
 
   buttonCancel: {
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 
-  buttonText: { color: "white", fontWeight: "bold" },
+  buttonText: { fontSize: 16, color: "white", fontWeight: "bold" },
 
   saveIcon: {
     display: "flex",

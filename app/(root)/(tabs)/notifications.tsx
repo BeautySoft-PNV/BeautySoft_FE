@@ -18,7 +18,7 @@ const Notifications = () => {
                 return;
             }
 
-            const response = await fetch(`http://192.168.48.183:5280/api/notification/user/notification/${notificationId}`, {
+            const response = await fetch(`http://192.168.11.183:5280/api/notification/user/notification/${notificationId}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const Notifications = () => {
                 return;
             }
 
-            const response = await fetch("http://192.168.48.183:5280/api/notification/user/notification", {
+            const response = await fetch("http://192.168.11.183:5280/api/notification/user/notification", {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',

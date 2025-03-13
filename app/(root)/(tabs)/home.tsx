@@ -108,7 +108,7 @@ const Home = () => {
           setLoading(false);
           return;
         }
-        const response = await fetch("http://192.168.48.183:5280/api/MakeupStyles/user/me", {
+        const response = await fetch("http://192.168.11.183:5280/api/MakeupStyles/user/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -144,7 +144,7 @@ const Home = () => {
         if (!token) {
           return;
         }
-        const response = await fetch("http://192.168.48.183:5280/api/MakeupItems/user/me", {
+        const response = await fetch("http://192.168.11.183:5280/api/MakeupItems/user/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -245,7 +245,7 @@ const Home = () => {
                   </Text>
                 </View>
                 <View style={styles.imageContainer}>
-                  <Image source={{ uri: `http://192.168.48.183:5280${item.image}` }} style={styles.faceImage} />
+                  <Image source={{ uri: item.image }} style={styles.faceImage} />
                 </View>
               </View>
           ))}
@@ -254,7 +254,7 @@ const Home = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {items.map((item) => (
               <View key={item.id} style={styles.itemContainer}>
-                <Image source={{ uri: `http://192.168.48.183:5280${item.image}` }} style={styles.itemImage} />
+                <Image source={{ uri: `http://192.168.11.183:5280${item.image}` }} style={styles.itemImage} />
                 <Text style={styles.itemText}>{item.name}</Text>
               </View>
           ))}

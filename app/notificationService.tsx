@@ -6,14 +6,14 @@ const checkForNewNotifications = async () => {
         await AsyncStorage.setItem("notifications", JSON.stringify([]));
         console.log("Đã tạo notifications với mảng rỗng.");
     } else {
-        console.log("notifications đã tồn tại, không cần tạo mới.");
+        // console.log("notifications đã tồn tại, không cần tạo mới.");
     }
 
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
 
-        const response = await fetch("http://192.168.48.183:5280/api/notification/user/notification", {
+        const response = await fetch("http://192.168.11.183:5280/api/notification/user/notification", {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',

@@ -69,7 +69,7 @@ const UpgradeStorage = () => {
           return;
         }
 
-        const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
+        const checkVip = await fetch("http://192.168.11.183:5280/api/managerstorage/check-user", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ const UpgradeStorage = () => {
           Amount: typeStorage?.price,
           OrderDescription: 'Payment via vnpay',
           OrderType: 'other',
-          returnUrl:`http://192.168.48.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
+          returnUrl:`http://192.168.11.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
         }),
       });
 
