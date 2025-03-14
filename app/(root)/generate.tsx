@@ -238,6 +238,7 @@ export default function Generate() {
               ) : error ? (
                 <Text style={styles.errorText}>{error}</Text>
               ) : (
+                
                 <PaperProvider>
                   <ModelAddMakeupStyle
                     generatedImage={generatedImage}
@@ -245,6 +246,7 @@ export default function Generate() {
                   />
                 </PaperProvider>
               )}
+              
               <Text style={styles.steps}>{generateStep}</Text>
             </View>
           </View>
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   steps: {
-    marginTop: 10,
+    marginTop: 40,
   },
   errorText: {
     color: "red",
