@@ -57,7 +57,7 @@ export default function Generate() {
       : params.request;
     formData.append(
       "TextPrompt",
-      ` ${textPrompt} For a soft, natural Asian-style makeup look, start with a lightweight, hydrating foundation or BB cream for an even, dewy finish, setting lightly with translucent powder on the T-zone to control shine. Shape and fill your eyebrows with a soft brown or taupe shade, keeping them slightly straight or gently arched for a youthful effect. Apply soft neutral eyeshadows like champagne, peach, or light brown for a fresh, bright appearance, blending seamlessly. Use fine brown eyeliner along the upper lash line, subtly extending the outer corners, and finish with lengthening mascara or natural false lashes. Sweep a sheer pink or peach blush on the apples of your cheeks, blending outward for a healthy glow. For the lips, choose a soft coral, rosy pink, or MLBB shade, applying in a gradient for a fresh, youthful effect. Complete the look with a subtle highlight on the high points of your face and a dewy setting mist for a luminous, natural finish that enhances your beauty with elegance and minimalism..
+      ` ${textPrompt} For a soft, natural Asian-style makeup look, start with a lightweight, hydrating foundation or BB cream for an even, dewy finish, setting lightly with translucent powder on the T-zone to control shine. Shape and fill your eyebrows with a soft brown or taupe shade, keeping them slightly straight or gently arched for a youthful effect. Apply soft neutral eyeshadows like champagne, peach, or light brown for a fresh, bright appearance, blending seamlessly. Use fine brown eyeliner along the upper lash line, subtly extending the outer corners, and finish with lengthening mascara or natural false lashes. Sweep a sheer pink or peach blush on the apples of your cheeks, blending outward for a healthy glow. For the lips, choose a soft coral, rosy pink, or MLBB shade, applying in a gradient for a fresh, youthful effect. Complete the look with a subtle highlight on the high points of your face and a dewy setting mist for a luminous, natural finish that enhances your beauty with elegance and minimalism. Don't change my face
     );`
     );
 
@@ -238,6 +238,7 @@ export default function Generate() {
               ) : error ? (
                 <Text style={styles.errorText}>{error}</Text>
               ) : (
+                
                 <PaperProvider>
                   <ModelAddMakeupStyle
                     generatedImage={generatedImage}
@@ -245,6 +246,7 @@ export default function Generate() {
                   />
                 </PaperProvider>
               )}
+              
               <Text style={styles.steps}>{generateStep}</Text>
             </View>
           </View>
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   steps: {
-    marginTop: 10,
+    marginTop: 40,
   },
   errorText: {
     color: "red",

@@ -47,5 +47,5 @@ const checkForNewNotifications = async () => {
 
 export const startNotificationService = () => {
     checkForNewNotifications();
-    return setInterval(checkForNewNotifications, 1000);
+    return setInterval(checkForNewNotifications, 10000);
 };

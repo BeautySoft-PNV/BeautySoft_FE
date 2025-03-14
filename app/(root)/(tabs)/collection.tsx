@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome } from "@expo/vector-icons";
 
 interface MakeupStyle {
   id: string;
@@ -91,7 +92,10 @@ const Collection = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => router.push("/(root)/(tabs)/home")}>
+          <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
+        </TouchableOpacity>
         <Text style={styles.title}>Collection</Text>
       </View>
       <ScrollView
@@ -106,10 +110,7 @@ const Collection = () => {
                 style={styles.item}
                 onPress={() => handlePress(style)}
               >
-                <Image
-                  source={{ uri: style.image }}
-                  style={styles.image}
-                />
+                <Image source={{ uri: style.image }} style={styles.image} />
               </TouchableOpacity>
             ))
           ) : (
@@ -134,14 +135,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
   },
-  header: {
+  headerContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 40,
+  },
+  header: {
+    paddingVertical: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    fontFamily: "Playfair Display",
+    color: "#ED1E51",
+    fontFamily: "PlayfairDisplay-Bold",
+    marginRight: "30%",
   },
   verticalScroll: {
     backgroundColor: "#d8d8d870",
