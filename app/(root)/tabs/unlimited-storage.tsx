@@ -20,7 +20,7 @@ const UpgradeStorage = () => {
           return;
         }
 
-        const response = await fetch("http://192.168.11.183:5280/api/users/me", {
+        const response = await fetch("https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/users/me", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const UpgradeStorage = () => {
         await AsyncStorage.setItem('user', JSON.stringify(responseData));
         setUser(responseData);
 
-        const responseTypeStorage = await fetch("http://192.168.11.183:5280/api/TypeStorage/1", {
+        const responseTypeStorage = await fetch("https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/TypeStorage/1", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const UpgradeStorage = () => {
           return;
         }
 
-        const checkVip = await fetch("http://192.168.11.183:5280/api/managerstorage/check-user", {
+        const checkVip = await fetch("https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/managerstorage/check-user", {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const UpgradeStorage = () => {
 
   const handlePayment = async () => {
     try {
-      const response = await fetch('http://192.168.11.183:5280/api/payment', {
+      const response = await fetch('https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -107,7 +107,7 @@ const UpgradeStorage = () => {
           Amount: typeStorage?.price,
           OrderDescription: 'Payment via vnpay',
           OrderType: 'other',
-          returnUrl:`http://192.168.11.183:5280/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
+          returnUrl:`https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/payment/confirm?userId=${user?.id}&typeStorageId=${typeStorage?.id}`,
         }),
       });
 

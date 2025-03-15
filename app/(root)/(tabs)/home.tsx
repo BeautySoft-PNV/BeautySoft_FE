@@ -59,7 +59,7 @@ const Home = () => {
         }
 
         const response = await fetch(
-          "http://192.168.11.183:5280/api/users/me",
+          "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/users/me",
           {
             method: "GET",
             headers: {
@@ -74,7 +74,7 @@ const Home = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.11.183:5280/api/managerstorage/check-user",
+          "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -127,7 +127,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.11.183:5280/api/MakeupStyles/user/me",
+          "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -164,7 +164,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.11.183:5280/api/MakeupItems/user/me",
+          "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -305,7 +305,7 @@ const Home = () => {
           {items.map((item) => (
             <View key={item.id} style={styles.itemContainer}>
               <Image
-                source={{ uri: `http://192.168.11.183:5280${item.image}` }}
+                source={{ uri: `https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app${item.image}` }}
                 style={styles.itemImage}
               />
               <Text style={styles.itemText}>{item.name}</Text>

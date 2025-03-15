@@ -13,7 +13,7 @@ const SignIn = ({ navigation }: any) => {
     const router = useRouter();
 
     const handleSignIn = async () => {
-        const API_URL = "http://192.168.11.183:5280/api/auth/login";
+        const API_URL = "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/auth/login";
 
         try {
             const response = await fetch(API_URL, {

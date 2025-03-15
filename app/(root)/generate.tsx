@@ -163,7 +163,7 @@ export default function Generate() {
       const token = await getToken();
 
       const response = await fetch(
-        "http://192.168.11.183:5280/api/combined/generate-and-inpaint",
+        "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/combined/generate-and-inpaint",
         {
           method: "POST",
           headers: {

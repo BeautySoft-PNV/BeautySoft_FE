@@ -45,7 +45,7 @@ const ForgotPasswordScreen = () => {
         }
 
         try {
-            const response = await fetch("http://192.168.11.183:5280/api/account/forgot-password", {
+            const response = await fetch("https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/account/forgot-password", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

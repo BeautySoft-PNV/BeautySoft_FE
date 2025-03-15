@@ -53,7 +53,7 @@ const CollectionDetails = () => {
         
 
         const response = await fetch(
-          `http://192.168.11.183:5280/api/MakeupStyles/${id}`,
+          `https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/MakeupStyles/${id}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -93,7 +93,7 @@ const CollectionDetails = () => {
       const token = await getToken();
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
-        `http://192.168.11.183:5280/api/MakeupStyles/${id}`,
+        `https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/MakeupStyles/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

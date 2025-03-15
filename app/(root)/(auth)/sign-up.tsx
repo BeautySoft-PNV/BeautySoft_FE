@@ -26,7 +26,7 @@ const SignUp = () => {
     const router = useRouter();
 
     const handleSignUp = async () => {
-        const API_URL = 'http://192.168.11.183:5280/api/auth/register';
+        const API_URL = 'https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/auth/register';
 
         try {
             const newErrors: { [key: string]: string } = {};

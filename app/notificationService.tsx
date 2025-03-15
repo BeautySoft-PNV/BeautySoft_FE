@@ -13,7 +13,7 @@ const checkForNewNotifications = async () => {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
 
-        const response = await fetch("http://192.168.11.183:5280/api/notification/user/notification", {
+        const response = await fetch("https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/notification/user/notification", {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',

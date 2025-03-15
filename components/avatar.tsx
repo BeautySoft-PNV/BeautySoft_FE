@@ -19,7 +19,7 @@ export default function Avatar() {
         }
 
         const response = await fetch(
-          "http://192.168.11.183:5280/api/users/me",
+          "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/users/me",
           {
             method: "GET",
             headers: {
@@ -35,7 +35,7 @@ export default function Avatar() {
         console.log(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.11.183:5280/api/managerstorage/check-user",
+          "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -69,7 +69,7 @@ export default function Avatar() {
             <Image
               source={{
                 uri: user?.avatar
-                  ? "http://192.168.11.183:5280" + user.avatar
+                  ? "https://a6e2-2401-d800-d560-aa0b-8b3-2fd3-dc84-915c.ngrok-free.app" + user.avatar
                   : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
               }}
                 style={styles.avatar}
