@@ -1,45 +1,88 @@
-import React, {useEffect, useState} from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  Animated,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {FontAwesome5} from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import moment from "moment";
+
+const { width } = Dimensions.get("window");
+
+const images = [
+  require("@/assets/images/banner1.jpg"),
+  require("@/assets/images/banner2.jpg"),
+  require("@/assets/images/banner3.jpg"),
+];
+
+
+interface MakeupStyle {
+  id: string;
+  name: string;
+  description: string;
+  time: string;
+  steps: string[];
+  image: string;
+}
 
 const Home = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [vip, setVip] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const currentIndex = useRef(0);
+  const [makeupStyles, setMakeupStyles] = useState<
+    Array<{ id: number; image: string; guidance: string; date: string }>
+  >([]);
+  const [items, setItems] = useState<
+    Array<{ id: number; image: string; name: string }>
+  >([]);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
     const fetchUserProfileHome = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await AsyncStorage.getItem("token");
         if (!token) {
           console.error("No token found!");
           setLoading(false);
           return;
         }
 
-        const response = await fetch("http://192.168.48.183:5280/api/users/me", {
-          method: "GET",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        const response = await fetch(
+          "http:// 192.168.236.183:5280/api/users/me",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
         const responseData = await response.json();
-        await AsyncStorage.setItem('user', JSON.stringify(responseData));
+        await AsyncStorage.setItem("user", JSON.stringify(responseData));
         setUser(responseData);
-        console.log(responseData);
 
-        const checkVip = await fetch("http://192.168.48.183:5280/api/managerstorage/check-user", {
-          method: "GET",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        const checkVip = await fetch(
+          "http:// 192.168.236.183:5280/api/managerstorage/check-user",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         if (!checkVip.ok) {
           throw new Error("Lỗi khi gọi API");
         }
@@ -59,151 +102,334 @@ const Home = () => {
 
     fetchUserProfileHome();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollViewRef.current) {
+        currentIndex.current = (currentIndex.current + 1) % images.length;
+        scrollViewRef.current.scrollTo({
+          x: currentIndex.current * width,
+          animated: true,
+        });
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchMakeupStyles = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (!token) {
+          console.error("No token found!");
+          setLoading(false);
+          return;
+        }
+        const response = await fetch(
+          "http:// 192.168.236.183:5280/api/MakeupStyles/user/me",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 404) {
+          console.warn("No makeup styles found (404)");
+          setMakeupStyles([]);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setMakeupStyles(data);
+      } catch (error) {
+        console.error("Error fetching makeup styles:", error);
+      }
+    };
+
+    fetchMakeupStyles();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (!token) {
+          return;
+        }
+        const response = await fetch(
+          "http:// 192.168.236.183:5280/api/MakeupItems/user/me",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.status === 404) {
+          console.warn("No makeup styles found (404)");
+          setMakeupStyles([]);
+          return;
+        }
+
+        const data = await response.json();
+        setItems(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 0.3,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
+  const handlePress = (style: MakeupStyle) => {
+    router.push({
+      pathname: "/tabs/collection-details",
+      params: { id: style.id },
+    });
+  };
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.avatarContainer}>
-            <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
+            <TouchableOpacity
+              onPress={() => router.push("/(root)/(auth)/profile")}
+            >
               <Image
-                  source={{ uri: user?.avatar
-                        ? "http://192.168.48.183:5280" + user.avatar
-                        : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg" }}
-                  style={styles.avatar}
+                source={{
+                  uri: user?.avatar
+                    ? user.avatar
+                    : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
+                }}
+                style={styles.avatar}
               />
             </TouchableOpacity>
             {vip && (
-                <FontAwesome5 name="crown" size={20} color="gold" style={styles.crownIcon} />
+              <FontAwesome5
+                name="crown"
+                size={14}
+                color="gold"
+                style={styles.crownIcon}
+              />
             )}
           </View>
         </ScrollView>
-        <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} style={styles.carouselContainer}>
-          {[
-            require("@/assets/images/banner1.jpg"),
-            require("@/assets/images/banner2.jpg"),
-            require("@/assets/images/banner3.jpg"),
-          ].map((image, index) => (
-            <View key={index} style={styles.bannerWrapper}>
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          style={styles.carouselContainer}
+        >
+          {images.map((image, index) => (
+            <View key={index} style={[styles.bannerWrapper, { width }]}>
               <Image source={image} style={styles.bannerImage} />
-              <Text style={styles.newOfferText}>New Offers</Text>
             </View>
           ))}
         </ScrollView>
 
         <View style={styles.scanContainer}>
-          <Image 
-            source={{ uri: "https://veridas.com/wp-content/uploads/2025/01/Captura-de-pantalla-2025-01-14-a-las-10.47.58.png.webp" }} 
-            style={styles.scanImage} 
+          <Image
+            source={{
+              uri: "https://veridas.com/wp-content/uploads/2025/01/Captura-de-pantalla-2025-01-14-a-las-10.47.58.png.webp",
+            }}
+            style={styles.scanImage}
           />
-          <TouchableOpacity 
-            style={styles.scanButton} 
-            onPress={() => router.push('/scan')}
-          >
-            <Text style={styles.scanButtonText}>Take photo</Text>
-          </TouchableOpacity>
+          <Animated.View style={[styles.scanButton, { opacity: fadeAnim }]}>
+            <TouchableOpacity onPress={() => router.push("/scan")}>
+              <Text style={styles.scanButtonText}>TAKE PHOTO</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
         <Text style={styles.sectionTitle1}>Face Shape Styles</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-          {[
-            { id: 1, text: "Style make up for diamond face shape", image: require("@/assets/images/faceShape.png") },
-            { id: 2, text: "Style make up for round face shape", image: require("@/assets/images/faceShape2.png") },
-            { id: 3, text: "Style make up for rectangle face shape", image: require("@/assets/images/faceShape3.png") },
-          ].map((item) => (
-            <View key={item.id} style={styles.cardContainer}>
-              <View style={styles.textContainer}>
-                <Text style={styles.faceText}>{item.text}</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.horizontalScroll}
+        >
+          {makeupStyles.map((item) => (
+            <TouchableOpacity onPress={() => handlePress(item)}>
+              <View key={item.id} style={styles.cardContainer}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.faceText}>
+                    {/* {item.date.replace("T", "\n")} */}
+                      {moment(item.date).format("DD/MM/YYYY hh:mm A")}
+                  </Text>
+                </View>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.faceImage}
+                  />
+                </View>
               </View>
-              <View style={styles.imageContainer}>
-                <Image source={item.image} style={styles.faceImage} />
-              </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
         <Text style={styles.sectionTitle2}>Favorite Makeup Item Storage</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-          {[
-            { id: 1, text: "Douyin style", image: require("@/assets/images/favoriteItem1.png") },
-            { id: 2, text: "Eye shadow", image: require("@/assets/images/favoriteItem2.png") },
-            { id: 3, text: "Makeup brush", image: require("@/assets/images/favoriteItem3.png") },
-          ].map((item) => (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.horizontalScroll}
+        >
+          {items.map((item) => (
             <View key={item.id} style={styles.itemContainer}>
-              <Image source={item.image} style={styles.itemImage} />
-              <Text style={styles.itemText}>{item.text}</Text>
+              <Image
+                source={{ uri: `http:// 192.168.236.183:5280${item.image}` }}
+                style={styles.itemImage}
+              />
+              <Text style={styles.itemText}>{item.name}</Text>
             </View>
           ))}
         </ScrollView>
-
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-
 const styles = StyleSheet.create({
-  safeContainer: { flex: 1, backgroundColor: "#F3F4F6" },
-  scrollContainer: { paddingHorizontal: 16, paddingBottom: 20 },
-  headerContainer: { flexDirection: "row", justifyContent: "flex-end", alignItems: "center", marginVertical: 10 },
-  avatar: { width: 50, height: 50, borderRadius: 25 , marginBottom: 20, marginTop:5},
+  safeContainer: { flex: 1, backgroundColor: "#F3F4F6", width: "100%" },
+  scrollContainer: { paddingHorizontal: 16, paddingBottom: 20, width: "100%" },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginBottom: 20,
+    marginTop: 5,
+  },
   bannerWrapper: {
     position: "relative",
   },
-  scroll:{
-    display:"flex",
-    alignItems:"flex-end",
+  bellContainer: {
+    position: "relative",
+    width: 50,
+    height: 40,
+  },
+  bellIcon: {
+    position: "absolute",
+    zIndex: 1,
+    top: 1,
+  },
+  scroll: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingVertical: 10,
   },
   newOfferText: {
     position: "absolute",
     right: 15,
     color: "#DC4775",
     fontSize: 22,
-    marginTop:6, 
+    marginTop: 6,
     fontFamily: "PlayfairDisplay-Medium",
     fontWeight: "bold",
   },
   avatarContainer: {
     position: "relative",
-    right: 0,
+    right: 10,
   },
-  carouselContainer: { height: 200, borderRadius: 10, overflow: "hidden", marginBottom: 16 },
-  bannerImage: { width: 300, height: 160, resizeMode: "cover", marginRight: 10, borderRadius: 15 },
-  scanContainer: { position: "relative", marginTop: 5, backgroundColor: "#F4F0EF"},
-  scanImage: { width: "100%", height: 260, borderRadius: 10,},
+  carouselContainer: {
+    height: 200,
+    borderRadius: 10,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  bannerImage: {
+    width: "91%",
+    height: 160,
+    resizeMode: "cover",
+    marginRight: 10,
+    borderRadius: 15,
+  },
+  scanContainer: {
+    position: "relative",
+    marginTop: 0,
+    backgroundColor: "#F4F0EF",
+    width: "100%",
+    borderRadius: 10,
+  },
+  scanImage: { width: "100%", height: 260, borderRadius: 10, marginLeft: 8 },
   scanButton: {
     position: "absolute",
-    bottom: 40,
+    bottom: 30,
     alignSelf: "center",
-    width:130,
+    width: 140,
     height: 48,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    backgroundColor: "#F4F0EF",
+    backgroundColor: "#ED1E51",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5, 
+    elevation: 5,
     fontFamily: "PlayfairDisplay-Bold",
   },
-  scanButtonText: { color: "black", fontSize: 16, fontWeight: "bold", fontFamily: "PlayfairDisplay-Medium"},
+  scanButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
+    textAlign: "center",
+    textAlignVertical: "center", 
+    height: 30, 
+  },
   sectionTitle1: {
     fontSize: 18,
     marginTop: 16,
-    marginBottom:22,
+    marginBottom: 22,
     fontFamily: "PlayfairDisplay-Bold",
   },
   sectionTitle2: {
     fontSize: 18,
     marginTop: 16,
-    marginBottom:22,
+    marginBottom: 22,
     fontFamily: "PlayfairDisplay-Bold",
   },
-    crownIcon: {
-      position: "absolute",
-      top: 3,
-      left: -10,
-      transform: [{ rotate: "-50deg" }],
-    },
+  crownIcon: {
+    position: "absolute",
+    top: 3,
+    right: -7,
+    transform: [{ rotate: "50deg" }],
+  },
   horizontalScroll: {
     flexDirection: "row",
     marginBottom: 16,
@@ -220,9 +446,9 @@ const styles = StyleSheet.create({
     height: 120,
   },
   textContainer: {
-    flex:1,
+    flex: 1,
     paddingRight: 1,
-    width:"100%",
+    width: "100%",
     fontFamily: "PlayfairDisplay-Medium",
   },
   imageContainer: {
@@ -230,20 +456,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   faceImage: {
-    width: 70,
-    height: 90,
-    borderRadius: 40
+    width: 100,
+    height: 100,
+    borderRadius: 10,
   },
   faceText: {
     fontSize: 14,
     fontWeight: "500",
     color: "#333",
     textAlign: "center",
-    fontFamily: "PlayfairDisplay-Medium"
+    fontFamily: "PlayfairDisplay-Medium",
   },
   itemContainer: { alignItems: "center", marginRight: 16, width: 120 },
   itemImage: { width: 100, height: 100, borderRadius: 10 },
-  itemText: { marginTop: 8, textAlign: "center", fontSize: 14, fontWeight: "500", marginBottom: 70, fontFamily: "PlayfairDisplay-Medium" },
+  itemText: {
+    marginTop: 8,
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 70,
+    fontFamily: "PlayfairDisplay-Medium",
+  },
+  mainButton: {
+    backgroundColor: "#ED1E51",
+  },
 });
 
 

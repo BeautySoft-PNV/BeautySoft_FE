@@ -70,7 +70,8 @@
             "./assets/fonts/PlayfairDisplay-Regular.ttf"
           ]
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

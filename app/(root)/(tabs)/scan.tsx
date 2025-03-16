@@ -51,9 +51,6 @@ export default function Scan() {
         setCapturedImage(null);
         setImageDescription("");
     }
-
-
-    console.log("capturedImage: ", capturedImage)
     return (
         <View style={styles.container}>
             {!capturedImage ? (
