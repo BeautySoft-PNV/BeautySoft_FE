@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   Button,
   StyleSheet,
@@ -10,14 +10,23 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import { router } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
 
-export default function AddMakeupItem() {
+
+export default function AddMakeupItem(){
   const [facing, setFacing] = useState<"front" | "back">("back");
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
+  
+  const [name, setName] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [description, setDescription] = useState("");
+  const [guidance, setGuidance] = useState("");
+  const [manufactureDate, setManufactureDate] = useState(null);
+  const [expirationDate, setExpirationDate] = useState(null);
+  const [showManufacturePicker, setShowManufacturePicker] = useState(false);
+  const [showExpirationPicker, setShowExpirationPicker] = useState(false);
+  
   const [imageDescription, setImageDescription] = useState<string>("");
 
   if (!permission) return <View />;
@@ -70,48 +79,85 @@ export default function AddMakeupItem() {
             </View>
           </>
         ) : (
-          <View style={styles.previewContainer}>
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: capturedImage }} style={styles.preview} />
-              <TouchableOpacity
-                style={styles.retakeButton}
-                onPress={retakePicture}
-              >
-                <Text style={styles.text}>🔄 ReTake</Text>
-              </TouchableOpacity>
-            </View>
+            <View style={styles.previewContainer}>
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: capturedImage }} style={styles.preview} />
+                <TouchableOpacity
+                    style={styles.retakeButton}
+                    onPress={retakePicture}
+                >
+                  <Text style={styles.text}>🔄 ReTake</Text>
+                </TouchableOpacity>
+              </View>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Input request"
-                value={imageDescription}
-                onChangeText={setImageDescription}
-              />
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "/generate",
-                    params: {
-                      imageUri: capturedImage,
-                      request: imageDescription,
-                    },
-                  })
-                }
-              >
-                <AntDesign
-                  name="upload"
-                  size={24}
-                  color="black"
-                  style={styles.iconStyle}
+              <View style={styles.inputContainer}>
+                <Text style={styles.title}>Name <Text style ={styles.noticed}>*</Text></Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Lips..."
+                    placeholderTextColor="#C4C4C4"
+                    autoCapitalize="none"
+                    value={name}
+                    onChangeText={(text) => {
+                      setName(text);
+                      setErrors((prev) => ({ ...prev, name: '' }));
+                    }}
                 />
-              </TouchableOpacity>
+                {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
+
+                <Text style={styles.title}>Description</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Description..."
+                    placeholderTextColor="#C4C4C4"
+                    autoCapitalize="none"
+                    value={description}
+                    onChangeText={(text) => {
+                      setDescription(text);
+                      setErrors((prev) => ({ ...prev, description: '' }));
+                    }}
+                />
+                {errors.description ? <Text style={styles.errorText}>{errors.description}</Text> : null}
+
+                <Text style={styles.title}>Guidance</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Guidance..."
+                    placeholderTextColor="#C4C4C4"
+                    autoCapitalize="none"
+                    value={guidance}
+                    onChangeText={(text) => {
+                      setGuidance(text);
+                      setErrors((prev) => ({ ...prev, guidance: '' }));
+                    }}
+                />
+                {errors.guidance ? <Text style={styles.errorText}>{errors.guidance}</Text> : null}
+
+              </View>
             </View>
-          </View>
         )}
       </View>
   );
 }
+
+const pickerSelectStyles = {
+  inputIOS: {
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#C4C4C4",
+    borderRadius: 4,
+    color: "black",
+  },
+  inputAndroid: {
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#C4C4C4",
+    borderRadius: 4,
+    color: "black",
+  },
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -166,26 +212,21 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   inputContainer: {
-    flex: 0.2,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: "white",
-    width: "100%",
-    marginBottom: 65,
+    flex: 1,
+    padding: 20,
+    backgroundColor: 'white',
   },
   input: {
-    flex: 1,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    width: '100%',
     padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
     borderRadius: 5,
-    backgroundColor: "white",
+    marginBottom: 10,
+    backgroundColor: 'white',
+    fontFamily: 'PlayfairDisplay-Bold',
+    fontSize: 18,
+    color: 'black',
   },
   uploadImage: {
     marginLeft: 20,
@@ -203,4 +244,21 @@ const styles = StyleSheet.create({
   iconStyle: {
     marginLeft: 10, // Khoảng cách bên trái
   },
-});
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: 'black',
+    marginBottom: 5,
+    alignSelf: 'flex-start',
+  },
+  noticed: {
+    color: "red"
+  },
+})

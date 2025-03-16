@@ -178,7 +178,7 @@ const MakeupItem = () => {
           <Text style={styles.title}>Item storage</Text>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.push(`/add-makeup-item`)}
+            onPress={() => router.push("add-makeup-item")}
           >
             <Text style={styles.text}>
               ADD <AntDesign name="plus" size={20} />

@@ -172,7 +172,7 @@ Create a gentle and refined Asian-inspired makeup look that captures elegance an
       const token = await getToken();
 
       const response = await fetch(
-        "http:// 192.168.236.183:5280/api/combined/generate-and-inpaint",
+        "http://192.168.148.183:5280/api/combined/generate-and-inpaint",
         {
           method: "POST",
           headers: {
