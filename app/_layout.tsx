@@ -31,8 +31,8 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   useEffect(() => {
-    const intervalId = startNotificationService(); // Bắt đầu kiểm tra thông báo
-    return () => clearInterval(intervalId); // Dừng khi component unmount
+    const intervalId = startNotificationService();
+    return () => clearInterval(intervalId);
   }, []);
 
   if (!fontsLoaded) {
