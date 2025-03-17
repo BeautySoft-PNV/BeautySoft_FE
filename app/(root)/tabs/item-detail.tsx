@@ -6,16 +6,28 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Platform
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { MD2Colors, TextInput } from "react-native-paper";
+import { FontAwesome } from "@expo/vector-icons";
+import moment from "moment";
 
-const whiteColor = MD2Colors.white;
+interface ItemData {
+  id: string,
+  name: string, 
+  description: string,
+  guidance: string,
+  image: string,
+  dateOfManuaFacture: string,
+  expirationDate: string
+}
 
-const Home = () => {
+const ItemDetail = () => {
+  const { id } = useLocalSearchParams();
+  const [itemData, setItemData] = useState <ItemData | null> (null);
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +87,53 @@ const Home = () => {
 
     fetchUserProfileHome();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!id) return;
+      const getToken = async () => {
+          try {
+            if (Platform.OS === "web") {
+              return localStorage.getItem("token") || "";
+            } else {
+              return (await AsyncStorage.getItem("token")) || "";
+            }
+          } catch (error) {
+            console.error("Lỗi lấy token:", error);
+            return "";
+          }
+        };
+        const token = await getToken();
+        if (!token) throw new Error("No authentication token found");
+
+      try {
+        
+
+        const response = await fetch(
+          `http://192.168.11.183:5280/api/MakeupItems/${id}`,
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const data = await response.json();
+        setItemData(data);
+        console.log("data: ", data)
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
@@ -108,13 +167,13 @@ const Home = () => {
 
       <ScrollView>
         <View style={styles.containerItemDetail}>
-          <TouchableOpacity>
-            <Image
-              style={styles.imageItem}
-              source={require("../../../assets/images/makeupItem8.png")}
-            />
-            <Text style={styles.textItem}>Background A12</Text>
-          </TouchableOpacity>
+        <Text style={styles.title}>{itemData?.name}</Text>
+        <View style={styles.timeContainer}>
+          <FontAwesome name="calendar" size={14} color="black" />
+          <Text style={styles.time}>
+            {moment(itemData?.expirationDate).format("DD/MM/YYYY hh:mm A")}
+          </Text>
+        </View> 
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -179,6 +238,16 @@ const styles = StyleSheet.create({
   textItem: {
     marginTop: 10,
   },
+  timeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  time: {
+    color: "black",
+    fontFamily: "PlayfairDisplay-Medium",
+    fontWeight: "bold",
+  },
 });
 
-export default Home;
+export default ItemDetail;
