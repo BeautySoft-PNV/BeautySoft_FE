@@ -30,9 +30,7 @@ const ItemDetail = () => {
   const { id } = useLocalSearchParams();
   const [itemData, setItemData] = useState<ItemData | null>(null);
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [vip, setVip] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -139,7 +137,7 @@ const ItemDetail = () => {
             style={styles.image}
           />
           <View style={styles.itemContainer}>
-            <Text style={styles.title}>Item: {itemData?.name}</Text>
+            <Text style={styles.title}>Name: {itemData?.name}</Text>
             <View style={styles.timeContainer}>
               <FontAwesome name="calendar" size={14} color="black" />
               <Text style={styles.time}>
@@ -157,13 +155,13 @@ const ItemDetail = () => {
               </Text>
             </View>
 
-            <Text>
-              <Text style={{ fontWeight: "bold" }}>Description: </Text>
+            <Text style={{ fontWeight: "bold", marginTop:10}}>
+              <Text>Description: </Text>
               {itemData?.description}
             </Text>
 
-            <Text>
-              <Text style={{ fontWeight: "bold" }}>Guidance: </Text>
+            <Text style={{ fontWeight: "bold", marginTop:10}}>
+              <Text>Guidance: </Text>
               {itemData?.guidance}
             </Text>
           </View>
@@ -251,7 +249,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 150,
+    height: 200,
     borderRadius: 8,
   },
   avatar: {
@@ -265,8 +263,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "black",
-    justifyContent: "center", // Đẩy hai phần tử ra hai đầu
-    alignItems: "center", // Căn giữa theo trục dọc
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   container: {
@@ -367,7 +365,7 @@ const styles = StyleSheet.create({
     fontFamily: "PlayfairDisplay-Medium",
   },
   button: {
-    padding: 12,
+    padding: 10,
     backgroundColor: "#ED1E51",
     borderRadius: 5,
     width: 80,

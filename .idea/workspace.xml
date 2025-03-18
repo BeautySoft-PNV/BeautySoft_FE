@@ -6,21 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="0aa7f4e7-d833-403f-a3c1-b244346aba09" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/forgot-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/forgot-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/collection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/collection.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/home.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/makeup-item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/makeup-item.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/add-makeup-item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/add-makeup-item.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/generate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/generate.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/tabs/edit-item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/tabs/edit-item.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(root)/tabs/item-detail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/tabs/item-detail.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/notificationService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/notificationService.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,6 +142,7 @@
       <workItem from="1742137500302" duration="1054000" />
       <workItem from="1742141099859" duration="2001000" />
       <workItem from="1742172449772" duration="1325000" />
+      <workItem from="1742287743906" duration="1802000" />
     </task>
     <servers />
   </component>
@@ -173,8 +170,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/(root)/tabs/edit-item.tsx</url>
-          <line>213</line>
-          <properties lambdaOrdinal="-1" />
+          <line>245</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>

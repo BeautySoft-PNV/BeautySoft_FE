@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         width: '100%',
+        fontFamily: "PlayfairDisplay-Bold",
     },
     container: {
         flex: 1,
@@ -136,7 +137,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         padding: 8,
         marginTop: 20,
-        backgroundColor: "#B3B3B3"
     },
     headerContainer: {
         flexDirection: "row",

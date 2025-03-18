@@ -116,9 +116,6 @@ const MakeupItem = () => {
               value={searchQuery}
               onChangeText={setSearchQuery}
           />
-          <TouchableOpacity>
-            <AntDesign name="search1" size={24} color={whiteColor} />
-          </TouchableOpacity>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.verticalScroll}>
@@ -131,7 +128,7 @@ const MakeupItem = () => {
                       onPress={() => handlePress(makeupItem)}
                   >
                     <Image source={{ uri: makeupItem.image }} style={styles.image} />
-                    <Text style={styles.title}>{makeupItem?.name}</Text>
+                    <Text style={styles.name}>{makeupItem?.name}</Text>
                   </TouchableOpacity>
               ))
           ) : (
@@ -144,7 +141,7 @@ const MakeupItem = () => {
 };
 
 const styles = StyleSheet.create({
-  safeContainer: { flex: 1, backgroundColor: "#F3F4F6" },
+  safeContainer: { flex: 1, backgroundColor: "#F3F4F6",  fontFamily: "PlayfairDisplay-Bold", },
   scrollContainer: { paddingHorizontal: 16, paddingBottom: 20 },
   headerContainer: {
     flexDirection: "row",
@@ -170,16 +167,23 @@ const styles = StyleSheet.create({
     color: "white",
   },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
     color: "black",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
+  name: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "black",
+    fontFamily: "PlayfairDisplay-Bold",
   },
   scroll: {
     display: "flex",
     alignItems: "flex-end",
   },
   buttonField: {
-    paddingHorizontal: 16, // Thêm khoảng cách 16px ở 2 bên trái/phải
+    paddingHorizontal: 16,
     paddingBottom: 20,
   },
   scrollItem: {
@@ -187,10 +191,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   container: {
-    flexDirection: "row", // Căn theo chiều ngang
-    justifyContent: "space-between", // Đẩy hai phần tử ra hai đầu
-    alignItems: "center", // Căn giữa theo trục dọc
-    paddingHorizontal: 1, // Khoảng cách hai bên
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 1,
     marginTop: 20,
   },
   inputField: {
@@ -253,8 +257,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   image: {
-    width: "100%",
-    height: 150,
+    width: "80%",
+    height: 120,
     borderRadius: 8,
   },
   noDataText: {

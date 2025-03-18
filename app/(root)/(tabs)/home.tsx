@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import moment from "moment";
+import { Alert, BackHandler } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -31,6 +32,8 @@ interface MakeupStyle {
   time: string;
   steps: string[];
   image: string;
+  date: string;
+  guidance: string;
 }
 
 type MakeupItem = {
@@ -48,16 +51,49 @@ const Home = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [vip, setVip] = useState(true);
+  const [vip, setVip] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const currentIndex = useRef(0);
-  const [makeupStyles, setMakeupStyles] = useState<
-    Array<{ id: number; image: string; guidance: string; date: string }>
-  >([]);
+  const [makeupStyles, setMakeupStyles] = useState<MakeupStyle[]>([]);
   const [items, setItems] = useState<
     Array<{ id: number; image: string; name: string }>
   >([]);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Confirm", "Are you sure you want to leave?", [
+        { text: "Stay", style: "cancel" },
+        { text: "Leave", onPress: handleLogout },
+      ]);
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () => BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      if (token) {
+        await fetch("http://192.168.31.183:5280/api/auth/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+
+      await AsyncStorage.removeItem("token");
+      router.push("/(root)/(auth)/sign-in");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchUserProfileHome = async () => {
@@ -320,17 +356,15 @@ const Home = () => {
           style={styles.horizontalScroll}
         >
           {items.map((item) => (
-            <TouchableOpacity
-            onPress={() => handlePressItem(item)}
-            >
-              <View key={item.id} style={styles.itemContainer}>
-              <Image
-                source={{ uri: item.image }}
-                style={styles.itemImage}
-              />
-              <Text style={styles.itemText}>{item.name}</Text>
-            </View>
-            </TouchableOpacity>
+              <TouchableOpacity
+                  key={item.id} // Đặt key ở đây
+                  onPress={() => handlePressItem(item)}
+              >
+                <View style={styles.itemContainer}>
+                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Text style={styles.itemText}>{item.name}</Text>
+                </View>
+              </TouchableOpacity>
           ))}
         </ScrollView>
       </ScrollView>

@@ -31,6 +31,8 @@ export default function AddMakeupItem() {
   const inputRef = useRef(null);
   const [error, setError] = useState("");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [manufactureDateError, setManufactureDateError] = useState("");
+  const [expirationDateError, setExpirationDateError] = useState("");
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -84,6 +86,7 @@ export default function AddMakeupItem() {
     return "";
   };
 
+
   const handleManufactureDateChange = (text: string) => {
     let cleanedText = text.replace(/[^0-9\/: ]/g, "");
     let formatted = cleanedText.length >= manufactureDate.length
@@ -91,7 +94,7 @@ export default function AddMakeupItem() {
         : cleanedText;
     if (formatted !== manufactureDate) {
       setManufactureDate(formatted);
-      setError(validateDateTime(formatted));
+      setManufactureDateError(validateDateTime(text));
     }
   };
   const handleExpirationDateChange = (text: string) => {
@@ -101,11 +104,43 @@ export default function AddMakeupItem() {
         : cleanedText;
     if (formatted !== expirationDate) {
       setExpirationDate(formatted);
-      setError(validateDateTime(formatted));
+      setExpirationDateError(validateDateTime(text));
     }
   };
 
   const handleAddMakeupItem = async () => {
+    type ErrorType = {
+      name?: string;
+      manufactureDate?: string;
+      expirationDate?: string;
+      description?: string;
+      guidance?: string;
+    };
+
+    let newErrors: ErrorType = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required!";
+    }
+    if (!manufactureDate.trim()) {
+      newErrors.manufactureDate = "Manufacture date is required!";
+    }
+    if (!expirationDate.trim()) {
+      newErrors.expirationDate = "Expiration date is required!";
+    } else if (new Date(expirationDate) < new Date(manufactureDate)) {
+      newErrors.expirationDate = "Expiration date must be after manufacture date!";
+    }
+    if (!description.trim()) {
+      newErrors.description = "Description is required!";
+    }
+    if (!guidance.trim()) {
+      newErrors.guidance = "Guidance is required!";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     const getToken = async () => {
       try {
         if (Platform.OS === "web") {
@@ -219,7 +254,6 @@ export default function AddMakeupItem() {
         </>
       ) : (
         <View style={styles.container}>
-          {/* Phần hiển thị ảnh */}
           <View style={styles.imageContainer}>
             <Image source={{ uri: capturedImage }} style={styles.preview} />
             <TouchableOpacity
@@ -230,7 +264,7 @@ export default function AddMakeupItem() {
             </TouchableOpacity>
           </View>
 
-          {/* Phần nhập thông tin có thể cuộn */}
+
           <ScrollView style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Text style={styles.title}>Name</Text>
@@ -244,6 +278,7 @@ export default function AddMakeupItem() {
                   setName(text);
                   setErrors((prev) => ({ ...prev, name: "" }));
                 }}
+
               />
               {errors.name ? (
                 <Text style={styles.errorText}>{errors.name}</Text>
@@ -259,7 +294,7 @@ export default function AddMakeupItem() {
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {error ? <Text style={styles.error}>{error}</Text> : null}
+              {manufactureDateError ? <Text style={styles.errorText}>{manufactureDateError}</Text> : null}
 
               <Text style={styles.title}>Expiration Date</Text>
               <TextInput
@@ -271,8 +306,7 @@ export default function AddMakeupItem() {
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-
+              {expirationDateError ? <Text style={styles.errorText}>{expirationDateError}</Text> : null}
               <Text style={styles.title}>Description</Text>
               <TextInput
                 style={styles.input}
@@ -419,7 +453,8 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 14,
     alignSelf: "flex-start",
-    marginBottom: 10,
+    marginBottom: 5,
+    marginTop: -15,
   },
   title: {
     fontSize: 18,

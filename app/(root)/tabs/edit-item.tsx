@@ -141,6 +141,38 @@ export default function EditMakeupItem() {
 
 
   const handleEditMakeupItem = async () => {
+    type ErrorType = {
+      name?: string;
+      manufactureDate?: string;
+      expirationDate?: string;
+      description?: string;
+      guidance?: string;
+    };
+
+    let newErrors: ErrorType = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required!";
+    }
+    if (!manufactureDate.trim()) {
+      newErrors.manufactureDate = "Manufacture date is required!";
+    }
+    if (!expirationDate.trim()) {
+      newErrors.expirationDate = "Expiration date is required!";
+    } else if (new Date(expirationDate) < new Date(manufactureDate)) {
+      newErrors.expirationDate = "Expiration date must be after manufacture date!";
+    }
+    if (!description.trim()) {
+      newErrors.description = "Description is required!";
+    }
+    if (!guidance.trim()) {
+      newErrors.guidance = "Guidance is required!";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     const getToken = async () => {
       try {
         if (Platform.OS === "web") {
@@ -274,7 +306,6 @@ export default function EditMakeupItem() {
             </TouchableOpacity>
           </View>
 
-          {/* Phần nhập thông tin có thể cuộn */}
           <ScrollView style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Text style={styles.title}>Name</Text>
@@ -283,7 +314,7 @@ export default function EditMakeupItem() {
                 placeholder="Lips..."
                 placeholderTextColor="#C4C4C4"
                 autoCapitalize="none"
-                value={name} // ✅ Giá trị lấy từ params
+                value={name}
                 onChangeText={(text) => {
                   setName(text);
                   setErrors((prev) => ({ ...prev, name: "" }));
@@ -463,8 +494,8 @@ const styles = StyleSheet.create({
   },
   retakeButton: {
     position: "absolute",
-    bottom: 10, // Cách đáy của ảnh 10px
-    right: 10, // Cách mép phải của ảnh 10px
+    bottom: 10,
+    right: 10,
     backgroundColor: "#007AFF",
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -472,13 +503,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconStyle: {
-    marginLeft: 10, // Khoảng cách bên trái
+    marginLeft: 10,
   },
   errorText: {
     color: "red",
     fontSize: 14,
     alignSelf: "flex-start",
-    marginBottom: 10,
+    marginBottom: 5,
+    marginTop: -15,
   },
   title: {
     fontSize: 18,
@@ -548,7 +580,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   buttonSubmit: {
-    alignItems: "center", // Căn giữa theo chiều ngang
-    justifyContent: "center", // Căn giữa theo chiều dọc nếu cần
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
