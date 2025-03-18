@@ -101,7 +101,7 @@ export default function ModelAddMakeupStyle({
       formData.append("guidance", guidance);
 
       const response = await fetch(
-        "http://192.168.11.183:5280/api/MakeupStyles",
+        "http://192.168.31.183:5280/api/MakeupStyles",
         {
           method: "POST",
           headers: {
@@ -127,11 +127,11 @@ export default function ModelAddMakeupStyle({
 
   return (
     <View style={styles.container}>
-      <View style={{ position: "absolute", top: 10, right: 0 }}>
+      <View style={{ position: "absolute", top: 8, right: 0 }}>
         <AntDesign
           name="save"
           style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]} 
-          size={30}
+          size={24}
           onPress={() => !isDisabled && setModalVisible(true)} 
         />
       </View>
@@ -167,7 +167,7 @@ export default function ModelAddMakeupStyle({
 
       <Modal visible={successModalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+          <View style={styles.modalContentSuccess}>
             <Text style={styles.text}>Makeup style added successfully!</Text>
 
             <Pressable
@@ -195,6 +195,14 @@ const styles = StyleSheet.create({
 
   modalContent: {
     width: 300,
+    height: 140,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalContentSuccess: {
+    width: 300,
     height: 120,
     padding: 20,
     backgroundColor: "white",
@@ -221,6 +229,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     width: 100,
   },
 
@@ -238,5 +247,6 @@ const styles = StyleSheet.create({
   saveIcon: {
     display: "flex",
     justifyContent: "flex-end",
+    color: "#ED1E51"
   },
 });
