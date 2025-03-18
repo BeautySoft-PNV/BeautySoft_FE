@@ -158,7 +158,7 @@ export default function AddMakeupItem() {
     for (let pair of formData.entries()) {
       console.log(pair[0], pair[1]);
     }
-    const response = await fetch("http://192.168.11.183:5280/api/MakeupItems", {
+    const response = await fetch("http://192.168.148.183:5280/api/MakeupItems", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

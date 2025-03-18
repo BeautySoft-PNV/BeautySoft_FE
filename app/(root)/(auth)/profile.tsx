@@ -30,7 +30,7 @@ const Profile = () => {
         }
 
         const response = await fetch(
-          "http://192.168.11.183:5280/api/users/me",
+          "http://192.168.148.183:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -49,7 +49,7 @@ const Profile = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.11.183:5280/api/managerstorage/check-user",
+          "http://192.168.148.183:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -81,7 +81,7 @@ const Profile = () => {
 
       if (token) {
         // Gửi yêu cầu logout lên server
-        await fetch("http://192.168.11.183:5280/api/auth/logout", {
+        await fetch("http://192.168.148.183:5280/api/auth/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

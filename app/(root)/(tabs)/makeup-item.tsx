@@ -109,7 +109,7 @@ const MakeupItem = () => {
         if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(
-          "http://192.168.11.183:5280/api/MakeupItems/user/me",
+          "http://192.168.148.183:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {

@@ -194,7 +194,7 @@ export default function EditMakeupItem() {
 
 
     try {
-        const response = await fetch(`http://192.168.11.183:5280/api/MakeupItems/${id}`, {
+        const response = await fetch(`http://192.168.148.183:5280/api/MakeupItems/${id}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,

@@ -110,7 +110,7 @@ const ItemDetail = () => {
 
       try {
         const response = await fetch(
-          `http://192.168.11.183:5280/api/MakeupItems/${id}`,
+          `http://192.168.148.183:5280/api/MakeupItems/${id}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -150,7 +150,7 @@ const ItemDetail = () => {
       const token = await getToken();
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
-        `http://192.168.11.183:5280/api/MakeupItems/${id}`,
+        `http://192.168.148.183:5280/api/MakeupItems/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
