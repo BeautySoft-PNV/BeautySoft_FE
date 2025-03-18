@@ -58,7 +58,7 @@ export default function AddMakeupItem() {
   function retakePicture() {
     setCapturedImage(null);
   }
-  const formatDateTime = (text) => {
+  const formatDateTime = (text : any) => {
     let numbersOnly = text.replace(/\D/g, ""); // Chỉ lấy số
 
     let formatted = numbersOnly
@@ -70,29 +70,39 @@ export default function AddMakeupItem() {
     return formatted.trim(); // Xóa khoảng trắng dư thừa
   };
 
-  const validateDateTime = (text) => {
+  const validateDateTime = (text : any) => {
     const parts = text.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
-    if (!parts) return "Sai định dạng";
+    if (!parts) return "Incorrect format";
 
     let [_, day, month, year, hour, minute] = parts.map(Number);
-    if (day < 1 || day > 31) return "Ngày không hợp lệ";
-    if (month < 1 || month > 12) return "Tháng không hợp lệ";
-    if (year < 1900 || year > 2100) return "Năm không hợp lệ";
-    if (hour > 23) return "Giờ không hợp lệ";
-    if (minute > 59) return "Phút không hợp lệ";
+    if (day < 1 || day > 31) return "Invalid date";
+    if (month < 1 || month > 12) return "Invalid month";
+    if (year < 1900 || year > 2100) return "Invalid year";
+    if (hour > 23) return "Invalid time";
+    if (minute > 59) return "Invalid time";
 
     return "";
   };
 
-  const handleManufactureDateChange = (text) => {
-    let formatted = formatDateTime(text);
-    setManufactureDate(formatted);
-    setError(validateDateTime(formatted));
+  const handleManufactureDateChange = (text: string) => {
+    let cleanedText = text.replace(/[^0-9\/: ]/g, "");
+    let formatted = cleanedText.length >= manufactureDate.length
+        ? formatDateTime(cleanedText)
+        : cleanedText;
+    if (formatted !== manufactureDate) {
+      setManufactureDate(formatted);
+      setError(validateDateTime(formatted));
+    }
   };
-  const handleExpirationDateChange = (text) => {
-    let formatted = formatDateTime(text);
-    setExpirationDate(formatted);
-    setError(validateDateTime(formatted));
+  const handleExpirationDateChange = (text: string) => {
+    let cleanedText = text.replace(/[^0-9\/: ]/g, "");
+    let formatted = cleanedText.length >= expirationDate.length
+        ? formatDateTime(cleanedText)
+        : cleanedText;
+    if (formatted !== expirationDate) {
+      setExpirationDate(formatted);
+      setError(validateDateTime(formatted));
+    }
   };
 
   const handleAddMakeupItem = async () => {
@@ -135,7 +145,7 @@ export default function AddMakeupItem() {
       console.error("Không tìm thấy userId trong token!");
     }
 
-    function convertToISOFormat(dateString) {
+    function convertToISOFormat(dateString : any) {
       const [day, month, yearAndTime] = dateString.split("/");
       const [year, time] = yearAndTime.split(" ");
       return `${year}-${month}-${day}T${time}:00`;
@@ -146,11 +156,20 @@ export default function AddMakeupItem() {
 
     formData.append("Name", name);
     formData.append("Description", description);
-    formData.append("imageFile", {
+ /*   formData.append("imageFile", {
       uri: capturedImage,  
       name: "makeup.jpg",
       type: "image/jpeg"
-    });
+    });*/
+    if (capturedImage && !capturedImage.includes("/uploads")) {
+      const file = {
+        uri: capturedImage,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      };
+
+      formData.append("imageFile", file as any);
+    }
     formData.append("Guidance", guidance);
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
@@ -158,7 +177,7 @@ export default function AddMakeupItem() {
     for (let pair of formData.entries()) {
       console.log(pair[0], pair[1]);
     }
-    const response = await fetch("http://192.168.148.183:5280/api/MakeupItems", {
+    const response = await fetch("http://192.168.31.183:5280/api/MakeupItems", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

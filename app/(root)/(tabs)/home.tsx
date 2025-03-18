@@ -70,7 +70,7 @@ const Home = () => {
         }
 
         const response = await fetch(
-          "http://192.168.148.183:5280/api/users/me",
+          "http://192.168.31.183:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -85,7 +85,7 @@ const Home = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.148.183:5280/api/managerstorage/check-user",
+          "http://192.168.31.183:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -99,7 +99,7 @@ const Home = () => {
         }
 
         const datacheckVip = await checkVip.json();
-
+        console.log(datacheckVip.status)
         setVip(datacheckVip.status);
         if (!response.ok) {
           throw new Error("Failed to fetch user profile");
@@ -138,7 +138,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.148.183:5280/api/MakeupStyles/user/me",
+          "http://192.168.31.183:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -175,7 +175,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.148.183:5280/api/MakeupItems/user/me",
+          "http://192.168.31.183:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {

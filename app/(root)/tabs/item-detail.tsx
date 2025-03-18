@@ -34,61 +34,6 @@ const ItemDetail = () => {
   const [loading, setLoading] = useState(true);
   const [vip, setVip] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  useEffect(() => {
-    const fetchUserProfileHome = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (!token) {
-          console.error("No token found!");
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          "http://192.168.48.183:5280/api/users/me",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const responseData = await response.json();
-        await AsyncStorage.setItem("user", JSON.stringify(responseData));
-        setUser(responseData);
-        console.log(responseData);
-
-        const checkVip = await fetch(
-          "http://192.168.48.183:5280/api/managerstorage/check-user",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!checkVip.ok) {
-          throw new Error("Lỗi khi gọi API");
-        }
-
-        const datacheckVip = await checkVip.json();
-
-        setVip(datacheckVip.status);
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfileHome();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,7 +55,7 @@ const ItemDetail = () => {
 
       try {
         const response = await fetch(
-          `http://192.168.148.183:5280/api/MakeupItems/${id}`,
+          `http://192.168.31.183:5280/api/MakeupItems/${id}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -150,7 +95,7 @@ const ItemDetail = () => {
       const token = await getToken();
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
-        `http://192.168.148.183:5280/api/MakeupItems/${id}`,
+        `http://192.168.31.183:5280/api/MakeupItems/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -169,33 +114,6 @@ const ItemDetail = () => {
 
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.avatarContainer}>
-          <TouchableOpacity
-            onPress={() => router.push("/(root)/(auth)/profile")}
-          >
-            <Image
-              source={{
-                uri: user?.avatar
-                  ? "http://192.168.48.183:5280" + user.avatar
-                  : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
-              }}
-              style={styles.avatar}
-            />
-          </TouchableOpacity>
-          {vip && (
-            <FontAwesome5
-              name="crown"
-              size={20}
-              color="gold"
-              style={styles.crownIcon}
-            />
-          )}
-        </View>
-      </ScrollView>
       <View style={styles.header}>
         <TouchableOpacity
           style={{ marginLeft: "7%" }}

@@ -45,7 +45,7 @@ const Collection = () => {
         const token = await getToken();
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
-          "http:/192.168.148.183:5280/api/MakeupStyles/user/me",
+          "http:/192.168.31.183:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -67,7 +67,7 @@ const Collection = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false); // Khi fetch xong, tắt trạng thái loading
+        setIsLoading(false);
       }
     };
 

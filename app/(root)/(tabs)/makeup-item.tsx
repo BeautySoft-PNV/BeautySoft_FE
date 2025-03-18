@@ -28,66 +28,9 @@ interface MakeupItem {
 }
 const MakeupItem = () => {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [vip, setVip] = useState(true);
   const [makeupItems, setMakeupItems] = useState<MakeupItem[]>([]);
-
-  useEffect(() => {
-    const fetchUserProfileHome = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (!token) {
-          console.error("No token found!");
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          "http://192.168.48.183:5280/api/users/me",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const responseData = await response.json();
-        await AsyncStorage.setItem("user", JSON.stringify(responseData));
-        setUser(responseData);
-        console.log(responseData);
-
-        const checkVip = await fetch(
-          "http://192.168.48.183:5280/api/managerstorage/check-user",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!checkVip.ok) {
-          throw new Error("Lỗi khi gọi API");
-        }
-
-        const datacheckVip = await checkVip.json();
-
-        setVip(datacheckVip.status);
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfileHome();
-  }, []);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,7 +52,7 @@ const MakeupItem = () => {
         if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(
-          "http://192.168.148.183:5280/api/MakeupItems/user/me",
+          "http://192.168.31.183:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -119,6 +62,10 @@ const MakeupItem = () => {
         );
 
         if (!response.ok) {
+          if (response.status === 404) {
+            console.warn("API trả về 404 - Không tìm thấy dữ liệu");
+            return null;
+          }
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -143,36 +90,11 @@ const MakeupItem = () => {
       params: { id: makeupItem.id },
     });
   };
-
+  const filteredItems = makeupItems.filter((item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView
-        contentContainerStyle={[styles.scroll, styles.scrollContainer]}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.avatarContainer}>
-          <TouchableOpacity
-            onPress={() => router.push("/(root)/(auth)/profile")}
-          >
-            <Image
-              source={{
-                uri: user?.avatar
-                  ? "http://192.168.48.183:5280" + user.avatar
-                  : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
-              }}
-              style={styles.avatar}
-            />
-          </TouchableOpacity>
-          {vip && (
-            <FontAwesome5
-              name="crown"
-              size={20}
-              color="gold"
-              style={styles.crownIcon}
-            />
-          )}
-        </View>
-      </ScrollView>
       <View style={styles.buttonField}>
         <View style={styles.container}>
           <Text style={styles.title}>Item storage</Text>
@@ -187,38 +109,33 @@ const MakeupItem = () => {
         </View>
         <View style={styles.inputField}>
           <TextInput
-            style={styles.input}
-            placeholder="Search Inventory"
-            placeholderTextColor={whiteColor}
-            textColor="white"
+              style={styles.input}
+              placeholder="Search Inventory"
+              placeholderTextColor={whiteColor}
+              textColor="white"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
           />
           <TouchableOpacity>
             <AntDesign name="search1" size={24} color={whiteColor} />
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.verticalScroll}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.verticalScroll}>
         <View style={styles.gridContainer}>
-          {makeupItems.length > 0 ? (
-            makeupItems.map((makeupItem) => (
-              <TouchableOpacity
-                key={makeupItem.id}
-                style={styles.item}
-                onPress={() => handlePress(makeupItem)}
-              >
-                <Image
-                  source={{
-                    uri: makeupItem.image,
-                  }}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-            ))
+          {filteredItems.length > 0 ? (
+              filteredItems.map((makeupItem) => (
+                  <TouchableOpacity
+                      key={makeupItem.id}
+                      style={styles.item}
+                      onPress={() => handlePress(makeupItem)}
+                  >
+                    <Image source={{ uri: makeupItem.image }} style={styles.image} />
+                    <Text style={styles.title}>{makeupItem?.name}</Text>
+                  </TouchableOpacity>
+              ))
           ) : (
-            <Text style={styles.noDataText}>No makeup styles available.</Text>
+              <Text style={styles.noDataText}>No matching makeup items found.</Text>
           )}
         </View>
       </ScrollView>
