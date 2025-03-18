@@ -109,7 +109,7 @@ const MakeupItem = () => {
         if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(
-          "http://192.168.48.183:5280/api/MakeupItems/user/me",
+          "http://192.168.148.183:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -139,7 +139,7 @@ const MakeupItem = () => {
   }, []);
   const handlePress = (makeupItem: MakeupItem) => {
     router.push({
-      pathname: "/tabs/collection-details",
+      pathname: "/tabs/item-detail",
       params: { id: makeupItem.id },
     });
   };
@@ -178,7 +178,7 @@ const MakeupItem = () => {
           <Text style={styles.title}>Item storage</Text>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.push("add-makeup-item")}
+            onPress={() => router.push("/add-makeup-item")}
           >
             <Text style={styles.text}>
               ADD <AntDesign name="plus" size={20} />
@@ -209,12 +209,12 @@ const MakeupItem = () => {
                 style={styles.item}
                 onPress={() => handlePress(makeupItem)}
               >
-                {/* <Image
+                <Image
                   source={{
-                    uri: `http://192.168.48.183:5280${makeupItem.image}`,
+                    uri: makeupItem.image,
                   }}
                   style={styles.image}
-                /> */}
+                />
               </TouchableOpacity>
             ))
           ) : (
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     width: "100%",
-    marginBottom: 35,
+    marginBottom: 80,
   },
   gridContainer: {
     flexDirection: "row",

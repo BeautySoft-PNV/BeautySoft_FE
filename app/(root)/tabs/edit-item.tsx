@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Button,
   StyleSheet,
@@ -15,12 +15,16 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import moment from "moment";
 
-export default function AddMakeupItem() {
+export default function EditMakeupItem() {
   const [facing, setFacing] = useState<"front" | "back">("back");
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
 
+  const params = useLocalSearchParams();
+  const id = params.id;
   const [name, setName] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -31,6 +35,35 @@ export default function AddMakeupItem() {
   const inputRef = useRef(null);
   const [error, setError] = useState("");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (params) {
+      setName(Array.isArray(params.name) ? params.name[0] : params.name || "");
+      setCapturedImage(
+        Array.isArray(params.image) ? params.image[0] : params.image || null
+      );
+      setDescription(
+        Array.isArray(params.description)
+          ? params.description[0]
+          : params.description || ""
+      );
+      setGuidance(
+        Array.isArray(params.guidance)
+          ? params.guidance[0]
+          : params.guidance || ""
+      );
+      setManufactureDate(
+        params.dateOfManufacture && moment(params.dateOfManufacture).isValid()
+          ? moment(params.dateOfManufacture).format("DD/MM/YYYY HH:mm")
+          : ""
+      );
+      setExpirationDate(
+        params.expirationDate && moment(params.expirationDate).isValid()
+          ? moment(params.expirationDate).format("DD/MM/YYYY HH:mm")
+          : ""
+      );
+    }
+  }, []);
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -95,7 +128,7 @@ export default function AddMakeupItem() {
     setError(validateDateTime(formatted));
   };
 
-  const handleAddMakeupItem = async () => {
+  const handleEditMakeupItem = async () => {
     const getToken = async () => {
       try {
         if (Platform.OS === "web") {
@@ -143,41 +176,57 @@ export default function AddMakeupItem() {
 
     let formattedManufactureDate = convertToISOFormat(manufactureDate);
     let formattedExpirationDate = convertToISOFormat(expirationDate);
-
     formData.append("Name", name);
     formData.append("Description", description);
     formData.append("imageFile", {
-      uri: capturedImage,  
+      uri: capturedImage,
       name: "makeup.jpg",
-      type: "image/jpeg"
+      type: "image/jpeg",
     });
     formData.append("Guidance", guidance);
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
 
     for (let pair of formData.entries()) {
+      
       console.log(pair[0], pair[1]);
     }
-    const response = await fetch("http://192.168.148.183:5280/api/MakeupItems", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.log(`HTTP Error ${response.status}: ${errorText}`)
-      
-      throw new Error(`HTTP Error ${response.status}: ${errorText}`);
-    } else {
-      console.log("Add successful!");
-      setSuccessModalVisible(true);
-      router.push("/(root)/(tabs)/makeup-item")
-    }
-  };
 
-  console.log("capturedImage: ", capturedImage);
+
+    try {
+        const response = await fetch(`http://192.168.148.183:5280/api/MakeupItems/${id}`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData, 
+        });
+      
+        console.log("Response Status:", response.status);
+      
+        if (!response.ok) {
+          console.log("❌ Lỗi khi edit!");
+      
+          // Kiểm tra xem API trả về JSON hay text
+          const errorText = await response.text();
+          try {
+            const errorJson = JSON.parse(errorText); 
+            console.error("Lỗi JSON từ server:", errorJson);
+          } catch (e) {
+            console.error("Lỗi dạng text từ server:", errorText);
+          }
+      
+          throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+        }
+      
+        console.log("✅ Edit successful!");
+        setSuccessModalVisible(true);
+        router.push("/(root)/(tabs)/makeup-item");
+      
+      } catch (error) {
+        console.error("🚨 Lỗi Fetch:", error.message);
+      }
+  };
   return (
     <View style={styles.container}>
       {!capturedImage ? (
@@ -220,39 +269,51 @@ export default function AddMakeupItem() {
                 placeholder="Lips..."
                 placeholderTextColor="#C4C4C4"
                 autoCapitalize="none"
-                value={name}
+                value={name} // ✅ Giá trị lấy từ params
                 onChangeText={(text) => {
                   setName(text);
                   setErrors((prev) => ({ ...prev, name: "" }));
                 }}
               />
-              {errors.name ? (
+              {errors.name && (
                 <Text style={styles.errorText}>{errors.name}</Text>
-              ) : null}
-              
+              )}
+
               <Text style={styles.title}>Date of Manufacture</Text>
               <TextInput
-                ref={inputRef}
-                style={[styles.input, error ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  errors.manufactureDate ? styles.inputError : null,
+                ]}
                 placeholder="DD/MM/YYYY HH:mm"
                 value={manufactureDate}
-                onChangeText={handleManufactureDateChange}
+                onChangeText={(text) => {
+                    handleManufactureDateChange(text)
+                }}
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {error ? <Text style={styles.error}>{error}</Text> : null}
+              {errors.manufactureDate && (
+                <Text style={styles.errorText}>{errors.manufactureDate}</Text>
+              )}
 
               <Text style={styles.title}>Expiration Date</Text>
               <TextInput
-                ref={inputRef}
-                style={[styles.input, error ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  errors.expirationDate ? styles.inputError : null,
+                ]}
                 placeholder="DD/MM/YYYY HH:mm"
                 value={expirationDate}
-                onChangeText={handleExpirationDateChange}
+                onChangeText={(text) => {
+                    handleExpirationDateChange(text)
+                }}
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {error ? <Text style={styles.error}>{error}</Text> : null}
+              {errors.expirationDate && (
+                <Text style={styles.errorText}>{errors.expirationDate}</Text>
+              )}
 
               <Text style={styles.title}>Description</Text>
               <TextInput
@@ -260,15 +321,15 @@ export default function AddMakeupItem() {
                 placeholder="Description..."
                 placeholderTextColor="#C4C4C4"
                 autoCapitalize="none"
-                value={description}
+                value={description} // ✅ Giá trị lấy từ params
                 onChangeText={(text) => {
                   setDescription(text);
                   setErrors((prev) => ({ ...prev, description: "" }));
                 }}
               />
-              {errors.description ? (
+              {errors.description && (
                 <Text style={styles.errorText}>{errors.description}</Text>
-              ) : null}
+              )}
 
               <Text style={styles.title}>Guidance</Text>
               <TextInput
@@ -276,19 +337,22 @@ export default function AddMakeupItem() {
                 placeholder="Guidance..."
                 placeholderTextColor="#C4C4C4"
                 autoCapitalize="none"
-                value={guidance}
+                value={guidance} // ✅ Giá trị lấy từ params
                 onChangeText={(text) => {
                   setGuidance(text);
                   setErrors((prev) => ({ ...prev, guidance: "" }));
                 }}
               />
-              {errors.guidance ? (
+              {errors.guidance && (
                 <Text style={styles.errorText}>{errors.guidance}</Text>
-              ) : null}
+              )}
             </View>
           </ScrollView>
           <View style={styles.buttonSubmit}>
-            <TouchableOpacity style={styles.button} onPress={handleAddMakeupItem}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleEditMakeupItem}
+            >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -472,5 +536,5 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     alignItems: "center", // Căn giữa theo chiều ngang
     justifyContent: "center", // Căn giữa theo chiều dọc nếu cần
-  }
+  },
 });

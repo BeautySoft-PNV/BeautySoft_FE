@@ -33,6 +33,17 @@ interface MakeupStyle {
   image: string;
 }
 
+type MakeupItem = {
+  id: number;
+  image: string;
+  name: string;
+  time?: string; // Dấu ? giúp thuộc tính có thể bị thiếu
+  description?: string;
+  guidance?: string;
+  dateOfManufacture?: Date;
+  expirationDate?: Date;
+};
+
 const Home = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -211,6 +222,12 @@ const Home = () => {
       params: { id: style.id },
     });
   };
+  const handlePressItem = (item: MakeupItem) => {
+    router.push({
+      pathname: "/tabs/item-detail",
+      params: { id: item.id },
+    });
+  };
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
@@ -277,18 +294,18 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.horizontalScroll}
         >
-          {makeupStyles.map((item) => (
-            <TouchableOpacity onPress={() => handlePress(item)}>
-              <View key={item.id} style={styles.cardContainer}>
+          {makeupStyles.map((style) => (
+            <TouchableOpacity onPress={() => handlePress(style)}>
+              <View key={style.id} style={styles.cardContainer}>
                 <View style={styles.textContainer}>
                   <Text style={styles.faceText}>
                     {/* {item.date.replace("T", "\n")} */}
-                      {moment(item.date).format("DD/MM/YYYY hh:mm A")}
+                      {moment(style.date).format("DD/MM/YYYY hh:mm A")}
                   </Text>
                 </View>
                 <View style={styles.imageContainer}>
                   <Image
-                    source={{ uri: item.image }}
+                    source={{ uri: style.image }}
                     style={styles.faceImage}
                   />
                 </View>
@@ -303,13 +320,17 @@ const Home = () => {
           style={styles.horizontalScroll}
         >
           {items.map((item) => (
-            <View key={item.id} style={styles.itemContainer}>
+            <TouchableOpacity
+            onPress={() => handlePressItem(item)}
+            >
+              <View key={item.id} style={styles.itemContainer}>
               <Image
-                source={{ uri: `http://192.168.148.183:5280${item.image}` }}
+                source={{ uri: item.image }}
                 style={styles.itemImage}
               />
               <Text style={styles.itemText}>{item.name}</Text>
             </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </ScrollView>
