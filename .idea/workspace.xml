@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0aa7f4e7-d833-403f-a3c1-b244346aba09" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/authService.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/forgot-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/forgot-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-in.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/sign-up.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_3_18_2025_7_57_AM_[Changes]/shelved.patch" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,10 +150,6 @@
           <url>file://$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx</url>
           <line>210</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx</url>
-          <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/_layout.tsx</url>
