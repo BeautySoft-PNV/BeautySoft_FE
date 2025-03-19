@@ -9,7 +9,6 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import * as FileSystem from "expo-file-system"; // For native platforms
 import { AntDesign } from "@expo/vector-icons";
 interface ModelAddMakeupStyleProps {
   generatedImage: string | null;
@@ -22,40 +21,23 @@ export default function ModelAddMakeupStyle({
   generateStep,
 }: ModelAddMakeupStyleProps) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
   const [guidance, setGuidance] = useState(generateStep || "Step guidance");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const saveBase64AsFile = async (base64: string | null, filename: string) => {
-    try {
-      // Định dạng đường dẫn file
-      const filePath = FileSystem.cacheDirectory + filename;
-      if (!base64) {
-        console.error("Base64 string is null or empty!");
-        return;
-      }
-
-      await FileSystem.writeAsStringAsync(filePath, base64, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      console.log("File saved at:", filePath);
-      return filePath;
-    } catch (error) {
-      console.error("Lỗi lưu file:", error);
-      return null;
-    }
-  };
-
   const handleAddMakeupStyle = async () => {
     try {
       const formData = new FormData();
-      formData.append("imageFile", {
-        uri: generatedImage,
-        name: "generated-image.jpg",
-        type: "image/jpeg",
-      });
+
+      if (generatedImage && !generatedImage.includes("/uploads")) {
+        const file = {
+          uri: generatedImage,
+          name: "generated-image.jpg",
+          type: "image/jpeg",
+        };
+
+        formData.append("imageFile", file as any);
+      }
 
       const parseJwt = (token: string): { [key: string]: any } | null => {
         try {
@@ -75,21 +57,8 @@ export default function ModelAddMakeupStyle({
         }
       };
 
-      const getToken = async () => {
-        try {
-          if (Platform.OS === "web") {
-            return localStorage.getItem("token") || "";
-          } else {
-            const token = await AsyncStorage.getItem("token");
-            return token || "";
-          }
-        } catch (error) {
-          console.error("🚨 Lỗi lấy token:", error);
-          return "";
-        }
-      };
-      const token = await getToken();
-      const decodedToken = parseJwt(token);
+      const token = await AsyncStorage.getItem("token");
+      const decodedToken = parseJwt(token || "");
 
       console.log("decodedToken: ", decodedToken);
       if (decodedToken && decodedToken.id) {

@@ -23,7 +23,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Generate() {
   const params = useLocalSearchParams();
   const [imageUri, setImageUri] = useState(params.imageUri || null);
-  const [error, setError] = useState(null);
+  const [itemName, setItemName] = useState(params.itemName || null);
+  const [itemDescription, setItemDescription] = useState(
+    params.itemDescription || null
+  );
+  const [itemGuidance, setItemGuidance] = useState(params.itemGuidance || null);
+  const [error, setError] = useState("");
   const [imageDescription, setImageDescription] = useState<string>("");
   const router = useRouter();
   const [generatedImage, setGeneratedImage] = useState<string[]>([]);
@@ -50,18 +55,119 @@ export default function Generate() {
     }
   }, []);
 
+  useEffect(() => {
+    if (imageDescription) {
+      generateMakeup();
+    }
+  }, [imageDescription]);
+
+  const makeupKeywords = [
+    // Các sản phẩm trang điểm nền
+    "makeup",
+    "foundation",
+    "concealer",
+    "primer",
+    "setting spray",
+    "powder",
+    "compact",
+    "loose powder",
+    "bb cream",
+    "cc cream",
+    "tinted moisturizer",
+
+    // Trang điểm mắt
+    "eyeshadow",
+    "mascara",
+    "eyeliner",
+    "brow",
+    "brow pencil",
+    "brow gel",
+    "kajal",
+    "lash",
+    "lash curler",
+    "eye primer",
+    "glitter shadow",
+    "cut crease",
+    "smokey eye",
+
+    // Trang điểm má
+    "blush",
+    "bronzer",
+    "contour",
+    "highlighter",
+    "cheek tint",
+    "cream blush",
+    "powder blush",
+    "liquid blush",
+
+    // Trang điểm môi
+    "lipstick",
+    "lip gloss",
+    "lip tint",
+    "lip liner",
+    "lip balm",
+    "matte lipstick",
+    "lip plumper",
+    "lip stain",
+
+    // Các kỹ thuật trang điểm
+    "baking",
+    "strobing",
+    "highlighting",
+    "contouring",
+    "color correcting",
+    "blending",
+    "overlining",
+    "cut crease",
+    "ombre lips",
+    "dewy finish",
+    "matte finish",
+    "full glam",
+    "natural makeup",
+    "no-makeup makeup",
+  ];
+  const handleUpload = () => {
+    if (!tempInput.trim()) {
+      setError("Input cannot be empty!");
+      return;
+    }
+    const containsMakeupKeyword = makeupKeywords.some((keyword) =>
+      tempInput.toLowerCase().includes(keyword)
+    );
+
+    if (!containsMakeupKeyword) {
+      setError("Input must be related to makeup!");
+      return;
+    }
+    setError("");
+    if (tempInput.trim() !== "") {
+      setInput((prev) => [...prev, tempInput]);
+      setImageDescription(tempInput);
+      setTempInput("");
+    }
+  };
+
   const generateMakeup = async () => {
     if (!imageUri) return;
+
     setLoading(true);
-    setError(null);
+    setError("");
+
     const formData = new FormData();
     const textPrompt = Array.isArray(params.request)
       ? params.request[0]
       : params.request;
     formData.append(
       "TextPrompt",
-      ` ${textPrompt} ${imageDescription} For a soft, natural Asian-style makeup look, start with a lightweight, hydrating foundation or BB cream for an even, dewy finish, setting lightly with translucent powder on the T-zone to control shine. Shape and fill your eyebrows with a soft brown or taupe shade, keeping them slightly straight or gently arched for a youthful effect. Apply soft neutral eyeshadows like champagne, peach, or light brown for a fresh, bright appearance, blending seamlessly. Use fine brown eyeliner along the upper lash line, subtly extending the outer corners, and finish with lengthening mascara or natural false lashes. Sweep a sheer pink or peach blush on the apples of your cheeks, blending outward for a healthy glow. For the lips, choose a soft coral, rosy pink, or MLBB shade, applying in a gradient for a fresh, youthful effect. Complete the look with a subtle highlight on the high points of your face and a dewy setting mist for a luminous, natural finish that enhances your beauty with elegance and minimalism. Don't change my face
-    );`
+      `Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}. Apply a natural and light makeup look tailored for Asian facial features. Focus on a dewy, healthy skin finish with a lightweight, hydrating base that enhances natural radiance. Use a sheer foundation or BB cream to even out skin tone while maintaining a fresh, glowing complexion. Apply a minimal amount of concealer only where needed. Set with a fine, translucent powder to control shine but keep the skin looking soft and natural.
+
+For the eyes, use soft, neutral shades like peach or warm brown to enhance the natural eye shape subtly. Avoid heavy contouring; instead, use a soft, gradient eyeshadow blending technique. Apply a thin, natural eyeliner that follows the eye’s shape closely, with a slight upward flick to create a subtle lifting effect. Curl the lashes and use a lengthening mascara for a fluttery, defined look without clumping.
+
+For the brows, keep them softly arched and filled in with light strokes to mimic natural hair. Use a subtle peach or pink blush applied high on the cheeks to give a youthful, lifted effect. Apply a liquid or cream highlighter sparingly on the high points of the face for a fresh glow.
+
+For the lips, choose a soft, natural pink or coral shade. Use a gradient lip technique for a youthful and effortless effect, applying more color in the center and blending outwards. Finish with a light, glossy tint for a hydrated and plump look.
+
+Ensure the makeup enhances natural Asian features without looking heavy, maintaining a soft, fresh, and effortless appearance. Provide specific steps for each stage, such as Step 1, Step 2, Step 3, and so on. Apply a natural and light makeup look without altering my facial features or hairstyle. Focus only on face makeup with a fresh, minimal, and natural foundation. Start with a light, hydrating primer to create a smooth base and prolong the wear of the makeup. Use a thin, skin-like foundation that evens out my skin tone while maintaining a natural look, blending it well for a lightweight finish. Apply a light-coverage concealer only where needed (under the eyes, redness, or blemishes) and blend lightly for a natural effect. Lightly dust translucent powder to prevent shine while keeping my skin looking fresh. Add a natural, peachy blush to the apples of my cheeks for a healthy-looking glow. Apply a thin layer of liquid or cream highlighter to the high points of my face (cheekbones, bridge of the nose) for a fresh look. Lightly fill in sparse areas of my brows with a natural brow pencil or loose powder, keeping the look soft and fluffy. Use a neutral matte or shimmer eyeshadow to enhance my natural, soft look. Apply a thin layer of brown or black mascara to subtly define my lashes without clumping. Finish with a tint or a clear, hydrating lip balm in a natural shade to accentuate my lip color. Ensure that my makeup enhances my natural features without looking heavy or overly defined, maintaining my skin texture and keeping the overall look fresh and effortless.`
     );
 
     try {
@@ -120,15 +226,20 @@ export default function Generate() {
 
       const maskFile = await copyAssetToTemp();
 
-      formData.append("Mask", {
-        uri: maskFile.uri,
-        name: maskFile.name,
-        type: maskFile.type,
-      });
+      if (maskFile.uri && !maskFile.uri.includes("/uploads")) {
+        const file = {
+          uri: maskFile.uri,
+          name: maskFile.name,
+          type: maskFile.type,
+        };
+
+        formData.append("Mask", file as any);
+      }
 
       let imageFile;
       if (Platform.OS === "web") {
-        const response = await fetch(imageUri);
+        const imageUrl = Array.isArray(imageUri) ? imageUri[0] : imageUri;
+        const response = await fetch(imageUrl);
         const blob = await response.blob();
         const contentType =
           response.headers.get("Content-Type") || "image/jpeg";
@@ -139,14 +250,16 @@ export default function Generate() {
           lastModified: Date.now(),
         });
       } else {
-        imageFile = {
-          uri: correctedUri,
-          type: "image/jpeg",
-          name: `uploaded_${Date.now()}.jpg`,
-        };
+        if (correctedUri && !correctedUri.includes("/uploads")) {
+          const imageFile = {
+            uri: correctedUri,
+            type: "image/jpeg",
+            name: `uploaded_${Date.now()}.jpg`,
+          };
+          formData.append("Image", imageFile as any);
+        }
       }
 
-      formData.append("Image", imageFile);
       formData.append("OutputFormat", "webp");
 
       const getToken = async () => {
@@ -196,13 +309,12 @@ export default function Generate() {
 
   return (
     <View style={styles.wrapper}>
-      {/* Phần nội dung cuộn được */}
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         <TouchableOpacity
-          style={{ marginLeft: "4%" }}
+          style={{ marginLeft: "10%" }}
           onPress={() => router.push("/(root)/(tabs)/scan")}
         >
           <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
@@ -245,10 +357,10 @@ export default function Generate() {
                         />
                       </View>
                     </PaperProvider>
+
                     <Text style={styles.steps}>
                       {generateStep[index] || "No step available"}
                     </Text>
-                    
                   </View>
                 ))}
               {loading ? (
@@ -262,28 +374,26 @@ export default function Generate() {
       </ScrollView>
 
       <View style={styles.inputContainerFixed}>
-        <TextInput
-          style={styles.input}
-          placeholder="Input request"
-          value={tempInput} // Dùng tempInput thay vì imageDescription
-          onChangeText={(text) => setTempInput(text)} // Chỉ cập nhật tạm
-        />
-        <TouchableOpacity
-          onPress={() => {
-            if (tempInput.trim() !== "") {
-              setInput((prev) => [...prev, tempInput]); // Chỉ cập nhật khi nhấn
-              setImageDescription(tempInput);
-            }
-            generateMakeup;
-          }}
-        >
-          <AntDesign
-            name="upload"
-            size={24}
-            color="black"
-            style={styles.iconStyle}
+        <View style={styles.rowContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Input request"
+            value={tempInput}
+            onChangeText={(text) => {
+              setTempInput(text);
+              if (text.trim()) setError("");
+            }}
           />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleUpload}>
+            <AntDesign
+              name="upload"
+              size={24}
+              color="black"
+              style={styles.iconStyle}
+            />
+          </TouchableOpacity>
+        </View>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
     </View>
   );
@@ -320,25 +430,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "white", // Đảm bảo input không bị che bởi nội dung cuộn
+    backgroundColor: "white",
     padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
     borderTopWidth: 1,
     borderColor: "#ccc",
   },
-  // input: {
-  //   flex: 1,
-  //   height: 40,
-  //   borderWidth: 1,
-  //   borderColor: "#ccc",
-  //   borderRadius: 5,
-  //   paddingHorizontal: 10,
-  //   marginRight: 10,
-  // },
-  // iconStyle: {
-  //   padding: 5,
-  // },
+
+  rowContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   input: {
     flex: 1,
     marginTop: 10,

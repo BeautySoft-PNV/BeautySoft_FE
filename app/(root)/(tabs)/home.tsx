@@ -174,8 +174,7 @@ const Home = () => {
           }
         );
         if (response.status === 404) {
-          console.warn("No makeup styles found (404)");
-          setMakeupStyles([]);
+          console.warn("No makeup items found (404)");
           return;
         }
 
