@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,26 +23,15 @@ interface MakeupStyle {
 
 const Collection = () => {
   const [makeupStyles, setMakeupStyles] = useState<MakeupStyle[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Thêm state loading
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const getToken = async () => {
-          try {
-            if (Platform.OS === "web") {
-              return localStorage.getItem("token") || "";
-            } else {
-              return (await AsyncStorage.getItem("token")) || "";
-            }
-          } catch (error) {
-            console.error("Lỗi lấy token:", error);
-            return "";
-          }
-        };
-        const token = await getToken();
-        console.log("token: ", token)
+        const token = await AsyncStorage.getItem("token");
+      
+
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
           "http://192.168.31.183:5280/api/MakeupStyles/user/me",
@@ -62,19 +50,16 @@ const Collection = () => {
         const data = await response.json();
         if (Array.isArray(data)) {
           setMakeupStyles(data);
-        } else {
-          console.error("Invalid data format:", data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false); // Khi fetch xong, tắt trạng thái loading
+        setIsLoading(false); 
       }
     };
 
     fetchData();
   }, []);
-  console.log("makeupStyles after: ", makeupStyles);
 
   const handlePress = (style: MakeupStyle) => {
     router.push({
@@ -148,7 +133,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
     color: "#ED1E51",
     fontFamily: "PlayfairDisplay-Bold",
     marginRight: "30%",

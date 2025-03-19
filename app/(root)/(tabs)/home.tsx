@@ -23,7 +23,6 @@ const images = [
   require("@/assets/images/banner3.jpg"),
 ];
 
-
 interface MakeupStyle {
   id: string;
   name: string;
@@ -40,8 +39,18 @@ const Home = () => {
   const [vip, setVip] = useState(true);
   const scrollViewRef = useRef<ScrollView>(null);
   const currentIndex = useRef(0);
+
   const [makeupStyles, setMakeupStyles] = useState<
-    Array<{ id: number; image: string; guidance: string; date: string }>
+    Array<{
+      id: string;
+      name: string;
+      description: string;
+      image: string;
+      guidance: string;
+      date: string;
+      time: string;
+      steps: string [];
+    }>
   >([]);
   const [items, setItems] = useState<
     Array<{ id: number; image: string; name: string }>
@@ -122,7 +131,6 @@ const Home = () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
-          console.error("No token found!");
           setLoading(false);
           return;
         }
@@ -137,7 +145,6 @@ const Home = () => {
         );
 
         if (response.status === 404) {
-          console.warn("No makeup styles found (404)");
           setMakeupStyles([]);
           return;
         }
@@ -187,7 +194,7 @@ const Home = () => {
 
     fetchData();
   }, []);
-  
+
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -282,8 +289,7 @@ const Home = () => {
               <View key={item.id} style={styles.cardContainer}>
                 <View style={styles.textContainer}>
                   <Text style={styles.faceText}>
-                    {/* {item.date.replace("T", "\n")} */}
-                      {moment(item.date).format("DD/MM/YYYY hh:mm A")}
+                    {moment(item.date).format("DD/MM/YYYY hh:mm A")}
                   </Text>
                 </View>
                 <View style={styles.imageContainer}>
@@ -304,10 +310,7 @@ const Home = () => {
         >
           {items.map((item) => (
             <View key={item.id} style={styles.itemContainer}>
-              <Image
-                source={{ uri: item.image }}
-                style={styles.itemImage}
-              />
+              <Image source={{ uri: item.image }} style={styles.itemImage} />
               <Text style={styles.itemText}>{item.name}</Text>
             </View>
           ))}
@@ -390,8 +393,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     alignSelf: "center",
-    width: 140,
-    height: 48,
+    width: 144,
+    height: 50,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -406,11 +409,10 @@ const styles = StyleSheet.create({
   scanButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     textAlign: "center",
-    textAlignVertical: "center", 
-    height: 30, 
+    textAlignVertical: "center",
+    height: 30,
   },
   sectionTitle1: {
     fontSize: 18,

@@ -41,43 +41,77 @@ export default function Scan() {
   }, []);
 
   const makeupKeywords = [
-    // Các sản phẩm trang điểm nền
-    "makeup", "foundation", "concealer", "primer", "setting spray", 
-    "powder", "compact", "loose powder", "bb cream", "cc cream", 
+    "Make up",
+    "make up",
+    "makeup",
+    "foundation",
+    "concealer",
+    "primer",
+    "setting spray",
+    "powder",
+    "compact",
+    "loose powder",
+    "bb cream",
+    "cc cream",
     "tinted moisturizer",
-  
-    // Trang điểm mắt
-    "eyeshadow", "mascara", "eyeliner", "brow", "brow pencil", 
-    "brow gel", "kajal", "lash", "lash curler", "eye primer", 
-    "glitter shadow", "cut crease", "smokey eye",
-  
-    // Trang điểm má
-    "blush", "bronzer", "contour", "highlighter", "cheek tint", 
-    "cream blush", "powder blush", "liquid blush",
-  
-    // Trang điểm môi
-    "lipstick", "lip gloss", "lip tint", "lip liner", "lip balm", 
-    "matte lipstick", "lip plumper", "lip stain",
-  
-    // Các kỹ thuật trang điểm
-    "baking", "strobing", "highlighting", "contouring", "color correcting", 
-    "blending", "overlining", "cut crease", "ombre lips", "dewy finish", 
-    "matte finish", "full glam", "natural makeup", "no-makeup makeup"
+    "eyeshadow",
+    "mascara",
+    "eyeliner",
+    "brow",
+    "brow pencil",
+    "brow gel",
+    "kajal",
+    "lash",
+    "lash curler",
+    "eye primer",
+    "glitter shadow",
+    "cut crease",
+    "smokey eye",
+    "blush",
+    "bronzer",
+    "contour",
+    "highlighter",
+    "cheek tint",
+    "cream blush",
+    "powder blush",
+    "liquid blush",
+    "lipstick",
+    "lip gloss",
+    "lip tint",
+    "lip liner",
+    "lip balm",
+    "matte lipstick",
+    "lip plumper",
+    "lip stain",
+    "baking",
+    "strobing",
+    "highlighting",
+    "contouring",
+    "color correcting",
+    "blending",
+    "overlining",
+    "cut crease",
+    "ombre lips",
+    "dewy finish",
+    "matte finish",
+    "full glam",
+    "natural makeup",
+    "no-makeup makeup",
   ];
   const handleUpload = () => {
     if (!imageDescription.trim()) {
       setError("Input cannot be empty!");
-      return; 
+      return;
     }
     const containsMakeupKeyword = makeupKeywords.some((keyword) =>
       imageDescription.toLowerCase().includes(keyword)
     );
-  
+
     if (!containsMakeupKeyword) {
       setError("Input must be related to makeup!");
       return;
     }
-    setError(""); 
+    setError("");
 
     router.push({
       pathname: "/generate",
@@ -93,7 +127,6 @@ export default function Scan() {
 
   const getMakeupItems = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log("Token: ", token);
     try {
       const response = await fetch(
         "http://192.168.31.183:5280/api/MakeupItems/user/me",
@@ -296,8 +329,8 @@ const styles = StyleSheet.create({
   },
   retakeButton: {
     position: "absolute",
-    bottom: 10, 
-    right: 10, 
+    bottom: 10,
+    right: 10,
     backgroundColor: "#007AFF",
     paddingVertical: 10,
     paddingHorizontal: 15,

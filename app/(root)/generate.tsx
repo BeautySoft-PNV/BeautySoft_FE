@@ -62,8 +62,9 @@ export default function Generate() {
   }, [imageDescription]);
 
   const makeupKeywords = [
-    // Các sản phẩm trang điểm nền
     "makeup",
+    "Make up",
+    "make up",
     "foundation",
     "concealer",
     "primer",
@@ -74,8 +75,6 @@ export default function Generate() {
     "bb cream",
     "cc cream",
     "tinted moisturizer",
-
-    // Trang điểm mắt
     "eyeshadow",
     "mascara",
     "eyeliner",
@@ -89,8 +88,6 @@ export default function Generate() {
     "glitter shadow",
     "cut crease",
     "smokey eye",
-
-    // Trang điểm má
     "blush",
     "bronzer",
     "contour",
@@ -99,8 +96,7 @@ export default function Generate() {
     "cream blush",
     "powder blush",
     "liquid blush",
-
-    // Trang điểm môi
+    "lips",
     "lipstick",
     "lip gloss",
     "lip tint",
@@ -109,8 +105,6 @@ export default function Generate() {
     "matte lipstick",
     "lip plumper",
     "lip stain",
-
-    // Các kỹ thuật trang điểm
     "baking",
     "strobing",
     "highlighting",
@@ -149,83 +143,51 @@ export default function Generate() {
 
   const generateMakeup = async () => {
     if (!imageUri) return;
-
     setLoading(true);
     setError("");
-
     const formData = new FormData();
     const textPrompt = Array.isArray(params.request)
       ? params.request[0]
       : params.request;
     formData.append(
       "TextPrompt",
-      `Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}. Apply a natural and light makeup look tailored for Asian facial features. Focus on a dewy, healthy skin finish with a lightweight, hydrating base that enhances natural radiance. Use a sheer foundation or BB cream to even out skin tone while maintaining a fresh, glowing complexion. Apply a minimal amount of concealer only where needed. Set with a fine, translucent powder to control shine but keep the skin looking soft and natural.
-
-For the eyes, use soft, neutral shades like peach or warm brown to enhance the natural eye shape subtly. Avoid heavy contouring; instead, use a soft, gradient eyeshadow blending technique. Apply a thin, natural eyeliner that follows the eye’s shape closely, with a slight upward flick to create a subtle lifting effect. Curl the lashes and use a lengthening mascara for a fluttery, defined look without clumping.
-
-For the brows, keep them softly arched and filled in with light strokes to mimic natural hair. Use a subtle peach or pink blush applied high on the cheeks to give a youthful, lifted effect. Apply a liquid or cream highlighter sparingly on the high points of the face for a fresh glow.
-
-For the lips, choose a soft, natural pink or coral shade. Use a gradient lip technique for a youthful and effortless effect, applying more color in the center and blending outwards. Finish with a light, glossy tint for a hydrated and plump look.
-
-Ensure the makeup enhances natural Asian features without looking heavy, maintaining a soft, fresh, and effortless appearance. Provide specific steps for each stage, such as Step 1, Step 2, Step 3, and so on. Apply a natural and light makeup look without altering my facial features or hairstyle. Focus only on face makeup with a fresh, minimal, and natural foundation. Start with a light, hydrating primer to create a smooth base and prolong the wear of the makeup. Use a thin, skin-like foundation that evens out my skin tone while maintaining a natural look, blending it well for a lightweight finish. Apply a light-coverage concealer only where needed (under the eyes, redness, or blemishes) and blend lightly for a natural effect. Lightly dust translucent powder to prevent shine while keeping my skin looking fresh. Add a natural, peachy blush to the apples of my cheeks for a healthy-looking glow. Apply a thin layer of liquid or cream highlighter to the high points of my face (cheekbones, bridge of the nose) for a fresh look. Lightly fill in sparse areas of my brows with a natural brow pencil or loose powder, keeping the look soft and fluffy. Use a neutral matte or shimmer eyeshadow to enhance my natural, soft look. Apply a thin layer of brown or black mascara to subtly define my lashes without clumping. Finish with a tint or a clear, hydrating lip balm in a natural shade to accentuate my lip color. Ensure that my makeup enhances my natural features without looking heavy or overly defined, maintaining my skin texture and keeping the overall look fresh and effortless.`
+      `Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}. Focus on smooth, radiant skin with a natural glow, well-defined yet soft, straight eyebrows, subtle eyeshadow in warm peach or brown tones, soft pink or coral blush, and naturally tinted lips. Maintain Asian facial features, including almond-shaped brown eyes, a small and softly contoured nose, a gentle jawline, and warm golden or neutral undertones. Ensure a dewy, healthy complexion with a lightweight, hydrating base to enhance radiance. Use a sheer foundation or BB cream to even out skin tone while keeping a fresh, natural look. Apply concealer only where needed. Lightly set with translucent powder to control shine while maintaining soft, natural skin.For the eyes, choose warm, neutral shades like peach, terracotta, or light brown to subtly enhance their appearance. Use a soft, blended gradient technique to create natural depth without harsh lines. Apply a thin, natural eyeliner following the lash line, with a slight upward flick for a subtle lifting effect. Curl the lashes and apply mascara to lengthen and define without clumping.For the eyebrows, maintain a naturally straight or softly arched shape, filling in sparse areas using a brow pencil or powder for a natural look. Apply a peach or soft pink blush to the high points of the cheeks to create a youthful, lifted effect. Use a liquid or cream highlighter on the high points of the face (cheekbones, nose bridge, and cupid’s bow) for a fresh glow.For the lips, use soft pink, coral, or warm nude shades. Apply a gradient lip technique for a natural and youthful effect by concentrating color in the center and blending outward. Finish with a light, glossy tint to keep the lips hydrated and plump.Ensure the makeup remains lightweight and enhances natural beauty without altering distinct Asian facial features. Provide step-by-step instructions, such as Step 1, Step 2, Step 3, and so on, for easy application. Keep the overall look fresh, simple, and effortlessly enhancing the natural elegance of East Asian beauty.`
     );
-
     try {
       const copyAssetToTemp = async () => {
         try {
           const asset = Asset.fromModule(
             require("../(root)/assets/face_oval_mask.png")
           );
-
-          if (Platform.OS === "web") {
-            const response = await fetch(asset.uri);
-            const blob = await response.blob();
-            const contentType =
-              response.headers.get("Content-Type") || "image/png";
-            const extension = contentType.split("/")[1] || "png";
-            const filename = `face_oval_mask.${extension}`;
-
-            const maskFile = new File([blob], filename, {
-              type: contentType,
-              lastModified: Date.now(),
-            });
-
-            console.log("📌 Mask File (Web):", maskFile);
-            return { file: maskFile, uri: null };
-          } else {
-            await asset.downloadAsync();
-            if (!asset.localUri) {
-              throw new Error("Tải asset thất bại");
-            }
-
-            const fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
-            await FileSystem.copyAsync({ from: asset.localUri, to: fileUri });
-
-            const base64 = await FileSystem.readAsStringAsync(fileUri, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-
-            const finalFileUri = `${FileSystem.documentDirectory}face_oval_mask.png`;
-            await FileSystem.writeAsStringAsync(finalFileUri, base64, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-
-            const maskFile = {
-              uri: finalFileUri,
-              name: "face_oval_mask.png",
-              type: "image/png",
-            };
-
-            return maskFile;
+          await asset.downloadAsync();
+          if (!asset.localUri) {
+            throw new Error("Tải asset thất bại");
           }
+
+          const fileUri = `${FileSystem.cacheDirectory}face_oval_mask.png`;
+          await FileSystem.copyAsync({ from: asset.localUri, to: fileUri });
+
+          const base64 = await FileSystem.readAsStringAsync(fileUri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          const finalFileUri = `${FileSystem.documentDirectory}face_oval_mask.png`;
+          await FileSystem.writeAsStringAsync(finalFileUri, base64, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          const maskFile = {
+            uri: finalFileUri,
+            name: "face_oval_mask.png",
+            type: "image/png",
+          };
+
+          return maskFile;
         } catch (error) {
-          console.error("Lỗi copy file:", error);
           throw error;
         }
       };
-
       const maskFile = await copyAssetToTemp();
-
       if (maskFile.uri && !maskFile.uri.includes("/uploads")) {
         const file = {
           uri: maskFile.uri,
@@ -236,47 +198,16 @@ Ensure the makeup enhances natural Asian features without looking heavy, maintai
         formData.append("Mask", file as any);
       }
 
-      let imageFile;
-      if (Platform.OS === "web") {
-        const imageUrl = Array.isArray(imageUri) ? imageUri[0] : imageUri;
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const contentType =
-          response.headers.get("Content-Type") || "image/jpeg";
-        const extension = contentType.split("/")[1] || "jpg";
-        const filename = `uploaded_${Date.now()}.${extension}`;
-        imageFile = new File([blob], filename, {
-          type: contentType,
-          lastModified: Date.now(),
-        });
-      } else {
-        if (correctedUri && !correctedUri.includes("/uploads")) {
-          const imageFile = {
-            uri: correctedUri,
-            type: "image/jpeg",
-            name: `uploaded_${Date.now()}.jpg`,
-          };
-          formData.append("Image", imageFile as any);
-        }
+      if (correctedUri && !correctedUri.includes("/uploads")) {
+        const imageFile = {
+          uri: correctedUri,
+          type: "image/jpeg",
+          name: `uploaded_${Date.now()}.jpg`,
+        };
+        formData.append("Image", imageFile as any);
       }
-
       formData.append("OutputFormat", "webp");
-
-      const getToken = async () => {
-        try {
-          if (Platform.OS === "web") {
-            return localStorage.getItem("token") || "";
-          } else {
-            return (await AsyncStorage.getItem("token")) || "";
-          }
-        } catch (error) {
-          console.error("Lỗi lấy token:", error);
-          return "";
-        }
-      };
-      const token = await getToken();
-      console.log("token: ", token);
-
+      const token = await AsyncStorage.getItem("token");
       try {
         const responseMain = await fetch(
           "http://192.168.31.183:5280/api/combined/generate-and-inpaint",
@@ -292,17 +223,15 @@ Ensure the makeup enhances natural Asian features without looking heavy, maintai
           );
         } else {
           const data = await responseMain.json();
-          console.log("generatedPrompt: ", data.generatedPrompt);
           setGeneratedImage((prev) => [...prev, data.imageData]);
           setGenerateStep((prev) => [...prev, data.generatedPrompt]);
         }
       } catch (error) {
-        console.error("⚠️ Lỗi khi gọi API Main:", error);
+        throw error;
       } finally {
         setLoading(false);
       }
     } catch (error) {
-      console.error("⚠️ Lỗi tổng thể khi generate image:", error);
       setLoading(false);
     }
   };
@@ -313,14 +242,13 @@ Ensure the makeup enhances natural Asian features without looking heavy, maintai
         style={styles.scrollView}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-        <TouchableOpacity
-          style={{ marginLeft: "10%" }}
-          onPress={() => router.push("/(root)/(tabs)/scan")}
-        >
-          <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
-        </TouchableOpacity>
-
         <View style={styles.container}>
+          <TouchableOpacity
+            style={{ marginLeft: "2%", marginBottom: 15 }}
+            onPress={() => router.push("/(root)/(tabs)/scan")}
+          >
+            <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
+          </TouchableOpacity>
           <View style={styles.row}>
             <View style={styles.photoAndRequest}>
               <Image source={{ uri: correctedUri }} style={styles.image} />
