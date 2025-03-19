@@ -295,7 +295,6 @@ export default function EditMakeupItem() {
         </>
       ) : (
         <View style={styles.container}>
-          {/* Phần hiển thị ảnh */}
           <View style={styles.imageContainer}>
             <Image source={{ uri: capturedImage }} style={styles.preview} />
             <TouchableOpacity
