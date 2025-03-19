@@ -56,6 +56,7 @@ const Notifications = () => {
                 }
             });
             const data = await response.json();
+            console.log(data)
             setNotifications(data);
         } catch (error) {
             console.error("Error fetching notifications:", error);
@@ -123,12 +124,13 @@ const styles = StyleSheet.create({
         right: 10,
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
         padding: 5,
-        borderRadius: 12,
+        borderRadius: 50,
     },
     scrollView: {
         flex: 1,
         backgroundColor: 'white',
         width: '100%',
+        fontFamily: "PlayfairDisplay-Bold",
     },
     container: {
         flex: 1,
@@ -136,7 +138,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         padding: 8,
         marginTop: 20,
-        backgroundColor: "#B3B3B3"
     },
     headerContainer: {
         flexDirection: "row",
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
         marginRight: "30%"
     },
     card: {
-        backgroundColor: 'white',
+        backgroundColor: 'pink',
         borderRadius: 8,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

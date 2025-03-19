@@ -5,10 +5,7 @@ const checkForNewNotifications = async () => {
     if (!existingData) {
         await AsyncStorage.setItem("notifications", JSON.stringify([]));
         console.log("Đã tạo notifications với mảng rỗng.");
-    } else {
-        // console.log("notifications đã tồn tại, không cần tạo mới.");
     }
-
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;

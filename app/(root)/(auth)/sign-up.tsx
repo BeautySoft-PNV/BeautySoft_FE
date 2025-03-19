@@ -269,9 +269,10 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: 'red',
-        fontSize: 14,
-        alignSelf: 'flex-start',
+        fontSize: 15,
+        fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 10,
+        alignSelf: 'flex-start',
     },
 });
 

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const ForgotPasswordScreen = () => {
     const [email, setEmail] = useState('');
     const [timer, setTimer] = useState(0);
+    const navigation = useNavigation();
+
 
     useEffect(() => {
         const checkTime = async () => {
@@ -72,6 +75,9 @@ const ForgotPasswordScreen = () => {
     return (
         <ScrollView> 
         <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Forgot Password</Text>
             <Text style={styles.description}>
                 Enter your email to receive password reset instructions.
@@ -99,6 +105,14 @@ const ForgotPasswordScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: {
+        alignSelf: 'flex-start',
+        marginBottom: 20,
+    },
+    backButtonText: {
+        fontSize: 18,
+        color: '#007bff',
+    },
     container: {
         flex: 1,
         justifyContent: 'center',

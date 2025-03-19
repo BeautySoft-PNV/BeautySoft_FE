@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 'auto',
   },
+  containerTitle:{},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -183,7 +184,6 @@ const styles = StyleSheet.create({
   backButton: {
     marginRight: 10,
   },
-  containerTitle: { display:'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width:'92%' },
   backButtonText: {
     color: '#ED1E51',
     fontSize: 20,
@@ -195,11 +195,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
-    marginLeft: 20,
+    textAlign: 'center',
   },
   image: {
     borderRadius: 10,
-    height: 165,
+    height: 200,
     width: '100%',
     marginBottom: 20,
   },
@@ -208,24 +208,21 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
-    width: '100%',
   },
   subtitle: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
-    width: '100%',
   },
   price: {
     textAlign: 'center',
     color: '#ED1E51',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
-    width: '100%',
   },
   bulletPoints: {
     marginBottom: 10,
@@ -236,14 +233,14 @@ const styles = StyleSheet.create({
   description: {
     textAlign: 'center',
     marginBottom: 10,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },
   contact: {
     textAlign: 'center',
     marginBottom: 20,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , ScrollView} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -126,16 +126,17 @@ const SignIn = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-    iconEye:{
-    position: 'absolute',
-        right: 10,
-    },
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
+        height: 750,
         backgroundColor: 'white',
+    },
+    iconEye:{
+        position: 'absolute',
+        right: 10,
     },
     forgot: {
         display: 'flex',
@@ -149,12 +150,12 @@ const styles = StyleSheet.create({
     },
     backgroundContainer: {
         width: 350,
-        height: 250,
+        height: 240,
         backgroundColor: '#F4F6FF',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-        marginBottom: 20,
+        marginBottom: 5,
     },
     welcomeText: {
         fontSize: 32,
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: 'red',
-        fontSize: 18,
+        fontSize: 15,
         fontFamily: "PlayfairDisplay-Bold",
         marginBottom: 10,
         alignSelf: 'flex-start',
