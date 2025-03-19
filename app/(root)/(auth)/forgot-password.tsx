@@ -112,6 +112,8 @@ const styles = StyleSheet.create({
     backButtonText: {
         fontSize: 18,
         color: '#007bff',
+        fontFamily: "PlayfairDisplay-Bold",
+
     },
     container: {
         flex: 1,
@@ -122,14 +124,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 24,
-        fontWeight: 'bold',
         marginBottom: 10,
+        fontFamily: "PlayfairDisplay-Bold",
+        color: "#ED1E51"
     },
     description: {
-        fontSize: 16,
+        fontSize: 15,
         textAlign: 'center',
         marginBottom: 20,
         color: '#666',
+        fontFamily: "PlayfairDisplay-Bold",
     },
     input: {
         width: '100%',
@@ -140,6 +144,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: '#fff',
         marginBottom: 20,
+        fontSize: 18, 
+        fontFamily: "PlayfairDisplay-Bold",
     },
     button: {
         backgroundColor: '#007bff',
@@ -152,7 +158,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: "PlayfairDisplay-Bold",
     },
 });
 

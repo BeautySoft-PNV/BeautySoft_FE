@@ -169,7 +169,7 @@ const SignUp = () => {
                         </TouchableOpacity>
                         <View style={styles.forgot}>
                             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/sign-in')}>
-                                <Text style={styles.link}>Log in</Text>
+                                <Text style={styles.link}>Sign in</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/forgot-password')}>
                                 <Text style={styles.link}>Forgot Password!</Text>
@@ -212,7 +212,6 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        fontWeight: 'bold',
         fontFamily: 'PlayfairDisplay-Bold',
         color: 'black',
         marginBottom: 5,
@@ -260,12 +259,13 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: "PlayfairDisplay-Bold",
     },
     link: {
         marginTop: 20,
         fontSize: 17,
         color: '#007bff',
+        fontFamily: "PlayfairDisplay-Bold",
     },
     errorText: {
         color: 'red',

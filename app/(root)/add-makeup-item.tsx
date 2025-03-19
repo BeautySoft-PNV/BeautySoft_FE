@@ -191,11 +191,6 @@ export default function AddMakeupItem() {
 
     formData.append("Name", name);
     formData.append("Description", description);
- /*   formData.append("imageFile", {
-      uri: capturedImage,  
-      name: "makeup.jpg",
-      type: "image/jpeg"
-    });*/
     if (capturedImage && !capturedImage.includes("/uploads")) {
       const file = {
         uri: capturedImage,
@@ -397,7 +392,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
     color: "black",
   },
   previewContainer: {
@@ -438,8 +433,8 @@ const styles = StyleSheet.create({
   },
   retakeButton: {
     position: "absolute",
-    bottom: 10, // Cách đáy của ảnh 10px
-    right: 10, // Cách mép phải của ảnh 10px
+    bottom: 10,
+    right: 10, 
     backgroundColor: "#007AFF",
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -447,7 +442,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconStyle: {
-    marginLeft: 10, // Khoảng cách bên trái
+    marginLeft: 10, 
   },
   errorText: {
     color: "red",
@@ -490,7 +485,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },

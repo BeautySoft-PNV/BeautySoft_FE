@@ -99,9 +99,9 @@ export default function ModelAddMakeupStyle({
       <View style={{ position: "absolute", top: 8, right: 0 }}>
         <AntDesign
           name="save"
-          style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]} 
+          style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]}
           size={24}
-          onPress={() => !isDisabled && setModalVisible(true)} 
+          onPress={() => !isDisabled && setModalVisible(true)}
         />
       </View>
 
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -211,11 +211,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 
-  buttonText: { fontSize: 16, color: "white", fontWeight: "bold" },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
 
   saveIcon: {
     display: "flex",
     justifyContent: "flex-end",
-    color: "#ED1E51"
+    color: "#ED1E51",
   },
 });

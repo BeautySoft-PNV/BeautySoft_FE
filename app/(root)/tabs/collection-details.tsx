@@ -134,9 +134,8 @@ const CollectionDetails = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Delete Item Storage</Text>
             <Text style={styles.modalMessage}>
-              Are you sure you want to delete "{styleData.name}"?
+              Are you sure you want to delete ?
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -245,16 +244,11 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    fontFamily: "PlayfairDisplay-Medium",
-  },
   modalMessage: {
     marginBottom: 10,
     textAlign: "center",
-    fontFamily: "PlayfairDisplay-Medium",
+    fontSize: 18, 
+    fontFamily: "PlayfairDisplay-Bold",
   },
   modalButtons: {
     flexDirection: "row",
