@@ -12,6 +12,7 @@ import {
   Modal,
   Pressable,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -35,6 +36,7 @@ export default function EditMakeupItem() {
   const inputRef = useRef(null);
   const [error, setError] = useState("");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (params) {
@@ -91,7 +93,7 @@ export default function EditMakeupItem() {
   function retakePicture() {
     setCapturedImage(null);
   }
-  const formatDateTime = (text : any) => {
+  const formatDateTime = (text: any) => {
     let numbersOnly = text.replace(/\D/g, "");
 
     let formatted = numbersOnly
@@ -100,10 +102,10 @@ export default function EditMakeupItem() {
       .replace(/^(\d{2}\/\d{2}\/\d{4})(\d{0,2})/, "$1 $2")
       .replace(/^(\d{2}\/\d{2}\/\d{4} \d{2})(\d{0,2})/, "$1:$2");
 
-    return formatted.trim(); // Xóa khoảng trắng dư thừa
+    return formatted.trim();
   };
 
-  const validateDateTime = (text : any) => {
+  const validateDateTime = (text: any) => {
     const parts = text.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
     if (!parts) return "Incorrect format";
 
@@ -116,29 +118,6 @@ export default function EditMakeupItem() {
 
     return "";
   };
-
-  const handleManufactureDateChange = (text: string) => {
-    let cleanedText = text.replace(/[^0-9\/: ]/g, "");
-    let formatted = cleanedText.length >= manufactureDate.length
-        ? formatDateTime(cleanedText)
-        : cleanedText;
-    if (formatted !== manufactureDate) {
-      setManufactureDate(formatted);
-      setError(validateDateTime(formatted));
-    }
-  };
-
-  const handleExpirationDateChange = (text: string) => {
-    let cleanedText = text.replace(/[^0-9\/: ]/g, "");
-    let formatted = cleanedText.length >= expirationDate.length
-        ? formatDateTime(cleanedText)
-        : cleanedText;
-    if (formatted !== expirationDate) {
-      setExpirationDate(formatted);
-      setError(validateDateTime(formatted));
-    }
-  };
-
 
   const handleEditMakeupItem = async () => {
     type ErrorType = {
@@ -160,7 +139,8 @@ export default function EditMakeupItem() {
     if (!expirationDate.trim()) {
       newErrors.expirationDate = "Expiration date is required!";
     } else if (new Date(expirationDate) < new Date(manufactureDate)) {
-      newErrors.expirationDate = "Expiration date must be after manufacture date!";
+      newErrors.expirationDate =
+        "Expiration date must be after manufacture date!";
     }
     if (!description.trim()) {
       newErrors.description = "Description is required!";
@@ -171,20 +151,12 @@ export default function EditMakeupItem() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      setLoading(false);
       return;
+    } else {
+      setLoading(true);
     }
-    const getToken = async () => {
-      try {
-        if (Platform.OS === "web") {
-          return localStorage.getItem("token") || "";
-        } else {
-          return (await AsyncStorage.getItem("token")) || "";
-        }
-      } catch (error) {
-        console.error("Lỗi lấy token:", error);
-        return "";
-      }
-    };
+
     const parseJwt = (token: string): { [key: string]: any } | null => {
       try {
         const base64Url = token.split(".")[1];
@@ -202,17 +174,18 @@ export default function EditMakeupItem() {
         return null;
       }
     };
-    const token = await getToken();
+
+    const token = await AsyncStorage.getItem("token");
     const formData = new FormData();
-    const decodedToken = parseJwt(token);
+    const decodedToken = parseJwt(token || "");
 
     if (decodedToken && decodedToken.id) {
       formData.append("UserId", String(decodedToken.id));
     } else {
-      console.error("Không tìm thấy userId trong token!");
+      console.error("Can not find UserId from token!");
     }
 
-    function convertToISOFormat(dateString : any) {
+    function convertToISOFormat(dateString: any) {
       const [day, month, yearAndTime] = dateString.split("/");
       const [year, time] = yearAndTime.split(" ");
       return `${year}-${month}-${day}T${time}:00`;
@@ -235,43 +208,37 @@ export default function EditMakeupItem() {
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
 
-    for (let pair of formData.entries()) {
-      
-      console.log(pair[0], pair[1]);
-    }
-
-
     try {
-      console.log(`http://192.168.31.183:5280/api/MakeupItems/${id}`)
-        const response = await fetch(`http://192.168.31.183:5280/api/MakeupItems/${id}`, {
+      console.log(`http://192.168.31.183:5280/api/MakeupItems/${id}`);
+      const response = await fetch(
+        `http://192.168.31.183:5280/api/MakeupItems/${id}`,
+        {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          body: formData, 
-        });
-      
-        console.log("Response Status:", response.status);
-      
-        if (!response.ok) {
-          console.log("❌ Lỗi khi edit!");
-          const errorText = await response.text();
-          try {
-            const errorJson = JSON.parse(errorText); 
-            console.error("Lỗi JSON từ server:", errorJson);
-          } catch (e) {
-            console.error("Lỗi dạng text từ server:", errorText);
-          }
-          throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+          body: formData,
         }
-      
-        console.log("✅ Edit successful!");
-        setSuccessModalVisible(true);
-        router.push("/(root)/(tabs)/makeup-item");
-      
-      } catch (error) {
-        console.error("🚨 Lỗi Fetch:", error);
+      );
+
+      if (!response.ok) {
+        console.log("❌ Error when edit!");
+        const errorText = await response.text();
+        try {
+          const errorJson = JSON.parse(errorText);
+          console.error("Error JSON from server:", errorJson);
+        } catch (e) {
+          console.error("Error format text from server:", errorText);
+        }
+        throw new Error(`HTTP Error ${response.status}: ${errorText}`);
       }
+
+      setLoading(false);
+      setSuccessModalVisible(true);
+      router.push("/(root)/(tabs)/makeup-item");
+    } catch (error) {
+      console.error("🚨 Error Fetch:", error);
+    }
   };
   return (
     <View style={styles.container}>
@@ -325,47 +292,40 @@ export default function EditMakeupItem() {
 
               <Text style={styles.title}>Date of Manufacture</Text>
               <TextInput
+                pointerEvents="none"
                 style={[
-                  styles.input,
+                  styles.enableInput,
                   errors.manufactureDate ? styles.inputError : null,
                 ]}
                 placeholder="DD/MM/YYYY HH:mm"
                 value={manufactureDate}
-                onChangeText={(text) => {
-                    handleManufactureDateChange(text)
-                }}
                 keyboardType="number-pad"
                 maxLength={16}
+                editable={false}
+                selectTextOnFocus={false}
               />
-              {errors.manufactureDate && (
-                <Text style={styles.errorText}>{errors.manufactureDate}</Text>
-              )}
 
               <Text style={styles.title}>Expiration Date</Text>
               <TextInput
+                pointerEvents="none"
                 style={[
-                  styles.input,
+                  styles.enableInput,
                   errors.expirationDate ? styles.inputError : null,
                 ]}
                 placeholder="DD/MM/YYYY HH:mm"
                 value={expirationDate}
-                onChangeText={(text) => {
-                    handleExpirationDateChange(text)
-                }}
                 keyboardType="number-pad"
                 maxLength={16}
+                editable={false}
+                selectTextOnFocus={false}
               />
-              {errors.expirationDate && (
-                <Text style={styles.errorText}>{errors.expirationDate}</Text>
-              )}
-
               <Text style={styles.title}>Description</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Description..."
                 placeholderTextColor="#C4C4C4"
                 autoCapitalize="none"
-                value={description} // ✅ Giá trị lấy từ params
+                value={description}
                 onChangeText={(text) => {
                   setDescription(text);
                   setErrors((prev) => ({ ...prev, description: "" }));
@@ -381,7 +341,7 @@ export default function EditMakeupItem() {
                 placeholder="Guidance..."
                 placeholderTextColor="#C4C4C4"
                 autoCapitalize="none"
-                value={guidance} // ✅ Giá trị lấy từ params
+                value={guidance}
                 onChangeText={(text) => {
                   setGuidance(text);
                   setErrors((prev) => ({ ...prev, guidance: "" }));
@@ -389,6 +349,29 @@ export default function EditMakeupItem() {
               />
               {errors.guidance && (
                 <Text style={styles.errorText}>{errors.guidance}</Text>
+              )}
+              {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+              ) : (
+                <Modal
+                  visible={successModalVisible}
+                  animationType="fade"
+                  transparent
+                >
+                  <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                      <Text style={styles.text}>
+                        Makeup item added successfully!
+                      </Text>
+                      <Pressable
+                        style={styles.buttonConfirm}
+                        onPress={() => setSuccessModalVisible(false)}
+                      >
+                        <Text style={styles.buttonText}>Close</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                </Modal>
               )}
             </View>
           </ScrollView>
@@ -406,7 +389,7 @@ export default function EditMakeupItem() {
       <Modal visible={successModalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.text}>Makeup item added successfully!</Text>
+            <Text style={styles.text}>Edit successfully!</Text>
             <Pressable
               style={styles.buttonConfirm}
               onPress={() => setSuccessModalVisible(false)}
@@ -488,6 +471,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "black",
   },
+  enableInput: {
+    width: 330,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginBottom: 20,
+    backgroundColor: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+    fontSize: 18,
+    color: "gray",
+  },
   uploadImage: {
     marginLeft: 20,
   },
@@ -513,7 +508,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     marginBottom: 5,
@@ -536,7 +530,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ED1E51",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 5,
     marginVertical: 20,
     width: 200,
     fontSize: 18,

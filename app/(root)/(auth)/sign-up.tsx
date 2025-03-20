@@ -172,7 +172,7 @@ const SignUp = () => {
                                 <Text style={styles.link}>Sign in</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/forgot-password')}>
-                                <Text style={styles.link}>Forgot Password!</Text>
+                                <Text style={styles.link}>Forgot Password</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

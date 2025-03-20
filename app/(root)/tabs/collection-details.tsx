@@ -76,7 +76,6 @@ const CollectionDetails = () => {
 
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-
       router.push("/(root)/(tabs)/collection");
     } catch (error) {
       console.error("Error deleting item:", error);

@@ -172,8 +172,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "black",
+    color: "#ED1E51",
     fontFamily: "PlayfairDisplay-Bold",
   },
   containerTitle: {
@@ -202,7 +201,6 @@ const styles = StyleSheet.create({
   avatar: { width: 90, height: 90, borderRadius: 50 },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     marginBottom: 5,
@@ -218,7 +216,6 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 10,
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
   },
   upgradeButton: {
@@ -243,7 +240,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },

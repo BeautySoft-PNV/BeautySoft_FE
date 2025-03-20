@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -12,6 +12,7 @@ import {
   Modal,
   Pressable,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -33,6 +34,7 @@ export default function AddMakeupItem() {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [manufactureDateError, setManufactureDateError] = useState("");
   const [expirationDateError, setExpirationDateError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -57,22 +59,24 @@ export default function AddMakeupItem() {
     }
   }
 
+  
+
   function retakePicture() {
     setCapturedImage(null);
   }
-  const formatDateTime = (text : any) => {
-    let numbersOnly = text.replace(/\D/g, ""); // Chỉ lấy số
+  const formatDateTime = (text: any) => {
+    let numbersOnly = text.replace(/\D/g, "");
 
     let formatted = numbersOnly
-      .replace(/^(\d{2})(\d{0,2})/, "$1/$2") // Thêm dấu `/` sau ngày
-      .replace(/^(\d{2}\/\d{2})(\d{0,4})/, "$1/$2") // Thêm dấu `/` sau tháng
-      .replace(/^(\d{2}\/\d{2}\/\d{4})(\d{0,2})/, "$1 $2") // Thêm dấu ` ` sau năm
-      .replace(/^(\d{2}\/\d{2}\/\d{4} \d{2})(\d{0,2})/, "$1:$2"); // Thêm dấu `:` sau giờ
+      .replace(/^(\d{2})(\d{0,2})/, "$1/$2")
+      .replace(/^(\d{2}\/\d{2})(\d{0,4})/, "$1/$2")
+      .replace(/^(\d{2}\/\d{2}\/\d{4})(\d{0,2})/, "$1 $2")
+      .replace(/^(\d{2}\/\d{2}\/\d{4} \d{2})(\d{0,2})/, "$1:$2");
 
-    return formatted.trim(); // Xóa khoảng trắng dư thừa
+    return formatted.trim();
   };
 
-  const validateDateTime = (text : any) => {
+  const validateDateTime = (text: any) => {
     const parts = text.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
     if (!parts) return "Incorrect format";
 
@@ -86,10 +90,10 @@ export default function AddMakeupItem() {
     return "";
   };
 
-
   const handleManufactureDateChange = (text: string) => {
     let cleanedText = text.replace(/[^0-9\/: ]/g, "");
-    let formatted = cleanedText.length >= manufactureDate.length
+    let formatted =
+      cleanedText.length >= manufactureDate.length
         ? formatDateTime(cleanedText)
         : cleanedText;
     if (formatted !== manufactureDate) {
@@ -99,7 +103,8 @@ export default function AddMakeupItem() {
   };
   const handleExpirationDateChange = (text: string) => {
     let cleanedText = text.replace(/[^0-9\/: ]/g, "");
-    let formatted = cleanedText.length >= expirationDate.length
+    let formatted =
+      cleanedText.length >= expirationDate.length
         ? formatDateTime(cleanedText)
         : cleanedText;
     if (formatted !== expirationDate) {
@@ -108,7 +113,10 @@ export default function AddMakeupItem() {
     }
   };
 
+  
+
   const handleAddMakeupItem = async () => {
+
     type ErrorType = {
       name?: string;
       manufactureDate?: string;
@@ -128,7 +136,8 @@ export default function AddMakeupItem() {
     if (!expirationDate.trim()) {
       newErrors.expirationDate = "Expiration date is required!";
     } else if (new Date(expirationDate) < new Date(manufactureDate)) {
-      newErrors.expirationDate = "Expiration date must be after manufacture date!";
+      newErrors.expirationDate =
+        "Expiration date must be after manufacture date!";
     }
     if (!description.trim()) {
       newErrors.description = "Description is required!";
@@ -139,20 +148,12 @@ export default function AddMakeupItem() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      setLoading(false)
       return;
+    }else{
+      setLoading(true);
     }
-    const getToken = async () => {
-      try {
-        if (Platform.OS === "web") {
-          return localStorage.getItem("token") || "";
-        } else {
-          return (await AsyncStorage.getItem("token")) || "";
-        }
-      } catch (error) {
-        console.error("Lỗi lấy token:", error);
-        return "";
-      }
-    };
+
     const parseJwt = (token: string): { [key: string]: any } | null => {
       try {
         const base64Url = token.split(".")[1];
@@ -166,21 +167,21 @@ export default function AddMakeupItem() {
 
         return JSON.parse(jsonPayload);
       } catch (e) {
-        console.error("Lỗi khi parse token:", e);
+        console.error("Error when parse token:", e);
         return null;
       }
     };
-    const token = await getToken();
+    const token = await AsyncStorage.getItem("token");
     const formData = new FormData();
-    const decodedToken = parseJwt(token);
+    const decodedToken = parseJwt(token || "");
 
     if (decodedToken && decodedToken.id) {
       formData.append("UserId", String(decodedToken.id));
     } else {
-      console.error("Không tìm thấy userId trong token!");
+      console.error("Can not find UserId from token!");
     }
 
-    function convertToISOFormat(dateString : any) {
+    function convertToISOFormat(dateString: any) {
       const [day, month, yearAndTime] = dateString.split("/");
       const [year, time] = yearAndTime.split(" ");
       return `${year}-${month}-${day}T${time}:00`;
@@ -216,17 +217,15 @@ export default function AddMakeupItem() {
     });
     if (!response.ok) {
       const errorText = await response.text();
-      console.log(`HTTP Error ${response.status}: ${errorText}`)
-      
+      console.log(`HTTP Error ${response.status}: ${errorText}`);
+
       throw new Error(`HTTP Error ${response.status}: ${errorText}`);
     } else {
-      console.log("Add successful!");
+      setLoading(false);
       setSuccessModalVisible(true);
-      router.push("/(root)/(tabs)/makeup-item")
+      router.push("/(root)/(tabs)/makeup-item");
     }
   };
-
-  console.log("capturedImage: ", capturedImage);
   return (
     <View style={styles.container}>
       {!capturedImage ? (
@@ -259,7 +258,6 @@ export default function AddMakeupItem() {
             </TouchableOpacity>
           </View>
 
-
           <ScrollView style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Text style={styles.title}>Name</Text>
@@ -273,12 +271,11 @@ export default function AddMakeupItem() {
                   setName(text);
                   setErrors((prev) => ({ ...prev, name: "" }));
                 }}
-
               />
               {errors.name ? (
                 <Text style={styles.errorText}>{errors.name}</Text>
               ) : null}
-              
+
               <Text style={styles.title}>Date of Manufacture</Text>
               <TextInput
                 ref={inputRef}
@@ -289,7 +286,9 @@ export default function AddMakeupItem() {
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {manufactureDateError ? <Text style={styles.errorText}>{manufactureDateError}</Text> : null}
+              {manufactureDateError ? (
+                <Text style={styles.errorText}>{manufactureDateError}</Text>
+              ) : null}
 
               <Text style={styles.title}>Expiration Date</Text>
               <TextInput
@@ -301,7 +300,9 @@ export default function AddMakeupItem() {
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {expirationDateError ? <Text style={styles.errorText}>{expirationDateError}</Text> : null}
+              {expirationDateError ? (
+                <Text style={styles.errorText}>{expirationDateError}</Text>
+              ) : null}
               <Text style={styles.title}>Description</Text>
               <TextInput
                 style={styles.input}
@@ -333,29 +334,41 @@ export default function AddMakeupItem() {
               {errors.guidance ? (
                 <Text style={styles.errorText}>{errors.guidance}</Text>
               ) : null}
+              {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+              ) : (
+                <Modal
+                  visible={successModalVisible}
+                  animationType="fade"
+                  transparent
+                >
+                  <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                      <Text style={styles.text}>
+                        Makeup item added successfully!
+                      </Text>
+                      <Pressable
+                        style={styles.buttonConfirm}
+                        onPress={() => setSuccessModalVisible(false)}
+                      >
+                        <Text style={styles.buttonText}>Close</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                </Modal>
+              )}
             </View>
           </ScrollView>
           <View style={styles.buttonSubmit}>
-            <TouchableOpacity style={styles.button} onPress={handleAddMakeupItem}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleAddMakeupItem}
+            >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
-
-      <Modal visible={successModalVisible} animationType="fade" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.text}>Makeup item added successfully!</Text>
-            <Pressable
-              style={styles.buttonConfirm}
-              onPress={() => setSuccessModalVisible(false)}
-            >
-              <Text style={styles.buttonText}>Close</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -393,7 +406,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontFamily: "PlayfairDisplay-Bold",
-    color: "black",
+    color: "white",
   },
   previewContainer: {
     flex: 1,
@@ -425,7 +438,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "white",
     fontFamily: "PlayfairDisplay-Bold",
-    fontSize: 18,
+    fontSize: 16,
     color: "black",
   },
   uploadImage: {
@@ -434,7 +447,7 @@ const styles = StyleSheet.create({
   retakeButton: {
     position: "absolute",
     bottom: 10,
-    right: 10, 
+    right: 10,
     backgroundColor: "#007AFF",
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -442,10 +455,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconStyle: {
-    marginLeft: 10, 
+    marginLeft: 10,
   },
   errorText: {
     color: "red",
+    fontFamily: "PlayfairDisplay-Bold",
     fontSize: 14,
     alignSelf: "flex-start",
     marginBottom: 5,
@@ -453,7 +467,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     marginBottom: 5,
@@ -476,7 +489,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ED1E51",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 10,
     marginVertical: 20,
     width: 200,
     fontSize: 18,
@@ -484,7 +497,7 @@ const styles = StyleSheet.create({
     fontFamily: "PlayfairDisplay-Bold",
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },
@@ -518,7 +531,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   buttonSubmit: {
-    alignItems: "center", // Căn giữa theo chiều ngang
-    justifyContent: "center", // Căn giữa theo chiều dọc nếu cần
-  }
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

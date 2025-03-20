@@ -231,7 +231,7 @@ const EditProfile = () => {
           keyboardType="email-address"
         />
 
-        <Text style={styles.title}>Current Password <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>Current password <Text style ={styles.noticed}>*</Text></Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputPassword}
@@ -251,7 +251,7 @@ const EditProfile = () => {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>New Password <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>New password <Text style ={styles.noticed}>*</Text></Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputPassword}
@@ -271,7 +271,7 @@ const EditProfile = () => {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>Confirm New Password <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>Confirm new password <Text style ={styles.noticed}>*</Text></Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputPassword}
@@ -314,9 +314,8 @@ const styles = StyleSheet.create({
     width: "92%",
   },
   header: {
-    color: "black",
+    color: "#ED1E51",
     fontSize: 24,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
   },
   avatarContainer: {
@@ -338,7 +337,6 @@ const styles = StyleSheet.create({
   avatar: { width: 90, height: 90, borderRadius: 50 },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     marginBottom: 5,
@@ -346,7 +344,6 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     width: "100%",
     padding: 10,
@@ -391,7 +388,6 @@ const styles = StyleSheet.create({
 
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },

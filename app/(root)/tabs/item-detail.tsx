@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Platform,
   Modal,
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -32,6 +33,8 @@ const ItemDetail = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,19 +81,7 @@ const ItemDetail = () => {
 
   const handleDelete = async () => {
     try {
-      const getToken = async () => {
-        try {
-          if (Platform.OS === "web") {
-            return localStorage.getItem("token") || "";
-          } else {
-            return (await AsyncStorage.getItem("token")) || "";
-          }
-        } catch (error) {
-          console.error("Lỗi lấy token:", error);
-          return "";
-        }
-      };
-      const token = await getToken();
+      const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
         `http://192.168.31.183:5280/api/MakeupItems/${id}`,
@@ -102,13 +93,11 @@ const ItemDetail = () => {
 
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-
       router.push("/(root)/(tabs)/makeup-item");
     } catch (error) {
       console.error("Error deleting item:", error);
     }
   };
-
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -155,12 +144,12 @@ const ItemDetail = () => {
               </Text>
             </View>
 
-            <Text style={{ fontWeight: "bold", marginTop:10}}>
+            <Text style={{ fontFamily: "PlayfairDisplay-Bold", marginTop: 10 }}>
               <Text>Description: </Text>
               {itemData?.description}
             </Text>
 
-            <Text style={{ fontWeight: "bold", marginTop:10}}>
+            <Text style={{ fontFamily: "PlayfairDisplay-Bold", marginTop: 10 }}>
               <Text>Guidance: </Text>
               {itemData?.guidance}
             </Text>
@@ -195,9 +184,8 @@ const ItemDetail = () => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Delete Item Storage</Text>
               <Text style={styles.modalMessage}>
-                Are you sure you want to delete "{itemData?.name}"?
+                Are you sure you want to delete {itemData?.name}?
               </Text>
               <View style={styles.modalButtons}>
                 <TouchableOpacity
@@ -216,6 +204,20 @@ const ItemDetail = () => {
             </View>
           </View>
         </Modal>
+
+        <Modal visible={successModalVisible} animationType="fade" transparent>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContentSuccess}>
+              <Text style={styles.text}>Delete makeup item successfully!</Text>
+              <Pressable
+                style={styles.buttonConfirm}
+                onPress={() => setSuccessModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -228,12 +230,41 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "flex-end",
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContentSuccess: {
+    width: 300,
+    height: 120,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  buttonConfirm: {
+    backgroundColor: "#4CAF50",
+    padding: 5,
+    borderRadius: 5,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 100,
+  },
   headerContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
     marginVertical: 10,
   },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
+
   header: {
     marginTop: 30,
     flexDirection: "row",
@@ -243,7 +274,6 @@ const styles = StyleSheet.create({
   },
   titleItem: {
     fontSize: 24,
-    fontWeight: "bold",
     color: "#ED1E51",
     fontFamily: "PlayfairDisplay-Bold",
   },
@@ -256,22 +286,21 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    // marginBottom: 50,
     marginTop: 5,
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     justifyContent: "center",
     alignItems: "center",
   },
 
   container: {
-    flexDirection: "row", // Căn theo chiều ngang
-    justifyContent: "space-between", // Đẩy hai phần tử ra hai đầu
-    alignItems: "center", // Căn giữa theo trục dọc
-    paddingHorizontal: 1, // Khoảng cách hai bên
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 1,
     marginTop: 20,
   },
   avatarContainer: {
@@ -306,8 +335,7 @@ const styles = StyleSheet.create({
   },
   time: {
     color: "black",
-    fontFamily: "PlayfairDisplay-Medium",
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
   },
   itemContainer: {
     marginTop: 15,
@@ -325,16 +353,11 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    fontFamily: "PlayfairDisplay-Medium",
-  },
   modalMessage: {
     marginBottom: 10,
     textAlign: "center",
-    fontFamily: "PlayfairDisplay-Medium",
+    fontSize: 16,
+    fontFamily: "PlayfairDisplay-Bold",
   },
   modalButtons: {
     flexDirection: "row",
@@ -369,12 +392,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#ED1E51",
     borderRadius: 5,
     width: 80,
-    alignItems: "center", // Căn giữa theo chiều ngang
-    justifyContent: "center", // Căn giữa theo chiều dọc
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },
 });

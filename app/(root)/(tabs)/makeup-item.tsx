@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { MD2Colors, TextInput } from "react-native-paper";
 
 const whiteColor = MD2Colors.white;
@@ -35,19 +35,8 @@ const MakeupItem = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const getToken = async () => {
-          try {
-            if (Platform.OS === "web") {
-              return localStorage.getItem("token") || "";
-            } else {
-              return (await AsyncStorage.getItem("token")) || "";
-            }
-          } catch (error) {
-            return "";
-          }
-        };
-
-        const token = await getToken();
+        
+        const token = await AsyncStorage.getItem("token");
 
         if (!token) throw new Error("No authentication token found");
 
@@ -63,7 +52,6 @@ const MakeupItem = () => {
 
         if (!response.ok) {
           if (response.status === 404) {
-            console.warn("API trả về 404 - Không tìm thấy dữ liệu");
             return null;
           }
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -91,13 +79,13 @@ const MakeupItem = () => {
     });
   };
   const filteredItems = makeupItems.filter((item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
     <SafeAreaView style={styles.safeContainer}>
       <View style={styles.buttonField}>
         <View style={styles.container}>
-          <Text style={styles.title}>Item storage</Text>
+          <Text style={styles.title}>Item Storage</Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => router.push("/add-makeup-item")}
@@ -109,30 +97,40 @@ const MakeupItem = () => {
         </View>
         <View style={styles.inputField}>
           <TextInput
-              style={styles.input}
-              placeholder="Search Inventory"
-              placeholderTextColor={whiteColor}
-              textColor="white"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
+            style={styles.input}
+            placeholder="Search Inventory"
+            placeholderTextColor={whiteColor}
+            textColor="white"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            theme={{ colors: { primary: "white" } }} 
+            underlineStyle={{ display: "none" }}
           />
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.verticalScroll}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.verticalScroll}
+      >
         <View style={styles.gridContainer}>
           {filteredItems.length > 0 ? (
-              filteredItems.map((makeupItem) => (
-                  <TouchableOpacity
-                      key={makeupItem.id}
-                      style={styles.item}
-                      onPress={() => handlePress(makeupItem)}
-                  >
-                    <Image source={{ uri: makeupItem.image }} style={styles.image} />
-                    <Text style={styles.name}>{makeupItem?.name}</Text>
-                  </TouchableOpacity>
-              ))
+            filteredItems.map((makeupItem) => (
+              <TouchableOpacity
+                key={makeupItem.id}
+                style={styles.item}
+                onPress={() => handlePress(makeupItem)}
+              >
+                <Image
+                  source={{ uri: makeupItem.image }}
+                  style={styles.image}
+                />
+                <Text style={styles.name}>{makeupItem?.name}</Text>
+              </TouchableOpacity>
+            ))
           ) : (
-              <Text style={styles.noDataText}>No matching makeup items found.</Text>
+            <Text style={styles.noDataText}>
+              No matching makeup items found.
+            </Text>
           )}
         </View>
       </ScrollView>
@@ -141,7 +139,11 @@ const MakeupItem = () => {
 };
 
 const styles = StyleSheet.create({
-  safeContainer: { flex: 1, backgroundColor: "#F3F4F6",  fontFamily: "PlayfairDisplay-Bold", },
+  safeContainer: {
+    flex: 1,
+    backgroundColor: "#F3F4F6",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
   scrollContainer: { paddingHorizontal: 16, paddingBottom: 20 },
   headerContainer: {
     flexDirection: "row",
@@ -163,18 +165,17 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
+
     color: "white",
   },
   title: {
     fontSize: 25,
-    fontWeight: "bold",
     color: "black",
     fontFamily: "PlayfairDisplay-Bold",
   },
   name: {
-    fontSize: 17,
-    fontWeight: "bold",
+    fontSize: 16,
     color: "black",
     fontFamily: "PlayfairDisplay-Bold",
   },
@@ -202,13 +203,15 @@ const styles = StyleSheet.create({
     padding: 0,
     backgroundColor: "#ED1E51",
     borderRadius: 10,
-    flexDirection: "row", // Căn theo chiều ngang
-    justifyContent: "space-between", // Đẩy hai phần tử ra hai đầu
-    alignItems: "center", // Căn giữa theo trục dọc
-    paddingHorizontal: 10, // Khoảng cách hai bên
+    borderBottomWidth: 0, 
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
   },
   input: {
-    fontStyle: "italic",
+    fontFamily: "PlayfairDisplay-Bold",
+    fontSize: 16,
     backgroundColor: "#ED1E51",
     color: whiteColor,
   },
@@ -223,10 +226,10 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "-50deg" }],
   },
   containerItem: {
-    flexDirection: "row", // Căn theo chiều ngang
-    justifyContent: "space-between", // Đẩy hai phần tử ra hai đầu
-    alignItems: "center", // Căn giữa theo trục dọc
-    paddingHorizontal: 30, // Khoảng cách hai bên
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 30,
     marginBottom: 30,
   },
 
@@ -264,6 +267,7 @@ const styles = StyleSheet.create({
   noDataText: {
     color: "black",
     textAlign: "center",
+    fontFamily: "PlayfairDisplay-Medium",
     marginTop: 20,
   },
 });
