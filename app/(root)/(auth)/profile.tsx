@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -80,7 +81,6 @@ const Profile = () => {
       const token = await AsyncStorage.getItem("token");
 
       if (token) {
-        // Gửi yêu cầu logout lên server
         await fetch("http://192.168.31.183:5280/api/auth/logout", {
           method: "POST",
           headers: {
@@ -162,9 +162,10 @@ const Profile = () => {
     </ScrollView>
   );
 };
+const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "white" },
+  container: { flex: 1, padding: 20, backgroundColor: "white", height: height },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ED1E51",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 5,
     marginVertical: 10,
     justifyContent: "center",
     width: "100%",

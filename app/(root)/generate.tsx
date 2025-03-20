@@ -9,6 +9,9 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Pressable,
+  Dimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -37,6 +40,7 @@ export default function Generate() {
   const [input, setInput] = useState<string[]>(
     Array.isArray(params.request) ? params.request : [params.request]
   );
+
 
   const [loading, setLoading] = useState(false);
 
@@ -218,9 +222,7 @@ export default function Generate() {
           }
         );
         if (!responseMain.ok) {
-          throw new Error(
-            `HTTP Error ${responseMain.status}: ${await responseMain.text()}`
-          );
+         throw responseMain.status
         } else {
           const data = await responseMain.json();
           setGeneratedImage((prev) => [...prev, data.imageData]);
@@ -322,16 +324,18 @@ export default function Generate() {
           </TouchableOpacity>
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      </View>
+      </View> 
     </View>
   );
 }
 
+const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     padding: 10,
   },
+ 
   row: {
     flexDirection: "row",
     padding: 5,
@@ -349,6 +353,8 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
+    backgroundColor: "white",
+    height: height,
   },
   scrollView: {
     flex: 1,
@@ -413,4 +419,39 @@ const styles = StyleSheet.create({
   iconStyle: {
     marginLeft: 10,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContentSuccess: {
+    width: 300,
+    height: 120,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 16,
+    fontFamily: "PlayfairDisplay-Bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  buttonConfirm: {
+    backgroundColor: "#4CAF50",
+    padding: 5,
+    borderRadius: 5,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 100,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
+
 });

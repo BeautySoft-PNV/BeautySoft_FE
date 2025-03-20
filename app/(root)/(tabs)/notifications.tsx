@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
@@ -46,8 +47,8 @@ const Notifications = () => {
       if (!response.ok) {
         throw new Error("Failed to delete notification");
       }
-
-      setNotifications(notifications.filter((n) => n.id !== notificationId));
+      setNotifications((prevNotifications) => prevNotifications.filter(n => n.notificationId !== notificationId));
+      fetchNotifications();
     } catch (error) {
       console.error("Error deleting notification:", error);
     }
@@ -133,7 +134,7 @@ const Notifications = () => {
               </View>
 
               <TouchableOpacity
-                onPress={() => deleteNotification(item.notificationId)}
+                onPress={() => deleteNotification(item.id)}
                 style={styles.closeButton}
               >
                 <FontAwesome name="times" size={18} color="#ED1E51" />
@@ -145,6 +146,8 @@ const Notifications = () => {
     </ScrollView>
   );
 };
+
+const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   closeButton: {
@@ -159,6 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     width: "100%",
+    height: height, 
     fontFamily: "PlayfairDisplay-Bold",
   },
   container: {

@@ -4,7 +4,6 @@ const checkForNewNotifications = async () => {
     const existingData = await AsyncStorage.getItem("notifications");
     if (!existingData) {
         await AsyncStorage.setItem("notifications", JSON.stringify([]));
-        console.log("Đã tạo notifications với mảng rỗng.");
     }
     try {
         const token = await AsyncStorage.getItem('token');
@@ -23,17 +22,19 @@ const checkForNewNotifications = async () => {
         const newData = await response.json();
         const storedData = await AsyncStorage.getItem("notifications");
         const oldNotifications = storedData ? JSON.parse(storedData) : [];
+        const newCount = newData.length;
+        const oldCount = oldNotifications.length;
 
         if (newData.length === 0 && oldNotifications.length === 0) {
             await AsyncStorage.setItem("hasNewNotification", "false");
             return;
         }
-
         const isSameData = JSON.stringify(newData) === JSON.stringify(oldNotifications);
-
+        if (!isSameData && newCount > oldCount) {
+            await AsyncStorage.setItem("hasNewNotification", "true");
+        }
         if (!isSameData) {
             await AsyncStorage.setItem("notifications", JSON.stringify(newData));
-            await AsyncStorage.setItem("hasNewNotification", newData.length > 0 ? "true" : "false");
         }
     } catch (error) {
         console.error("Error checking notifications:", error);

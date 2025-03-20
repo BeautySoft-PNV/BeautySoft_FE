@@ -205,9 +205,6 @@ export default function AddMakeupItem() {
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
     const response = await fetch("http://192.168.31.183:5280/api/MakeupItems", {
       method: "POST",
       headers: {
@@ -405,7 +402,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontFamily: "PlayfairDisplay-Bold",
+    fontFamily: "PlayfairDisplay-Medium",
     color: "white",
   },
   previewContainer: {

@@ -15,6 +15,7 @@ interface ModelAddMakeupStyleProps {
   generateStep: string | null;
 }
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 export default function ModelAddMakeupStyle({
   generatedImage,
@@ -24,6 +25,7 @@ export default function ModelAddMakeupStyle({
   const [guidance, setGuidance] = useState(generateStep || "Step guidance");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [limitModalVisible, setLimitModalVisible] = useState(false);
 
   const handleAddMakeupStyle = async () => {
     try {
@@ -80,8 +82,9 @@ export default function ModelAddMakeupStyle({
         }
       );
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+        if (response.status === 400) {
+          setLimitModalVisible(true);
+        }
       } else {
         console.log("add successfully!");
 
@@ -128,6 +131,33 @@ export default function ModelAddMakeupStyle({
                 }}
               >
                 <Text style={styles.buttonText}>OK</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={limitModalVisible} animationType="fade" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.text}>Storage limite reached! do you want to upgrade ?</Text>
+
+            <View style={styles.buttonContainer}>
+              <Pressable
+                style={styles.buttonCancel}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.buttonConfirm}
+                onPress={() => {
+                  setLimitModalVisible(false);
+                  router.push("/(root)/tabs/unlimited-storage")
+                }}
+              >
+                <Text style={styles.buttonText}>Upgrade</Text>
               </Pressable>
             </View>
           </View>

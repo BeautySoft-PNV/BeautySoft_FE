@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Linking } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { Dimensions } from "react-native";
 
 const UpgradeStorage = () => {
   const router = useRouter();
@@ -129,10 +129,7 @@ const UpgradeStorage = () => {
             <TouchableOpacity onPress={() => router.push('/(root)/(auth)/profile')}>
               <FontAwesome name="chevron-left" size={24} color="#ED1E51" />
             </TouchableOpacity>
-            <Text style={styles.title}>Makeup Storage Upgrade</Text>
-            <View style={styles.containerTitle}>
-              <Text style={styles.header}>Makeup Artist Upgrade</Text>
-            </View>
+            <Text style={styles.title}>Upgrade Storage</Text>
           </View>
           <Image
               source={{ uri: 'https://jibitoo.com/wp-content/uploads/2025/01/%D8%AA%D8%B1%D9%81%D9%86%D8%AF%D9%87%D8%A7%DB%8C-%D8%A2%D8%B1%D8%A7%DB%8C%D8%B4%DB%8C.jpg' }}
@@ -141,10 +138,10 @@ const UpgradeStorage = () => {
           />
           <View style={styles.infoContainer}>
             <Text style={styles.subtitle}>💄 {typeStorage?.name} 💄</Text>
-            <Text style={styles.price}>{typeStorage?.price} VND / Permanent package</Text>
+            <Text style={styles.price}>{typeStorage?.price} VND/Per package</Text>
             <View style={styles.bulletPoints}>
               <Text style={styles.textPoints}>✨ 1. Upgrade your makeup storage item</Text>
-              <Text style={styles.textPoints}>✨ 2.  Upgrade your makeup storage style</Text>
+              <Text style={styles.textPoints}>✨ 2. Upgrade your makeup storage style</Text>
               <Text style={styles.textPoints}>✨ 3. Favorite repository and 24/7 support</Text>
             </View>
             <Text style={styles.description}>💄 {typeStorage?.description}</Text>
@@ -158,6 +155,7 @@ const UpgradeStorage = () => {
   );
 };
 
+const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -173,7 +171,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     padding: 20,
     width: '100%',
-    height: 'auto',
+    height: height,
   },
   containerTitle:{},
   header: {
@@ -187,15 +185,13 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: '#ED1E51',
     fontSize: 20,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },
   title: {
     color: '#ED1E51',
     fontSize: 24,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
-    textAlign: 'center',
+    marginLeft: "20%"
   },
   image: {
     borderRadius: 10,
@@ -212,7 +208,6 @@ const styles = StyleSheet.create({
   subtitle: {
     textAlign: 'center',
     fontSize: 20,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
   },
@@ -220,29 +215,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#ED1E51',
     fontSize: 20,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
   },
   bulletPoints: {
     marginBottom: 10,
     fontSize: 20,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },
   description: {
     textAlign: 'center',
     marginBottom: 10,
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 15,
     fontFamily: "PlayfairDisplay-Bold"
   },
   contact: {
     textAlign: 'center',
     marginBottom: 20,
-    fontSize: 20,
-    fontWeight: "bold",
-    fontFamily: "PlayfairDisplay-Bold"
+    fontSize: 15,
+    fontFamily: "PlayfairDisplay-MediumItalic"
   },
   upgradeButton: {
     backgroundColor: '#ED1E51',
@@ -250,18 +241,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     fontSize: 20,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold"
   },
   upgradeButtonText: {
     color: '#ffffff',
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 18,
     fontFamily: "PlayfairDisplay-Bold"
   },
   textPoints: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 15,
     fontFamily: "PlayfairDisplay-Bold",
     width:'100%',
   }

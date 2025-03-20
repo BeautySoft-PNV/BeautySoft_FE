@@ -69,7 +69,7 @@ export default function Avatar() {
             <Image
               source={{
                 uri: user?.avatar
-                  ? "http://192.168.31.183:5280" + user.avatar
+                  ?  user.avatar
                   : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
               }}
                 style={styles.avatar}
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: "row",
         justifyContent: "flex-end",
-        // marginVertical: 10,
     },
     avatar: {
         width: 40,

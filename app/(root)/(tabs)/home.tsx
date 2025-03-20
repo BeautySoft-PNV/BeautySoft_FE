@@ -63,7 +63,7 @@ const Home = () => {
       guidance: string;
       date: string;
       time: string;
-      steps: string [];
+      steps: string[];
     }>
   >([]);
   const [items, setItems] = useState<
@@ -82,7 +82,8 @@ const Home = () => {
 
     BackHandler.addEventListener("hardwareBackPress", backAction);
 
-    return () => BackHandler.removeEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
   }, []);
 
   const handleLogout = async () => {
@@ -146,7 +147,7 @@ const Home = () => {
         }
 
         const datacheckVip = await checkVip.json();
-        console.log(datacheckVip.status)
+        console.log(datacheckVip.status);
         setVip(datacheckVip.status);
         if (!response.ok) {
           throw new Error("Failed to fetch user profile");
@@ -283,27 +284,30 @@ const Home = () => {
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.avatarContainer}>
-            <TouchableOpacity
-              onPress={() => router.push("/(root)/(auth)/profile")}
-            >
-              <Image
-                source={{
-                  uri: user?.avatar
-                    ? user.avatar
-                    : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
-                }}
-                style={styles.avatar}
-              />
-            </TouchableOpacity>
-            {vip && (
-              <FontAwesome5
-                name="crown"
-                size={14}
-                color="gold"
-                style={styles.crownIcon}
-              />
-            )}
+          <View style={styles.welcome}>
+            <Text style={styles.welcomeStyle}>Welcome {user?.name}</Text>
+            <View style={styles.avatarContainer}>
+              <TouchableOpacity
+                onPress={() => router.push("/(root)/(auth)/profile")}
+              >
+                <Image
+                  source={{
+                    uri: user?.avatar
+                      ? user.avatar
+                      : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
+                  }}
+                  style={styles.avatar}
+                />
+              </TouchableOpacity>
+              {vip && (
+                <FontAwesome5
+                  name="crown"
+                  size={14}
+                  color="gold"
+                  style={styles.crownIcon}
+                />
+              )}
+            </View>
           </View>
         </ScrollView>
         <ScrollView
@@ -339,23 +343,30 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.horizontalScroll}
         >
-          {makeupStyles.map((style) => (
-            <TouchableOpacity onPress={() => handlePress(style)}>
-              <View key={style.id} style={styles.cardContainer}>
-                <View style={styles.textContainer}>
-                  <Text style={styles.faceText}>
-                    {moment(style.date).format("DD/MM/YYYY hh:mm A")}
-                  </Text>
+          {makeupStyles.length === 0 ? (
+            <Text style={styles.noDataText}>No makeup style</Text>
+          ) : (
+            makeupStyles.map((style) => (
+              <TouchableOpacity
+                key={style.id}
+                onPress={() => handlePress(style)}
+              >
+                <View style={styles.cardContainer}>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.faceText}>
+                      {moment(style.date).format("DD/MM/YYYY hh:mm A")}
+                    </Text>
+                  </View>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={{ uri: style.image }}
+                      style={styles.faceImage}
+                    />
+                  </View>
                 </View>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: style.image }}
-                    style={styles.faceImage}
-                  />
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            ))
+          )}
         </ScrollView>
         <Text style={styles.sectionTitle2}>Favorite Makeup Item Storage</Text>
         <ScrollView
@@ -363,17 +374,24 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.horizontalScroll}
         >
-          {items.map((item) => (
+          {makeupStyles.length === 0 ? (
+            <Text style={styles.noDataText}>No makeup style</Text>
+          ) : (
+            items.map((item) => (
               <TouchableOpacity
-                  key={item.id} // Đặt key ở đây
-                  onPress={() => handlePressItem(item)}
+                key={item.id}
+                onPress={() => handlePressItem(item)}
               >
                 <View style={styles.itemContainer}>
-                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.itemImage}
+                  />
                   <Text style={styles.itemText}>{item.name}</Text>
                 </View>
               </TouchableOpacity>
-          ))}
+            ))
+          )}
         </ScrollView>
       </ScrollView>
     </SafeAreaView>
@@ -383,11 +401,16 @@ const Home = () => {
 const styles = StyleSheet.create({
   safeContainer: { flex: 1, backgroundColor: "#F3F4F6", width: "100%" },
   scrollContainer: { paddingHorizontal: 16, paddingBottom: 20, width: "100%" },
-  headerContainer: {
+  welcome: {
     flexDirection: "row",
-    justifyContent: "flex-end",
     alignItems: "center",
-    marginVertical: 10,
+    justifyContent: "space-between",
+  },
+  welcomeStyle: {
+    justifyContent: "flex-start",
+    color: "#ED1E51",
+    fontFamily: "PlayfairDisplay-Bold",
+    fontSize: 24,
   },
   avatar: {
     width: 50,
@@ -410,9 +433,6 @@ const styles = StyleSheet.create({
     top: 1,
   },
   scroll: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
     paddingVertical: 10,
   },
   newOfferText: {
@@ -542,7 +562,13 @@ const styles = StyleSheet.create({
   mainButton: {
     backgroundColor: "#ED1E51",
   },
+  noDataText: {
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: "PlayfairDisplay-Bold",
+    color: "#888", 
+    marginTop: 20, 
+  },
 });
-
 
 export default Home;

@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { MD2Colors, TextInput } from "react-native-paper";
 
 const whiteColor = MD2Colors.white;
@@ -35,7 +35,6 @@ const MakeupItem = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
         const token = await AsyncStorage.getItem("token");
 
         if (!token) throw new Error("No authentication token found");
@@ -97,13 +96,13 @@ const MakeupItem = () => {
         </View>
         <View style={styles.inputField}>
           <TextInput
-            style={styles.input}
-            placeholder="Search Inventory"
+              style={[styles.input, { fontFamily: "PlayfairDisplay-Bold" }]}
+            placeholder="Search Item"
             placeholderTextColor={whiteColor}
             textColor="white"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            theme={{ colors: { primary: "white" } }} 
+            theme={{ colors: { primary: "white" } }}
             underlineStyle={{ display: "none" }}
           />
         </View>
@@ -128,9 +127,12 @@ const MakeupItem = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noDataText}>
-              No matching makeup items found.
-            </Text>
+            <View style={styles.emptyContainer}>
+              <FontAwesome name="check-circle" size={50} color="green" />
+              <Text style={styles.emptyText}>
+                No make up item!
+              </Text>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -142,7 +144,6 @@ const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
     backgroundColor: "#F3F4F6",
-    fontFamily: "PlayfairDisplay-Bold",
   },
   scrollContainer: { paddingHorizontal: 16, paddingBottom: 20 },
   headerContainer: {
@@ -203,15 +204,15 @@ const styles = StyleSheet.create({
     padding: 0,
     backgroundColor: "#ED1E51",
     borderRadius: 10,
-    borderBottomWidth: 0, 
+    borderBottomWidth: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 10,
   },
   input: {
-    fontFamily: "PlayfairDisplay-Bold",
     fontSize: 16,
+    fontFamily: "PlayfairDisplay-Bold",
     backgroundColor: "#ED1E51",
     color: whiteColor,
   },
@@ -247,7 +248,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     width: "100%",
-    marginBottom: 80,
   },
   gridContainer: {
     flexDirection: "row",
@@ -264,11 +264,15 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 8,
   },
-  noDataText: {
+  emptyContainer: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontFamily: "PlayfairDisplay-Bold",
     color: "black",
-    textAlign: "center",
-    fontFamily: "PlayfairDisplay-Medium",
-    marginTop: 20,
+    marginTop: 10,
   },
 });
 

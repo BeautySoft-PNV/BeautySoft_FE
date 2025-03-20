@@ -30,7 +30,6 @@ const Collection = () => {
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-      
 
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
@@ -54,7 +53,7 @@ const Collection = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     };
 
@@ -100,7 +99,12 @@ const Collection = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noDataText}>No makeup styles available.</Text>
+            <View style={styles.emptyContainer}>
+              <FontAwesome name="check-circle" size={50} color="green" />
+              <Text style={styles.emptyText}>
+                No have make up style
+              </Text>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -142,7 +146,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     width: "100%",
-    marginBottom: 35,
   },
   gridContainer: {
     flexDirection: "row",
@@ -159,10 +162,15 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 8,
   },
-  noDataText: {
+  emptyContainer: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontFamily: "PlayfairDisplay-Bold",
     color: "black",
-    textAlign: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
 });
 
