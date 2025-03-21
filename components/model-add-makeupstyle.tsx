@@ -72,7 +72,7 @@ export default function ModelAddMakeupStyle({
       formData.append("guidance", guidance);
 
       const response = await fetch(
-        "http://192.168.31.183:5280/api/MakeupStyles",
+        "http://192.168.68.102:5280/api/MakeupStyles",
         {
           method: "POST",
           headers: {

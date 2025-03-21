@@ -344,7 +344,7 @@ const Home = () => {
           style={styles.horizontalScroll}
         >
           {makeupStyles.length === 0 ? (
-            <Text style={styles.noDataText}>No makeup style</Text>
+            <Text style={styles.noDataText}>No makeup style.</Text>
           ) : (
             makeupStyles.map((style) => (
               <TouchableOpacity
@@ -374,8 +374,8 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.horizontalScroll}
         >
-          {makeupStyles.length === 0 ? (
-            <Text style={styles.noDataText}>No makeup style</Text>
+          {items.length === 0 ? (
+            <Text style={styles.noDataText}>No makeup items.</Text>
           ) : (
             items.map((item) => (
               <TouchableOpacity

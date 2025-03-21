@@ -9,6 +9,7 @@ import {
   Image,
   TextInput,
   Platform,
+  Dimensions,
 } from "react-native";
 import { router } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
@@ -129,7 +130,7 @@ export default function Scan() {
     const token = await AsyncStorage.getItem("token");
     try {
       const response = await fetch(
-        "http://192.168.31.183:5280/api/MakeupItems/user/me",
+        "http://192.168.68.102:5280/api/MakeupItems/user/me",
         {
           method: "GET",
           headers: {
@@ -241,12 +242,12 @@ export default function Scan() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#f0f0f0",
+    marginBottom: 1
   },
   message: {
     textAlign: "center",
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   imageContainer: {
-    flex: 0.8,
+    flex: 1,
     width: "100%",
     alignItems: "center",
     position: "relative",
@@ -302,9 +303,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "100%",
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    paddingTop: 20,
-    marginBottom: 30,
+    paddingTop: 40,
   },
   rowContainer: {
     flexDirection: "row",
@@ -318,6 +317,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     backgroundColor: "white",
+    
   },
   errorText: {
     color: "red",

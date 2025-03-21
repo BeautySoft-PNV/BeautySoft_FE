@@ -9,7 +9,7 @@ const checkForNewNotifications = async () => {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
 
-        const response = await fetch("http://192.168.31.183:5280/api/notification/user/notification", {
+        const response = await fetch("http://192.168.68.102:5280/api/notification/user/notification", {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',

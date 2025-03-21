@@ -31,7 +31,7 @@ const Profile = () => {
         }
 
         const response = await fetch(
-          "http://192.168.31.183:5280/api/users/me",
+          "http://192.168.68.102:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -50,7 +50,7 @@ const Profile = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.31.183:5280/api/managerstorage/check-user",
+          "http://192.168.68.102:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -81,7 +81,7 @@ const Profile = () => {
       const token = await AsyncStorage.getItem("token");
 
       if (token) {
-        await fetch("http://192.168.31.183:5280/api/auth/logout", {
+        await fetch("http://192.168.68.102:5280/api/auth/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

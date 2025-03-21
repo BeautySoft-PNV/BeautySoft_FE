@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -19,9 +21,12 @@ const SignIn = ({ navigation }: any) => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
-    const API_URL = "http://192.168.31.183:5280/api/auth/login";
+    setLoading(true);
+
+    const API_URL = "http://192.168.68.102:5280/api/auth/login";
 
     try {
       const response = await fetch(API_URL, {
@@ -35,6 +40,8 @@ const SignIn = ({ navigation }: any) => {
       const responseData = await response.json();
 
       if (!response.ok) {
+        setLoading(false);
+
         if (response.status === 403) {
           setErrors({ message: "Your account has been locked." });
           return;
@@ -69,13 +76,13 @@ const SignIn = ({ navigation }: any) => {
       await AsyncStorage.setItem("user", JSON.stringify(responseData));
 
       setMessage({ text: "Login successful!", type: "success" });
-
+      setLoading(false);
       setTimeout(() => {
         router.push("/(root)/(tabs)/home");
-      }, 2000);
+      }, 1000);
     } catch (error: any) {
       setMessage({ text: "", type: "" });
-    }
+    } 
   };
 
   return (
@@ -152,6 +159,21 @@ const SignIn = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      {loading && (
+        <Modal transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <ActivityIndicator size="large" color="white" />
+              <Text
+                style={{ color: "white", fontFamily: "PlayfairDisplay-Bold" }}
+              >
+                Processing request...
+              </Text>
+            </View>
+          </View>
+        </Modal>
+      )}
     </ScrollView>
   );
 };
@@ -289,6 +311,18 @@ const styles = StyleSheet.create({
     fontFamily: "PlayfairDisplay-Bold",
     marginBottom: 10,
     alignSelf: "flex-start",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#ED1E51",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
   },
 });
 

@@ -41,7 +41,6 @@ export default function Generate() {
     Array.isArray(params.request) ? params.request : [params.request]
   );
 
-
   const [loading, setLoading] = useState(false);
 
   const correctedUri = (params.imageUri as string)
@@ -214,7 +213,7 @@ export default function Generate() {
       const token = await AsyncStorage.getItem("token");
       try {
         const responseMain = await fetch(
-          "http://192.168.31.183:5280/api/combined/generate-and-inpaint",
+          "http://192.168.68.102:5280/api/combined/generate-and-inpaint",
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
@@ -222,8 +221,10 @@ export default function Generate() {
           }
         );
         if (!responseMain.ok) {
-         throw responseMain.status
+          setLoading(false);
+          throw responseMain.status;
         } else {
+          setLoading(false);
           const data = await responseMain.json();
           setGeneratedImage((prev) => [...prev, data.imageData]);
           setGenerateStep((prev) => [...prev, data.generatedPrompt]);
@@ -294,7 +295,16 @@ export default function Generate() {
                   </View>
                 ))}
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <Modal transparent animationType="fade">
+                  <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                      <ActivityIndicator size="large" color="white" />
+                      <Text style={styles.modalText}>
+                        Processing reqest...
+                      </Text>
+                    </View>
+                  </View>
+                </Modal>
               ) : error ? (
                 <Text style={styles.errorText}>{error}</Text>
               ) : null}
@@ -324,7 +334,7 @@ export default function Generate() {
           </TouchableOpacity>
         </View>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      </View> 
+      </View>
     </View>
   );
 }
@@ -335,7 +345,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
   },
- 
+
   row: {
     flexDirection: "row",
     padding: 5,
@@ -453,5 +463,22 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "PlayfairDisplay-Bold",
   },
-
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+  modalContent: {
+    width: 200,
+    padding: 20,
+    backgroundColor: "#333",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    marginTop: 10,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
 });
