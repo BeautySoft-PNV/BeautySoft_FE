@@ -209,9 +209,9 @@ export default function EditMakeupItem() {
     formData.append("ExpirationDate", formattedExpirationDate);
 
     try {
-      console.log(`http://192.168.68.102:5280/api/MakeupItems/${id}`);
+      console.log(`http://192.168.2.155:5280/api/MakeupItems/${id}`);
       const response = await fetch(
-        `http://192.168.68.102:5280/api/MakeupItems/${id}`,
+        `http://192.168.2.155:5280/api/MakeupItems/${id}`,
         {
           method: "PUT",
           headers: {

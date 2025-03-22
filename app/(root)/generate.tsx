@@ -18,7 +18,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Avatar from "@/components/avatar";
 import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
-import { AntDesign } from "@expo/vector-icons";
+import { Svg, Polygon } from "react-native-svg";
 import ModelAddMakeupStyle from "@/components/model-add-makeupstyle";
 import { Provider as PaperProvider } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -213,7 +213,7 @@ export default function Generate() {
       const token = await AsyncStorage.getItem("token");
       try {
         const responseMain = await fetch(
-          "http://192.168.68.102:5280/api/combined/generate-and-inpaint",
+          "http://192.168.2.155:5280/api/combined/generate-and-inpaint",
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
@@ -264,21 +264,33 @@ export default function Generate() {
 
         <View style={styles.container}>
           <View style={styles.row}>
-            <View>
-              <Image
-                source={require("../../assets/images/beautysoftlogo.png")}
-                style={styles.chatboxavatar}
-              />
-            </View>
             <View style={styles.photoAndRequest}>
               {generatedImage.length > 0 &&
                 generatedImage.map((image, index) => (
                   <View key={index}>
-                    <TextInput
-                      style={styles.input}
-                      value={input[index] || ""}
-                      editable={false}
-                    />
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: "15%",
+                        marginTop: "5%",
+                      }}
+                    >
+                      <Image
+                        source={require("../../assets/images/beautysoftlogo.png")}
+                        style={styles.chatboxavatar}
+                      />
+                      <View style={styles.inputWrapper}>
+                        <View style={styles.inputContainer}>
+                          <TextInput
+                            style={styles.input}
+                            value={input[index] || ""}
+                            editable={false}
+                          />
+                        </View>
+                      </View>
+                    </View>
+
                     <Image source={{ uri: image }} style={styles.image} />
                     <PaperProvider>
                       <View style={{ alignSelf: "flex-end", marginTop: 5 }}>
@@ -300,7 +312,7 @@ export default function Generate() {
                     <View style={styles.modalContent}>
                       <ActivityIndicator size="large" color="white" />
                       <Text style={styles.modalText}>
-                        Processing reqest...
+                        Processing request...
                       </Text>
                     </View>
                   </View>
@@ -325,10 +337,10 @@ export default function Generate() {
             }}
           />
           <TouchableOpacity onPress={handleUpload}>
-            <AntDesign
-              name="upload"
+            <FontAwesome
+              name="send"
               size={24}
-              color="black"
+              color="#ED1E51"
               style={styles.iconStyle}
             />
           </TouchableOpacity>
@@ -377,7 +389,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 10,
     borderTopWidth: 1,
-    borderColor: "#ccc",
   },
 
   rowContainer: {
@@ -391,10 +402,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#FFE2E2",
     padding: 10,
     borderRadius: 5,
-    backgroundColor: "white",
+    backgroundColor: "#FFE2E2",
   },
   chatboxavatar: {
     width: 40,
@@ -411,29 +422,25 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     position: "absolute",
-    bottom: -300,
-    left: 0,
-    right: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: "white",
+    borderColor: "#FFE2E2",
+    borderRadius: 10,
+    backgroundColor: "#FFE2E2",
     width: "100%",
-    paddingVertical: 10,
+    borderTopLeftRadius: 0,
   },
-
+  
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "85%",
+    marginBottom: "-8%",
+  },
   iconStyle: {
     marginLeft: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContentSuccess: {
     width: 300,
@@ -472,7 +479,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: 200,
     padding: 20,
-    backgroundColor: "#333",
+    backgroundColor: "#ED1E51",
     borderRadius: 10,
     alignItems: "center",
   },

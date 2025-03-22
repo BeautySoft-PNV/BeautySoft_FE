@@ -30,7 +30,7 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     setLoading(true);
-    const API_URL = "http://192.168.68.102:5280/api/auth/register";
+    const API_URL = "http://192.168.2.155:5280/api/auth/register";
 
     try {
       const newErrors: { [key: string]: string } = {};

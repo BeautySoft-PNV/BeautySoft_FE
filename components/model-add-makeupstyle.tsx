@@ -8,6 +8,7 @@ import {
   Pressable,
   Alert,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 interface ModelAddMakeupStyleProps {
@@ -26,6 +27,7 @@ export default function ModelAddMakeupStyle({
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [limitModalVisible, setLimitModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleAddMakeupStyle = async () => {
     try {
@@ -70,29 +72,27 @@ export default function ModelAddMakeupStyle({
       }
 
       formData.append("guidance", guidance);
+      setLoading(true);
 
-      const response = await fetch(
-        "http://192.168.68.102:5280/api/MakeupStyles",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch("http://192.168.2.155:5280/api/MakeupStyles", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
       if (!response.ok) {
         if (response.status === 400) {
+          setLoading(false);
           setLimitModalVisible(true);
         }
       } else {
-        console.log("add successfully!");
-
+        setLoading(false);
         setSuccessModalVisible(true);
         setIsDisabled(true);
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
+      setLoading(false);
       Alert.alert("Lỗi", "Đã có lỗi xảy ra. Vui lòng thử lại!");
     }
   };
@@ -137,10 +137,23 @@ export default function ModelAddMakeupStyle({
         </View>
       </Modal>
 
+      {loading ? (
+        <Modal transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContentLoading}>
+              <ActivityIndicator size="large" color="white" />
+              <Text style={styles.modalText}>Processing request...</Text>
+            </View>
+          </View>
+        </Modal>
+      ) : null}
+
       <Modal visible={limitModalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.text}>Storage limite reached! do you want to upgrade ?</Text>
+            <Text style={styles.text}>
+              Storage limite reached! do you want to upgrade ?
+            </Text>
 
             <View style={styles.buttonContainer}>
               <Pressable
@@ -154,7 +167,7 @@ export default function ModelAddMakeupStyle({
                 style={styles.buttonConfirm}
                 onPress={() => {
                   setLimitModalVisible(false);
-                  router.push("/(root)/tabs/unlimited-storage")
+                  router.push("/(root)/tabs/unlimited-storage");
                 }}
               >
                 <Text style={styles.buttonText}>Upgrade</Text>
@@ -197,6 +210,14 @@ const styles = StyleSheet.create({
     height: 140,
     padding: 20,
     backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  modalContentLoading: {
+    width: 200,
+    padding: 20,
+    backgroundColor: "#ED1E51",
     borderRadius: 10,
     alignItems: "center",
   },
@@ -251,5 +272,16 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-end",
     color: "#ED1E51",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+  modalText: {
+    marginTop: 10,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
   },
 });

@@ -33,7 +33,7 @@ const Collection = () => {
 
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
-          "http://192.168.68.102:5280/api/MakeupStyles/user/me",
+          "http://192.168.2.155:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -99,11 +99,11 @@ const Collection = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View style={styles.emptyContainer}>
-              <FontAwesome name="check-circle" size={50} color="green" />
-              <Text style={styles.emptyText}>
-                No have make up style
-              </Text>
+            <View style={{ flex: 1 }}>
+              <View style={styles.emptyContainer}>
+                <FontAwesome name="check-circle" size={50} color="green" />
+                <Text style={styles.emptyText}>No make up item!</Text>
+              </View>
             </View>
           )}
         </View>
@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   emptyContainer: {
+    flex: 1, 
     alignItems: "center",
     marginTop: 50,
   },

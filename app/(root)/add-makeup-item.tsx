@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function AddMakeupItem() {
   const [facing, setFacing] = useState<"front" | "back">("back");
@@ -59,8 +60,6 @@ export default function AddMakeupItem() {
     }
   }
 
-  
-
   function retakePicture() {
     setCapturedImage(null);
   }
@@ -69,24 +68,20 @@ export default function AddMakeupItem() {
 
     let formatted = numbersOnly
       .replace(/^(\d{2})(\d{0,2})/, "$1/$2")
-      .replace(/^(\d{2}\/\d{2})(\d{0,4})/, "$1/$2")
-      .replace(/^(\d{2}\/\d{2}\/\d{4})(\d{0,2})/, "$1 $2")
-      .replace(/^(\d{2}\/\d{2}\/\d{4} \d{2})(\d{0,2})/, "$1:$2");
+      .replace(/^(\d{2}\/\d{2})(\d{0,4})/, "$1/$2");
+    formatted = formatted.replace(/(\d{2}\/\d{2}\/\d{4})\d+/, "$1");
 
     return formatted.trim();
   };
 
   const validateDateTime = (text: any) => {
-    const parts = text.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+    const parts = text.match(/(\d{2})\/(\d{2})\/(\d{4})/);
     if (!parts) return "Incorrect format";
 
-    let [_, day, month, year, hour, minute] = parts.map(Number);
+    let [_, day, month, year] = parts.map(Number);
     if (day < 1 || day > 31) return "Invalid date";
     if (month < 1 || month > 12) return "Invalid month";
     if (year < 1900 || year > 2100) return "Invalid year";
-    if (hour > 23) return "Invalid time";
-    if (minute > 59) return "Invalid time";
-
     return "";
   };
 
@@ -113,10 +108,7 @@ export default function AddMakeupItem() {
     }
   };
 
-  
-
   const handleAddMakeupItem = async () => {
-
     type ErrorType = {
       name?: string;
       manufactureDate?: string;
@@ -148,9 +140,9 @@ export default function AddMakeupItem() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setLoading(false)
+      setLoading(false);
       return;
-    }else{
+    } else {
       setLoading(true);
     }
 
@@ -205,7 +197,7 @@ export default function AddMakeupItem() {
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
 
-    const response = await fetch("http://192.168.68.102:5280/api/MakeupItems", {
+    const response = await fetch("http://192.168.2.155:5280/api/MakeupItems", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -214,8 +206,7 @@ export default function AddMakeupItem() {
     });
     if (!response.ok) {
       const errorText = await response.text();
-      console.log(`HTTP Error ${response.status}: ${errorText}`);
-
+      setLoading(false);
       throw new Error(`HTTP Error ${response.status}: ${errorText}`);
     } else {
       setLoading(false);
@@ -233,13 +224,19 @@ export default function AddMakeupItem() {
               style={styles.buttonChangeCamera}
               onPress={toggleCameraFacing}
             >
-              <Text style={styles.text}>🔄 Change camera</Text>
+              <Text style={styles.text}>
+                <FontAwesome name="exchange" size={20} color="white" /> Change
+                camera
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonTakePicture}
               onPress={takePicture}
             >
-              <Text style={styles.text}>📸 Take a picture</Text>
+              <Text style={styles.text}>
+                <FontAwesome name="camera-retro" size={20} color="white" /> Take
+                a picture
+              </Text>
             </TouchableOpacity>
           </View>
         </>
@@ -277,7 +274,7 @@ export default function AddMakeupItem() {
               <TextInput
                 ref={inputRef}
                 style={[styles.input, error ? styles.inputError : null]}
-                placeholder="DD/MM/YYYY HH:mm"
+                placeholder="DD/MM/YYYY"
                 value={manufactureDate}
                 onChangeText={handleManufactureDateChange}
                 keyboardType="number-pad"
@@ -291,7 +288,7 @@ export default function AddMakeupItem() {
               <TextInput
                 ref={inputRef}
                 style={[styles.input, error ? styles.inputError : null]}
-                placeholder="DD/MM/YYYY HH:mm"
+                placeholder="DD/MM/YYYY"
                 value={expirationDate}
                 onChangeText={handleExpirationDateChange}
                 keyboardType="number-pad"
@@ -332,7 +329,16 @@ export default function AddMakeupItem() {
                 <Text style={styles.errorText}>{errors.guidance}</Text>
               ) : null}
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <Modal transparent animationType="fade">
+                  <View style={styles.modalOverlay}>
+                    <View style={styles.modalContentLoading}>
+                      <ActivityIndicator size="large" color="white" />
+                      <Text style={styles.modalText}>
+                        Processing request...
+                      </Text>
+                    </View>
+                  </View>
+                </Modal>
               ) : (
                 <Modal
                   visible={successModalVisible}
@@ -530,5 +536,23 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+  modalText: {
+    marginTop: 10,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
+  modalContentLoading: {
+    width: 200,
+    padding: 20,
+    backgroundColor: "#ED1E51",
+    borderRadius: 10,
+    alignItems: "center",
   },
 });

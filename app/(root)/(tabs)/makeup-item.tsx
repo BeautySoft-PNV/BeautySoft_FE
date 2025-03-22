@@ -14,7 +14,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { MD2Colors, TextInput } from "react-native-paper";
 
-const whiteColor = MD2Colors.white;
 
 interface MakeupItem {
   id: string;
@@ -40,7 +39,7 @@ const MakeupItem = () => {
         if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(
-          "http://192.168.68.102:5280/api/MakeupItems/user/me",
+          "http://192.168.2.155:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -96,13 +95,13 @@ const MakeupItem = () => {
         </View>
         <View style={styles.inputField}>
           <TextInput
-              style={[styles.input, { fontFamily: "PlayfairDisplay-Bold" }]}
+            style={[styles.input, { fontFamily: "PlayfairDisplay-Bold" }]}
             placeholder="Search Item"
-            placeholderTextColor={whiteColor}
-            textColor="white"
+            placeholderTextColor={"black"}
+            textColor="black"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            theme={{ colors: { primary: "white" } }}
+            theme={{ colors: { primary: "black" } }}
             underlineStyle={{ display: "none" }}
           />
         </View>
@@ -127,11 +126,11 @@ const MakeupItem = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View style={styles.emptyContainer}>
-              <FontAwesome name="check-circle" size={50} color="green" />
-              <Text style={styles.emptyText}>
-                No make up item!
-              </Text>
+            <View style={{ flex: 1 }}>
+              <View style={styles.emptyContainer}>
+                <FontAwesome name="check-circle" size={50} color="green" />
+                <Text style={styles.emptyText}>No make up item!</Text>
+              </View>
             </View>
           )}
         </View>
@@ -202,8 +201,9 @@ const styles = StyleSheet.create({
   inputField: {
     marginTop: 17,
     padding: 0,
-    backgroundColor: "#ED1E51",
+    backgroundColor: "#FFB8E0",
     borderRadius: 10,
+    borderColor: "#F1E7E7",
     borderBottomWidth: 0,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -213,8 +213,8 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     fontFamily: "PlayfairDisplay-Bold",
-    backgroundColor: "#ED1E51",
-    color: whiteColor,
+    backgroundColor: "#FFB8E0",
+    color: "black",
   },
   avatarContainer: {
     position: "relative",
@@ -265,7 +265,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   emptyContainer: {
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 50,
   },
   emptyText: {

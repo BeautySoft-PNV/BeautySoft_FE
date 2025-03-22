@@ -34,7 +34,7 @@ const Notifications = () => {
       }
 
       const response = await fetch(
-        `http://192.168.68.102:5280/api/notification/user/notification/${notificationId}`,
+        `http://192.168.2.155:5280/api/notification/user/notification/${notificationId}`,
         {
           method: "DELETE",
           headers: {
@@ -67,7 +67,7 @@ const Notifications = () => {
       }
 
       const response = await fetch(
-        "http://192.168.68.102:5280/api/notification/user/notification",
+        "http://192.168.2.155:5280/api/notification/user/notification",
         {
           method: "GET",
           headers: {

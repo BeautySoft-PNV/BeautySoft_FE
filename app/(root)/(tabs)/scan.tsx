@@ -12,7 +12,7 @@ import {
   Dimensions,
 } from "react-native";
 import { router } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Scan() {
@@ -130,7 +130,7 @@ export default function Scan() {
     const token = await AsyncStorage.getItem("token");
     try {
       const response = await fetch(
-        "http://192.168.68.102:5280/api/MakeupItems/user/me",
+        "http://192.168.2.155:5280/api/MakeupItems/user/me",
         {
           method: "GET",
           headers: {
@@ -192,13 +192,18 @@ export default function Scan() {
               style={styles.buttonChangeCamera}
               onPress={toggleCameraFacing}
             >
-              <Text style={styles.text}>🔄 Change camera</Text>
+              <Text style={styles.text}>
+                <FontAwesome name="exchange" size={20} color="white"/>  Change camera
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonTakePicture}
               onPress={takePicture}
             >
-              <Text style={styles.text}>📸 Take a picture</Text>
+              <Text style={styles.text}>
+                <FontAwesome name="camera-retro" size={20} color="white" />  Take
+                a picture
+              </Text>
             </TouchableOpacity>
           </View>
         </>
@@ -226,10 +231,10 @@ export default function Scan() {
                 }}
               />
               <TouchableOpacity onPress={handleUpload}>
-                <AntDesign
-                  name="upload"
+                <FontAwesome
+                  name="send"
                   size={24}
-                  color="black"
+                  color="#ED1E51"
                   style={styles.iconStyle}
                 />
               </TouchableOpacity>
@@ -247,7 +252,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#f0f0f0",
-    marginBottom: 1
+    marginBottom: 1,
   },
   message: {
     textAlign: "center",
@@ -267,11 +272,15 @@ const styles = StyleSheet.create({
   buttonChangeCamera: {
     padding: 12,
     backgroundColor: "#007AFF",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 5,
   },
   buttonTakePicture: {
     padding: 12,
     backgroundColor: "#ED1E51",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 5,
   },
   text: {
@@ -317,7 +326,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     backgroundColor: "white",
-    
   },
   errorText: {
     color: "red",
@@ -338,6 +346,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconStyle: {
-    marginLeft: 10, // Khoảng cách bên trái
+    marginLeft: 10,
   },
 });
