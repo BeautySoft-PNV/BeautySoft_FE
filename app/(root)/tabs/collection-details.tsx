@@ -34,26 +34,13 @@ const CollectionDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
-      const getToken = async () => {
-          try {
-            if (Platform.OS === "web") {
-              return localStorage.getItem("token") || "";
-            } else {
-              return (await AsyncStorage.getItem("token")) || "";
-            }
-          } catch (error) {
-            console.error("Lỗi lấy token:", error);
-            return "";
-          }
-        };
-        const token = await getToken();
-        if (!token) throw new Error("No authentication token found");
+
+      const token = await AsyncStorage.getItem("token");
+      if (!token) throw new Error("No authentication token found");
 
       try {
-        
-
         const response = await fetch(
-          `http://192.168.11.183:5280/api/MakeupStyles/${id}`,
+          `http://192.168.31.183:5280/api/MakeupStyles/${id}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -65,7 +52,6 @@ const CollectionDetails = () => {
 
         const data = await response.json();
         setStyleData(data);
-        console.log("data: ", data)
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -78,22 +64,10 @@ const CollectionDetails = () => {
 
   const handleDelete = async () => {
     try {
-      const getToken = async () => {
-        try {
-          if (Platform.OS === "web") {
-            return localStorage.getItem("token") || "";
-          } else {
-            return (await AsyncStorage.getItem("token")) || "";
-          }
-        } catch (error) {
-          console.error("Lỗi lấy token:", error);
-          return "";
-        }
-      };
-      const token = await getToken();
+      const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
-        `http://192.168.11.183:5280/api/MakeupStyles/${id}`,
+        `http://192.168.31.183:5280/api/MakeupStyles/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -102,7 +76,6 @@ const CollectionDetails = () => {
 
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-
       router.push("/(root)/(tabs)/collection");
     } catch (error) {
       console.error("Error deleting item:", error);
@@ -137,10 +110,7 @@ const CollectionDetails = () => {
       </View>
       {styleData.image && (
         <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: styleData.image }}
-            style={styles.image}
-          />
+          <Image source={{ uri: styleData.image }} style={styles.image} />
         </View>
       )}
       <View style={styles.titleRow}>
@@ -163,9 +133,8 @@ const CollectionDetails = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Delete Item Storage</Text>
             <Text style={styles.modalMessage}>
-              Are you sure you want to delete "{styleData.name}"?
+              Are you sure you want to delete ?
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -274,16 +243,11 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    fontFamily: "PlayfairDisplay-Medium",
-  },
   modalMessage: {
     marginBottom: 10,
     textAlign: "center",
-    fontFamily: "PlayfairDisplay-Medium",
+    fontSize: 18, 
+    fontFamily: "PlayfairDisplay-Bold",
   },
   modalButtons: {
     flexDirection: "row",

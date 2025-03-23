@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,28 +23,17 @@ interface MakeupStyle {
 
 const Collection = () => {
   const [makeupStyles, setMakeupStyles] = useState<MakeupStyle[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Thêm state loading
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const getToken = async () => {
-          try {
-            if (Platform.OS === "web") {
-              return localStorage.getItem("token") || "";
-            } else {
-              return (await AsyncStorage.getItem("token")) || "";
-            }
-          } catch (error) {
-            console.error("Lỗi lấy token:", error);
-            return "";
-          }
-        };
-        const token = await getToken();
+        const token = await AsyncStorage.getItem("token");
+
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
-          "http://192.168.11.183:5280/api/MakeupStyles/user/me",
+          "http://192.168.31.183:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -61,19 +49,16 @@ const Collection = () => {
         const data = await response.json();
         if (Array.isArray(data)) {
           setMakeupStyles(data);
-        } else {
-          console.error("Invalid data format:", data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false); // Khi fetch xong, tắt trạng thái loading
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, []);
-  console.log("makeupStyles after: ", makeupStyles);
 
   const handlePress = (style: MakeupStyle) => {
     router.push({
@@ -114,7 +99,12 @@ const Collection = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noDataText}>No makeup styles available.</Text>
+            <View style={{ flex: 1 }}>
+              <View style={styles.emptyContainer}>
+                <FontAwesome name="check-circle" size={50} color="#ED1E51" />
+                <Text style={styles.emptyText}>No make up item!</Text>
+              </View>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -147,7 +137,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
     color: "#ED1E51",
     fontFamily: "PlayfairDisplay-Bold",
     marginRight: "30%",
@@ -157,7 +146,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     width: "100%",
-    marginBottom: 35,
   },
   gridContainer: {
     flexDirection: "row",
@@ -174,10 +162,16 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 8,
   },
-  noDataText: {
+  emptyContainer: {
+    flex: 1, 
+    alignItems: "center",
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontFamily: "PlayfairDisplay-Bold",
     color: "black",
-    textAlign: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
 });
 

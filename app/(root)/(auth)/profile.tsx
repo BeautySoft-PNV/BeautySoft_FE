@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -30,7 +31,7 @@ const Profile = () => {
         }
 
         const response = await fetch(
-          "http://192.168.11.183:5280/api/users/me",
+          "http://192.168.31.183:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -49,7 +50,7 @@ const Profile = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.11.183:5280/api/managerstorage/check-user",
+          "http://192.168.31.183:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -80,8 +81,7 @@ const Profile = () => {
       const token = await AsyncStorage.getItem("token");
 
       if (token) {
-        // Gửi yêu cầu logout lên server
-        await fetch("http://192.168.11.183:5280/api/auth/logout", {
+        await fetch("http://192.168.31.183:5280/api/auth/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -129,18 +129,25 @@ const Profile = () => {
             <FontAwesome name="pencil" size={18} color="#ED1E51" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Full Name <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>
+          Full Name <Text style={styles.noticed}>*</Text>
+        </Text>
         <TextInput
           style={styles.input}
           value={user?.name || ""}
           editable={false}
         />
-        <Text style={styles.title}>Email <Text style ={styles.noticed}>*</Text></Text>
-        <TextInput
-          style={styles.input}
-          value={user?.email || ""}
-          editable={false}
-        />
+        <Text style={styles.title}>
+          Email <Text style={styles.noticed}>*</Text>
+        </Text>
+        <ScrollView horizontal={true} style={{ flexGrow: 0 }}>
+          <TextInput
+            style={[styles.input, { minWidth: 200 }]} 
+            value={user?.email || ""}
+            editable={false}
+            scrollEnabled={true}
+          />
+        </ScrollView>
 
         <TouchableOpacity
           style={[styles.upgradeButton, vip && styles.disabledButton]}
@@ -162,9 +169,10 @@ const Profile = () => {
     </ScrollView>
   );
 };
+const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "white" },
+  container: { flex: 1, padding: 20, backgroundColor: "white", height: height },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -172,8 +180,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "black",
+    color: "#ED1E51",
     fontFamily: "PlayfairDisplay-Bold",
   },
   containerTitle: {
@@ -202,7 +209,6 @@ const styles = StyleSheet.create({
   avatar: { width: 90, height: 90, borderRadius: 50 },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     marginBottom: 5,
@@ -218,7 +224,6 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 10,
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
   },
   upgradeButton: {
@@ -227,7 +232,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ED1E51",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 5,
     marginVertical: 10,
     justifyContent: "center",
     width: "100%",
@@ -243,13 +248,12 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },
   noticed: {
-    color: "red"
-},
+    color: "red",
+  },
 });
 
 export default Profile;

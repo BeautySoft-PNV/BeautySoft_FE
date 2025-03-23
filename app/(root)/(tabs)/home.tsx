@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import moment from "moment";
+import { Alert, BackHandler } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -23,7 +24,6 @@ const images = [
   require("@/assets/images/banner3.jpg"),
 ];
 
-
 interface MakeupStyle {
   id: string;
   name: string;
@@ -31,22 +31,81 @@ interface MakeupStyle {
   time: string;
   steps: string[];
   image: string;
+  date: string;
+  guidance: string;
 }
+
+type MakeupItem = {
+  id: number;
+  image: string;
+  name: string;
+  time?: string; // Dấu ? giúp thuộc tính có thể bị thiếu
+  description?: string;
+  guidance?: string;
+  dateOfManufacture?: Date;
+  expirationDate?: Date;
+};
 
 const Home = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [vip, setVip] = useState(true);
+  const [vip, setVip] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const currentIndex = useRef(0);
+
   const [makeupStyles, setMakeupStyles] = useState<
-    Array<{ id: number; image: string; guidance: string; date: string }>
+    Array<{
+      id: string;
+      name: string;
+      description: string;
+      image: string;
+      guidance: string;
+      date: string;
+      time: string;
+      steps: string[];
+    }>
   >([]);
   const [items, setItems] = useState<
     Array<{ id: number; image: string; name: string }>
   >([]);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Confirm", "Are you sure you want to leave?", [
+        { text: "Stay", style: "cancel" },
+        { text: "Leave", onPress: handleLogout },
+      ]);
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      if (token) {
+        await fetch("http://192.168.31.183:5280/api/auth/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+
+      await AsyncStorage.removeItem("token");
+      router.push("/(root)/(auth)/sign-in");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchUserProfileHome = async () => {
@@ -59,7 +118,7 @@ const Home = () => {
         }
 
         const response = await fetch(
-          "http://192.168.11.183:5280/api/users/me",
+          "http://192.168.31.183:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -74,7 +133,7 @@ const Home = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.11.183:5280/api/managerstorage/check-user",
+          "http://192.168.31.183:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -88,7 +147,7 @@ const Home = () => {
         }
 
         const datacheckVip = await checkVip.json();
-
+        console.log(datacheckVip.status);
         setVip(datacheckVip.status);
         if (!response.ok) {
           throw new Error("Failed to fetch user profile");
@@ -122,12 +181,11 @@ const Home = () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
-          console.error("No token found!");
           setLoading(false);
           return;
         }
         const response = await fetch(
-          "http://192.168.11.183:5280/api/MakeupStyles/user/me",
+          "http://192.168.31.183:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -137,7 +195,6 @@ const Home = () => {
         );
 
         if (response.status === 404) {
-          console.warn("No makeup styles found (404)");
           setMakeupStyles([]);
           return;
         }
@@ -164,7 +221,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.11.183:5280/api/MakeupItems/user/me",
+          "http://192.168.31.183:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -174,8 +231,7 @@ const Home = () => {
           }
         );
         if (response.status === 404) {
-          console.warn("No makeup styles found (404)");
-          setMakeupStyles([]);
+          console.warn("No makeup items found (404)");
           return;
         }
 
@@ -188,6 +244,7 @@ const Home = () => {
 
     fetchData();
   }, []);
+
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -211,6 +268,12 @@ const Home = () => {
       params: { id: style.id },
     });
   };
+  const handlePressItem = (item: MakeupItem) => {
+    router.push({
+      pathname: "/tabs/item-detail" as any,
+      params: { id: item.id },
+    });
+  };
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
@@ -221,27 +284,30 @@ const Home = () => {
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.avatarContainer}>
-            <TouchableOpacity
-              onPress={() => router.push("/(root)/(auth)/profile")}
-            >
-              <Image
-                source={{
-                  uri: user?.avatar
-                    ? user.avatar
-                    : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
-                }}
-                style={styles.avatar}
-              />
-            </TouchableOpacity>
-            {vip && (
-              <FontAwesome5
-                name="crown"
-                size={14}
-                color="gold"
-                style={styles.crownIcon}
-              />
-            )}
+          <View style={styles.welcome}>
+            <Text style={styles.welcomeStyle}>Welcome {user?.name}</Text>
+            <View style={styles.avatarContainer}>
+              <TouchableOpacity
+                onPress={() => router.push("/(root)/(auth)/profile")}
+              >
+                <Image
+                  source={{
+                    uri: user?.avatar
+                      ? user.avatar
+                      : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
+                  }}
+                  style={styles.avatar}
+                />
+              </TouchableOpacity>
+              {vip && (
+                <FontAwesome5
+                  name="crown"
+                  size={14}
+                  color="gold"
+                  style={styles.crownIcon}
+                />
+              )}
+            </View>
           </View>
         </ScrollView>
         <ScrollView
@@ -277,24 +343,30 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.horizontalScroll}
         >
-          {makeupStyles.map((item) => (
-            <TouchableOpacity onPress={() => handlePress(item)}>
-              <View key={item.id} style={styles.cardContainer}>
-                <View style={styles.textContainer}>
-                  <Text style={styles.faceText}>
-                    {/* {item.date.replace("T", "\n")} */}
-                      {moment(item.date).format("DD/MM/YYYY hh:mm A")}
-                  </Text>
+          {makeupStyles.length === 0 ? (
+            <Text style={styles.noDataText}>No makeup style.</Text>
+          ) : (
+            makeupStyles.map((style) => (
+              <TouchableOpacity
+                key={style.id}
+                onPress={() => handlePress(style)}
+              >
+                <View style={styles.cardContainer}>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.faceText}>
+                      {moment(style.date).format("DD/MM/YYYY hh:mm A")}
+                    </Text>
+                  </View>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={{ uri: style.image }}
+                      style={styles.faceImage}
+                    />
+                  </View>
                 </View>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: item.image }}
-                    style={styles.faceImage}
-                  />
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            ))
+          )}
         </ScrollView>
         <Text style={styles.sectionTitle2}>Favorite Makeup Item Storage</Text>
         <ScrollView
@@ -302,15 +374,24 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.horizontalScroll}
         >
-          {items.map((item) => (
-            <View key={item.id} style={styles.itemContainer}>
-              <Image
-                source={{ uri: `http://192.168.11.183:5280${item.image}` }}
-                style={styles.itemImage}
-              />
-              <Text style={styles.itemText}>{item.name}</Text>
-            </View>
-          ))}
+          {items.length === 0 ? (
+            <Text style={styles.noDataText}>No makeup items.</Text>
+          ) : (
+            items.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                onPress={() => handlePressItem(item)}
+              >
+                <View style={styles.itemContainer}>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.itemImage}
+                  />
+                  <Text style={styles.itemText}>{item.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
         </ScrollView>
       </ScrollView>
     </SafeAreaView>
@@ -320,11 +401,16 @@ const Home = () => {
 const styles = StyleSheet.create({
   safeContainer: { flex: 1, backgroundColor: "#F3F4F6", width: "100%" },
   scrollContainer: { paddingHorizontal: 16, paddingBottom: 20, width: "100%" },
-  headerContainer: {
+  welcome: {
     flexDirection: "row",
-    justifyContent: "flex-end",
     alignItems: "center",
-    marginVertical: 10,
+    justifyContent: "space-between",
+  },
+  welcomeStyle: {
+    justifyContent: "flex-start",
+    color: "#ED1E51",
+    fontFamily: "PlayfairDisplay-Bold",
+    fontSize: 24,
   },
   avatar: {
     width: 50,
@@ -347,9 +433,6 @@ const styles = StyleSheet.create({
     top: 1,
   },
   scroll: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
     paddingVertical: 10,
   },
   newOfferText: {
@@ -390,8 +473,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     alignSelf: "center",
-    width: 140,
-    height: 48,
+    width: 144,
+    height: 50,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -406,11 +489,10 @@ const styles = StyleSheet.create({
   scanButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     textAlign: "center",
-    textAlignVertical: "center", 
-    height: 30, 
+    textAlignVertical: "center",
+    height: 30,
   },
   sectionTitle1: {
     fontSize: 18,
@@ -479,6 +561,13 @@ const styles = StyleSheet.create({
   },
   mainButton: {
     backgroundColor: "#ED1E51",
+  },
+  noDataText: {
+    textAlign: "center",
+    fontSize: 16,
+    fontFamily: "PlayfairDisplay-Bold",
+    color: "#888", 
+    marginTop: 20, 
   },
 });
 

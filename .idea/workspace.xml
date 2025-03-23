@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0aa7f4e7-d833-403f-a3c1-b244346aba09" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/edit-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(auth)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(root)/tabs/edit-item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(root)/tabs/edit-item.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/notificationService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/notificationService.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -77,7 +76,7 @@
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/127&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/BeautySoft_FE/assets/icons&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -132,28 +131,40 @@
       <workItem from="1741707349672" duration="4756000" />
       <workItem from="1741743220503" duration="13889000" />
       <workItem from="1741772187552" duration="598000" />
+      <workItem from="1742137500302" duration="1054000" />
+      <workItem from="1742141099859" duration="2001000" />
+      <workItem from="1742172449772" duration="1325000" />
+      <workItem from="1742287743906" duration="3232000" />
+      <workItem from="1742312577251" duration="1732000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/(root)/(auth)/profile.tsx</url>
-          <line>13</line>
+          <line>21</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/(root)/tabs/unlimited-storage.tsx</url>
-          <line>212</line>
+          <line>211</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app/(root)/(tabs)/notifications.tsx</url>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/app/_layout.tsx</url>
+          <line>44</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/(root)/tabs/edit-item.tsx</url>
+          <line>245</line>
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -135,7 +135,7 @@ const EditProfile = () => {
         return;
       }
       console.log(token);
-      const response = await fetch("http://192.168.11.183:5280/api/users/me", {
+      const response = await fetch("http://192.168.31.183:5280/api/users/me", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -212,7 +212,9 @@ const EditProfile = () => {
             <FontAwesome5 name="camera" size={18} color="#ED1E51" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Full Name <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>
+          Full Name <Text style={styles.noticed}>*</Text>
+        </Text>
         <TextInput
           style={styles.input}
           value={name}
@@ -222,16 +224,21 @@ const EditProfile = () => {
           <Text style={styles.errorText}>{errors.name}</Text>
         ) : null}
 
-        <Text style={styles.title}>Email <Text style ={styles.noticed}>*</Text></Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          editable={false}
-          keyboardType="email-address"
-        />
-
-        <Text style={styles.title}>Current Password <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>
+          Email <Text style={styles.noticed}>*</Text>
+        </Text>
+        <ScrollView horizontal={true} style={{ flexGrow: 0 }}>
+          <TextInput
+            style={[styles.enableInput, { minWidth: 200 }]}
+            value={email}
+            onChangeText={setEmail}
+            editable={false}
+            keyboardType="email-address"
+          />
+        </ScrollView>
+        <Text style={styles.title}>
+          Current password <Text style={styles.noticed}>*</Text>
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputPassword}
@@ -251,7 +258,9 @@ const EditProfile = () => {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>New Password <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>
+          New password <Text style={styles.noticed}>*</Text>
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputPassword}
@@ -271,7 +280,9 @@ const EditProfile = () => {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>Confirm New Password <Text style ={styles.noticed}>*</Text></Text>
+        <Text style={styles.title}>
+          Confirm new password <Text style={styles.noticed}>*</Text>
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputPassword}
@@ -314,9 +325,8 @@ const styles = StyleSheet.create({
     width: "92%",
   },
   header: {
-    color: "black",
+    color: "#ED1E51",
     fontSize: 24,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
   },
   avatarContainer: {
@@ -338,7 +348,6 @@ const styles = StyleSheet.create({
   avatar: { width: 90, height: 90, borderRadius: 50 },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "black",
     marginBottom: 5,
@@ -346,7 +355,6 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     width: "100%",
     padding: 10,
@@ -357,6 +365,18 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 10,
   },
+  enableInput: {
+    fontSize: 18,
+    fontFamily: "PlayfairDisplay-Bold",
+    width: "100%",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    backgroundColor: "white",
+    color: "gray",
+    marginBottom: 10,
+  }, 
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -380,7 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ED1E51",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 5,
     marginVertical: 10,
     justifyContent: "center",
     width: "100%",
@@ -391,7 +411,6 @@ const styles = StyleSheet.create({
 
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },

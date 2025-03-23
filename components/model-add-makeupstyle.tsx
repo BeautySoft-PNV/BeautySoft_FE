@@ -8,54 +8,40 @@ import {
   Pressable,
   Alert,
   Platform,
+  ActivityIndicator,
 } from "react-native";
-import * as FileSystem from "expo-file-system"; // For native platforms
 import { AntDesign } from "@expo/vector-icons";
 interface ModelAddMakeupStyleProps {
   generatedImage: string | null;
   generateStep: string | null;
 }
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 export default function ModelAddMakeupStyle({
   generatedImage,
   generateStep,
 }: ModelAddMakeupStyleProps) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
   const [guidance, setGuidance] = useState(generateStep || "Step guidance");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-
-  const saveBase64AsFile = async (base64: string | null, filename: string) => {
-    try {
-      // Định dạng đường dẫn file
-      const filePath = FileSystem.cacheDirectory + filename;
-      if (!base64) {
-        console.error("Base64 string is null or empty!");
-        return;
-      }
-
-      await FileSystem.writeAsStringAsync(filePath, base64, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      console.log("File saved at:", filePath);
-      return filePath;
-    } catch (error) {
-      console.error("Lỗi lưu file:", error);
-      return null;
-    }
-  };
+  const [limitModalVisible, setLimitModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleAddMakeupStyle = async () => {
     try {
       const formData = new FormData();
-      formData.append("imageFile", {
-        uri: generatedImage,
-        name: "generated-image.jpg",
-        type: "image/jpeg",
-      });
+
+      if (generatedImage && !generatedImage.includes("/uploads")) {
+        const file = {
+          uri: generatedImage,
+          name: "generated-image.jpg",
+          type: "image/jpeg",
+        };
+
+        formData.append("imageFile", file as any);
+      }
 
       const parseJwt = (token: string): { [key: string]: any } | null => {
         try {
@@ -75,21 +61,8 @@ export default function ModelAddMakeupStyle({
         }
       };
 
-      const getToken = async () => {
-        try {
-          if (Platform.OS === "web") {
-            return localStorage.getItem("token") || "";
-          } else {
-            const token = await AsyncStorage.getItem("token");
-            return token || "";
-          }
-        } catch (error) {
-          console.error("🚨 Lỗi lấy token:", error);
-          return "";
-        }
-      };
-      const token = await getToken();
-      const decodedToken = parseJwt(token);
+      const token = await AsyncStorage.getItem("token");
+      const decodedToken = parseJwt(token || "");
 
       console.log("decodedToken: ", decodedToken);
       if (decodedToken && decodedToken.id) {
@@ -99,40 +72,39 @@ export default function ModelAddMakeupStyle({
       }
 
       formData.append("guidance", guidance);
+      setLoading(true);
 
-      const response = await fetch(
-        "http://192.168.11.183:5280/api/MakeupStyles",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch("http://192.168.31.183:5280/api/MakeupStyles", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+        if (response.status === 400) {
+          setLoading(false);
+          setLimitModalVisible(true);
+        }
       } else {
-        console.log("add successfully!");
-
+        setLoading(false);
         setSuccessModalVisible(true);
         setIsDisabled(true);
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
+      setLoading(false);
       Alert.alert("Lỗi", "Đã có lỗi xảy ra. Vui lòng thử lại!");
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={{ position: "absolute", top: 10, right: 0 }}>
+      <View style={{ position: "absolute", top: 8, right: 0 }}>
         <AntDesign
           name="save"
-          style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]} 
-          size={30}
-          onPress={() => !isDisabled && setModalVisible(true)} 
+          style={[styles.saveIcon, isDisabled && { opacity: 0.5 }]}
+          size={24}
+          onPress={() => !isDisabled && setModalVisible(true)}
         />
       </View>
 
@@ -165,9 +137,49 @@ export default function ModelAddMakeupStyle({
         </View>
       </Modal>
 
-      <Modal visible={successModalVisible} animationType="fade" transparent>
+      {loading ? (
+        <Modal transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContentLoading}>
+              <ActivityIndicator size="large" color="white" />
+              <Text style={styles.modalText}>Processing request...</Text>
+            </View>
+          </View>
+        </Modal>
+      ) : null}
+
+      <Modal visible={limitModalVisible} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <Text style={styles.text}>
+              Storage limite reached! do you want to upgrade ?
+            </Text>
+
+            <View style={styles.buttonContainer}>
+              <Pressable
+                style={styles.buttonCancel}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.buttonConfirm}
+                onPress={() => {
+                  setLimitModalVisible(false);
+                  router.push("/(root)/tabs/unlimited-storage");
+                }}
+              >
+                <Text style={styles.buttonText}>Upgrade</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={successModalVisible} animationType="fade" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContentSuccess}>
             <Text style={styles.text}>Makeup style added successfully!</Text>
 
             <Pressable
@@ -195,6 +207,22 @@ const styles = StyleSheet.create({
 
   modalContent: {
     width: 300,
+    height: 140,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  modalContentLoading: {
+    width: 200,
+    padding: 20,
+    backgroundColor: "#ED1E51",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalContentSuccess: {
+    width: 300,
     height: 120,
     padding: 20,
     backgroundColor: "white",
@@ -204,7 +232,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -221,6 +249,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     width: 100,
   },
 
@@ -233,10 +262,26 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 
-  buttonText: { fontSize: 16, color: "white", fontWeight: "bold" },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
 
   saveIcon: {
     display: "flex",
     justifyContent: "flex-end",
+    color: "#ED1E51",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+  modalText: {
+    marginTop: 10,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
   },
 });
