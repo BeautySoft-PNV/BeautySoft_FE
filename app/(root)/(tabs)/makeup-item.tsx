@@ -39,7 +39,7 @@ const MakeupItem = () => {
         if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(
-          "http://192.168.2.155:5280/api/MakeupItems/user/me",
+          "http://192.168.31.183:5280/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -95,7 +95,7 @@ const MakeupItem = () => {
         </View>
         <View style={styles.inputField}>
           <TextInput
-            style={[styles.input, { fontFamily: "PlayfairDisplay-Bold" }]}
+            style={styles.input}
             placeholder="Search Item"
             placeholderTextColor={"black"}
             textColor="black"
@@ -128,7 +128,7 @@ const MakeupItem = () => {
           ) : (
             <View style={{ flex: 1 }}>
               <View style={styles.emptyContainer}>
-                <FontAwesome name="check-circle" size={50} color="green" />
+                <FontAwesome name="check-circle" size={50} color="#ED1E51" />
                 <Text style={styles.emptyText}>No make up item!</Text>
               </View>
             </View>

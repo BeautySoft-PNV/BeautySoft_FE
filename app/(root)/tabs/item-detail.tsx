@@ -56,7 +56,7 @@ const ItemDetail = () => {
 
       try {
         const response = await fetch(
-          `http://192.168.2.155:5280/api/MakeupItems/${id}`,
+          `http://192.168.31.183:5280/api/MakeupItems/${id}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -84,7 +84,7 @@ const ItemDetail = () => {
       const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
       const response = await fetch(
-        `http://192.168.2.155:5280/api/MakeupItems/${id}`,
+        `http://192.168.31.183:5280/api/MakeupItems/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -172,7 +172,7 @@ const ItemDetail = () => {
                 });
               }}
             >
-              <Text style={styles.text}>EDIT</Text>
+              <Text style={styles.text}>Edit</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -19,7 +19,7 @@ export default function Avatar() {
         }
 
         const response = await fetch(
-          "http://192.168.2.155:5280/api/users/me",
+          "http://192.168.31.183:5280/api/users/me",
           {
             method: "GET",
             headers: {
@@ -35,7 +35,7 @@ export default function Avatar() {
         console.log(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.2.155:5280/api/managerstorage/check-user",
+          "http://192.168.31.183:5280/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {

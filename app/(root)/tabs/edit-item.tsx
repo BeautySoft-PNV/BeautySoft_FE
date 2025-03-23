@@ -8,7 +8,6 @@ import {
   View,
   Image,
   TextInput,
-  Platform,
   Modal,
   Pressable,
   ScrollView,
@@ -34,7 +33,6 @@ export default function EditMakeupItem() {
   const [manufactureDate, setManufactureDate] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const inputRef = useRef(null);
-  const [error, setError] = useState("");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -209,9 +207,9 @@ export default function EditMakeupItem() {
     formData.append("ExpirationDate", formattedExpirationDate);
 
     try {
-      console.log(`http://192.168.2.155:5280/api/MakeupItems/${id}`);
+      console.log(`http://192.168.31.183:5280/api/MakeupItems/${id}`);
       const response = await fetch(
-        `http://192.168.2.155:5280/api/MakeupItems/${id}`,
+        `http://192.168.31.183:5280/api/MakeupItems/${id}`,
         {
           method: "PUT",
           headers: {
@@ -351,7 +349,16 @@ export default function EditMakeupItem() {
                 <Text style={styles.errorText}>{errors.guidance}</Text>
               )}
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <Modal transparent animationType="fade">
+                  <View style={styles.modalOverlay}>
+                    <View style={styles.modalContentLoading}>
+                      <ActivityIndicator size="large" color="white" />
+                      <Text style={styles.modalText}>
+                        Processing request...
+                      </Text>
+                    </View>
+                  </View>
+                </Modal>
               ) : (
                 <Modal
                   visible={successModalVisible}
@@ -435,8 +442,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "black",
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
   },
   previewContainer: {
     flex: 1,
@@ -534,12 +541,10 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: 200,
     fontSize: 18,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: "bold",
     fontFamily: "PlayfairDisplay-Bold",
     color: "white",
   },
@@ -575,5 +580,23 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+  modalText: {
+    marginTop: 10,
+    color: "white",
+    fontFamily: "PlayfairDisplay-Bold",
+  },
+  modalContentLoading: {
+    width: 200,
+    padding: 20,
+    backgroundColor: "#ED1E51",
+    borderRadius: 10,
+    alignItems: "center",
   },
 });

@@ -33,7 +33,7 @@ const Collection = () => {
 
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
-          "http://192.168.2.155:5280/api/MakeupStyles/user/me",
+          "http://192.168.31.183:5280/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -101,7 +101,7 @@ const Collection = () => {
           ) : (
             <View style={{ flex: 1 }}>
               <View style={styles.emptyContainer}>
-                <FontAwesome name="check-circle" size={50} color="green" />
+                <FontAwesome name="check-circle" size={50} color="#ED1E51" />
                 <Text style={styles.emptyText}>No make up item!</Text>
               </View>
             </View>

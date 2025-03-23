@@ -31,11 +31,12 @@ export default function AddMakeupItem() {
   const [manufactureDate, setManufactureDate] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const inputRef = useRef(null);
-  const [error, setError] = useState("");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [manufactureDateError, setManufactureDateError] = useState("");
   const [expirationDateError, setExpirationDateError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [limitModalVisible, setLimitModalVisible] = useState(false);
+  const [error, setError] = useState("");
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -104,7 +105,11 @@ export default function AddMakeupItem() {
         : cleanedText;
     if (formatted !== expirationDate) {
       setExpirationDate(formatted);
+
       setExpirationDateError(validateDateTime(text));
+    }
+    if (validateDateTime(formatted) === "") {
+      setErrors((prevErrors) => ({ ...prevErrors, expirationDate: "" }));
     }
   };
 
@@ -117,6 +122,15 @@ export default function AddMakeupItem() {
       guidance?: string;
     };
 
+    const parseDate = (dateString: string) => {
+      if (!dateString) return null;
+      const parts = dateString.split("/");
+      if (parts.length !== 3) return null;
+
+      const [day, month, year] = parts.map(Number);
+      return new Date(year, month - 1, day);
+    };
+
     let newErrors: ErrorType = {};
 
     if (!name.trim()) {
@@ -127,10 +141,24 @@ export default function AddMakeupItem() {
     }
     if (!expirationDate.trim()) {
       newErrors.expirationDate = "Expiration date is required!";
-    } else if (new Date(expirationDate) < new Date(manufactureDate)) {
-      newErrors.expirationDate =
-        "Expiration date must be after manufacture date!";
+    } else {
+      const expDate = parseDate(expirationDate);
+      const manuDate = parseDate(manufactureDate);
+      const currentDate = new Date();
+
+      if (!expDate) {
+        newErrors.expirationDate = "Invalid expiration date format!";
+      } else if (!manuDate) {
+        newErrors.expirationDate = "Invalid manufacture date format!";
+      } else if (expDate.getTime() < manuDate.getTime()) {
+        newErrors.expirationDate =
+          "Expiration date must be after manufacture date!";
+      } else if (expDate.getTime() < currentDate.getTime()) {
+        newErrors.expirationDate =
+          "Expiration date must be after current date!";
+      }
     }
+
     if (!description.trim()) {
       newErrors.description = "Description is required!";
     }
@@ -140,6 +168,7 @@ export default function AddMakeupItem() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+
       setLoading(false);
       return;
     } else {
@@ -176,7 +205,7 @@ export default function AddMakeupItem() {
     function convertToISOFormat(dateString: any) {
       const [day, month, yearAndTime] = dateString.split("/");
       const [year, time] = yearAndTime.split(" ");
-      return `${year}-${month}-${day}T${time}:00`;
+      return `${year}-${month}-${day}T00:00`;
     }
 
     let formattedManufactureDate = convertToISOFormat(manufactureDate);
@@ -197,7 +226,7 @@ export default function AddMakeupItem() {
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
 
-    const response = await fetch("http://192.168.2.155:5280/api/MakeupItems", {
+    const response = await fetch("http://192.168.31.183:5280/api/MakeupItems", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -205,9 +234,10 @@ export default function AddMakeupItem() {
       body: formData,
     });
     if (!response.ok) {
-      const errorText = await response.text();
-      setLoading(false);
-      throw new Error(`HTTP Error ${response.status}: ${errorText}`);
+      if (response.status === 400) {
+        setLoading(false);
+        setLimitModalVisible(true);
+      }
     } else {
       setLoading(false);
       setSuccessModalVisible(true);
@@ -225,7 +255,7 @@ export default function AddMakeupItem() {
               onPress={toggleCameraFacing}
             >
               <Text style={styles.text}>
-                <FontAwesome name="exchange" size={20} color="white" /> Change
+                <FontAwesome name="exchange" size={20} /> Change
                 camera
               </Text>
             </TouchableOpacity>
@@ -234,7 +264,7 @@ export default function AddMakeupItem() {
               onPress={takePicture}
             >
               <Text style={styles.text}>
-                <FontAwesome name="camera-retro" size={20} color="white" /> Take
+                <FontAwesome name="camera-retro" size={20} /> Take
                 a picture
               </Text>
             </TouchableOpacity>
@@ -273,29 +303,33 @@ export default function AddMakeupItem() {
               <Text style={styles.title}>Date of Manufacture</Text>
               <TextInput
                 ref={inputRef}
-                style={[styles.input, error ? styles.inputError : null]}
+                style={styles.input}
                 placeholder="DD/MM/YYYY"
                 value={manufactureDate}
                 onChangeText={handleManufactureDateChange}
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {manufactureDateError ? (
-                <Text style={styles.errorText}>{manufactureDateError}</Text>
+              {errors.manufactureDate || manufactureDateError ? (
+                <Text style={styles.errorText}>
+                  {errors.manufactureDate || manufactureDateError}
+                </Text>
               ) : null}
 
               <Text style={styles.title}>Expiration Date</Text>
               <TextInput
                 ref={inputRef}
-                style={[styles.input, error ? styles.inputError : null]}
+                style={styles.input}
                 placeholder="DD/MM/YYYY"
                 value={expirationDate}
                 onChangeText={handleExpirationDateChange}
                 keyboardType="number-pad"
                 maxLength={16}
               />
-              {expirationDateError ? (
-                <Text style={styles.errorText}>{expirationDateError}</Text>
+              {errors.expirationDate || expirationDateError ? (
+                <Text style={styles.errorText}>
+                  {errors.expirationDate || expirationDateError}
+                </Text>
               ) : null}
               <Text style={styles.title}>Description</Text>
               <TextInput
@@ -339,12 +373,8 @@ export default function AddMakeupItem() {
                     </View>
                   </View>
                 </Modal>
-              ) : (
-                <Modal
-                  visible={successModalVisible}
-                  animationType="fade"
-                  transparent
-                >
+              ) : successModalVisible ? (
+                <Modal visible animationType="fade" transparent>
                   <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                       <Text style={styles.text}>
@@ -359,7 +389,40 @@ export default function AddMakeupItem() {
                     </View>
                   </View>
                 </Modal>
-              )}
+              ) : limitModalVisible ? (
+                <Modal visible animationType="fade" transparent>
+                  <View style={styles.modalContainer}>
+                    <View style={styles.modalErrorContent}>
+                      <Text style={styles.textError}>
+                        Storage limit reached! Do you want to upgrade?
+                      </Text>
+
+                      <View style={styles.buttonErrorContainer}>
+                        <View style={styles.buttonWrapper}>
+                          <Pressable
+                            style={[styles.buttonError, styles.buttonCancel]}
+                            onPress={() => setLimitModalVisible(false)}
+                          >
+                            <Text style={styles.buttonText}>Cancel</Text>
+                          </Pressable>
+                        </View>
+
+                        <View style={styles.buttonWrapper}>
+                          <Pressable
+                            style={[styles.buttonError, styles.buttonConfirm]}
+                            onPress={() => {
+                              setLimitModalVisible(false);
+                              router.push("/(root)/tabs/unlimited-storage");
+                            }}
+                          >
+                            <Text style={styles.buttonText}>Upgrade</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
+              ) : null}
             </View>
           </ScrollView>
           <View style={styles.buttonSubmit}>
@@ -409,7 +472,13 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontFamily: "PlayfairDisplay-Medium",
-    color: "white",
+    color: "white"
+  },
+  textError: {
+    fontSize: 16,
+    fontFamily: "PlayfairDisplay-Medium",
+    color: "black",
+    marginBottom: "5%",
   },
   previewContainer: {
     flex: 1,
@@ -518,16 +587,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  buttonConfirm: {
-    backgroundColor: "#4CAF50",
-    padding: 7,
-    marginTop: 10,
-    marginBottom: 10,
-    borderRadius: 5,
-    flex: 1,
+  modalErrorContent: {
+    width: 330,
+    height: 160,
+    padding: 10,
+    backgroundColor: "white",
+    borderRadius: 10,
     alignItems: "center",
-    width: 100,
-    height: 50,
   },
   formContainer: {
     flex: 2,
@@ -555,4 +621,31 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  buttonErrorContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10,
+  },
+  
+  buttonWrapper: {
+    flex: 1, // Mỗi View bọc nút sẽ chiếm 50% không gian
+    paddingHorizontal: 5, // Để tạo khoảng cách giữa hai nút
+  },
+  
+  buttonError: {
+    width: "100%", // Đảm bảo nút chiếm toàn bộ View cha
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  
+  buttonCancel: {
+    backgroundColor: "#FF5733",
+  },
+  
+  buttonConfirm: {
+    backgroundColor: "#4CAF50",
+  },
+  
 });

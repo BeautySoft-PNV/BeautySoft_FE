@@ -61,7 +61,7 @@ const ForgotPasswordScreen = () => {
 
     try {
       const response = await fetch(
-        "http://192.168.2.155:5280/api/account/forgot-password",
+        "http://192.168.31.183:5280/api/account/forgot-password",
         {
           method: "POST",
           headers: {

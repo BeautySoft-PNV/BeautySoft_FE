@@ -213,7 +213,7 @@ export default function Generate() {
       const token = await AsyncStorage.getItem("token");
       try {
         const responseMain = await fetch(
-          "http://192.168.2.155:5280/api/combined/generate-and-inpaint",
+          "http://192.168.31.183:5280/api/combined/generate-and-inpaint",
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
