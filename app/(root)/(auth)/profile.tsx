@@ -30,16 +30,13 @@ const Profile = () => {
           return;
         }
 
-        const response = await fetch(
-          "http://18.142.0.155:5001/api/users/me",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch("http://18.142.0.155:5001/api/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch user profile");
@@ -140,14 +137,13 @@ const Profile = () => {
         <Text style={styles.title}>
           Email <Text style={styles.noticed}>*</Text>
         </Text>
-        <ScrollView horizontal={true} style={{ flexGrow: 0 }}>
-          <TextInput
-            style={[styles.input, { minWidth: 200 }]} 
-            value={user?.email || ""}
-            editable={false}
-            scrollEnabled={true}
-          />
-        </ScrollView>
+
+        <TextInput
+          style={styles.input}
+          value={user?.email || ""}
+          editable={false}
+          scrollEnabled={true}
+        />
 
         <TouchableOpacity
           style={[styles.upgradeButton, vip && styles.disabledButton]}

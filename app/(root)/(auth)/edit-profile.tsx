@@ -227,15 +227,13 @@ const EditProfile = () => {
         <Text style={styles.title}>
           Email <Text style={styles.noticed}>*</Text>
         </Text>
-        <ScrollView horizontal={true} style={{ flexGrow: 0 }}>
           <TextInput
-            style={[styles.enableInput, { minWidth: 200 }]}
+            style={styles.enableInput}
             value={email}
             onChangeText={setEmail}
             editable={false}
             keyboardType="email-address"
           />
-        </ScrollView>
         <Text style={styles.title}>
           Current password <Text style={styles.noticed}>*</Text>
         </Text>
