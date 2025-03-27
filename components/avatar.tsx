@@ -70,7 +70,7 @@ export default function Avatar() {
               source={{
                 uri: user?.avatar
                   ?  user.avatar
-                  : "https://photo.znews.vn/w660/Uploaded/kbd_pilk/2021_05_06/trieu_le_dinh4.jpg",
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzwTARPk--sPXBlUl-Qo4Y2kPpVRdVkTfvQRJh4dwh1bebQ4GP",
               }}
                 style={styles.avatar}
             />

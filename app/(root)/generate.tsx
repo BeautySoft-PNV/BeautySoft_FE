@@ -156,7 +156,7 @@ export default function Generate() {
     formData.append(
       "TextPrompt",
       `Vietnamese people typically have distinctive facial features, including warm or neutral-toned skin, which can lean towards either warm or cool undertones depending on the individual. Their skin is usually thin, with small pores but prone to pigmentation due to environmental factors. Common face shapes include oval or round, with moderately high cheekbones. Vietnamese eyes are often elongated, with monolids or hooded lids, and slightly downturned outer corners. Their eyebrows are naturally shaped, not too thick, and tend to be lighter in color. The nose bridge is generally not very high, with a slightly rounded tip, while the lips are moderately full with soft, natural contours, unlike the sharper lip shapes often seen in Western features.
-Based on these characteristics, a bridal-inspired makeup look for Vietnamese features should focus on enhancing natural beauty while maintaining a soft, elegant appearance. The foundation should be lightweight with a natural, dewy finish to keep the skin looking fresh and radiant. Eyebrows should be groomed and shaped naturally without overly sharp lines. For eye makeup, soft and subtle shades work best, without overly emphasizing the crease to maintain harmony with the natural eye shape. A thin eyeliner application can add depth without overpowering the delicate features. Blush and lipstick shades such as warm peach, soft pink, or rosy red complement Asian skin tones, giving the face a vibrant yet natural glow. Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}.`
+Based on these characteristics, a bridal-inspired makeup look for Vietnamese features should focus on enhancing natural beauty while maintaining a soft, elegant appearance. The foundation should be lightweight with a natural, dewy finish to keep the skin looking fresh and radiant. Eyebrows should be groomed and shaped naturally without overly sharp lines. For eye makeup, soft and subtle shades work best, without overly emphasizing the crease to maintain harmony with the natural eye shape. A thin eyeliner application can add depth without overpowering the delicate features. Blush and lipstick has a deep brick brown colorshades such as warm peach, soft pink, or rosy red complement Asian skin tones, giving the face a vibrant yet natural glow. Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}.`
     );
     try {
       const copyAssetToTemp = async () => {
@@ -262,6 +262,16 @@ Based on these characteristics, a bridal-inspired makeup look for Vietnamese fea
               <Avatar />
             </View>
           </View>
+          {generatedImage.length > 0 &&
+            generatedImage.map((image, index) => (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  value={input[index] || ""}
+                  editable={false}
+                />
+              </View>
+            ))}
         </View>
 
         <View style={styles.container}>
@@ -282,15 +292,6 @@ Based on these characteristics, a bridal-inspired makeup look for Vietnamese fea
                         source={require("../../assets/images/beautysoftlogo.png")}
                         style={styles.chatboxavatar}
                       />
-                      <View style={styles.inputWrapper}>
-                        <View style={styles.inputContainer}>
-                          <TextInput
-                            style={styles.input}
-                            value={input[index] || ""}
-                            editable={false}
-                          />
-                        </View>
-                      </View>
                     </View>
 
                     <Image source={{ uri: image }} style={styles.image} />
@@ -432,14 +433,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#FFE2E2",
     width: "100%",
-    borderTopLeftRadius: 0,
-  },
-
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "85%",
-    marginBottom: "-8%",
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
   },
   iconStyle: {
     marginLeft: 10,
