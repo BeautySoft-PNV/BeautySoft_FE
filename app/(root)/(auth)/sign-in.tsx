@@ -26,7 +26,7 @@ const SignIn = ({ navigation }: any) => {
   const handleSignIn = async () => {
     setLoading(true);
 
-    const API_URL = "http://192.168.31.183:5280/api/auth/login";
+    const API_URL = "http://18.142.0.155:5001/api/auth/login";
 
     try {
       const response = await fetch(API_URL, {

@@ -226,7 +226,7 @@ export default function AddMakeupItem() {
     formData.append("DateOfManufacture", formattedManufactureDate);
     formData.append("ExpirationDate", formattedExpirationDate);
 
-    const response = await fetch("http://192.168.31.183:5280/api/MakeupItems", {
+    const response = await fetch("http://18.142.0.155:5001/api/MakeupItems", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

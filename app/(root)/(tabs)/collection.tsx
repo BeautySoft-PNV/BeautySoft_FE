@@ -33,7 +33,7 @@ const Collection = () => {
 
         if (!token) throw new Error("No authentication token found");
         const response = await fetch(
-          "http://192.168.31.183:5280/api/MakeupStyles/user/me",
+          "http://18.142.0.155:5001/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -43,6 +43,9 @@ const Collection = () => {
         );
 
         if (!response.ok) {
+          if (response.status === 404){
+            return; 
+          }
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 

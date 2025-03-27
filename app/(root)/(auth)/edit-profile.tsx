@@ -135,7 +135,7 @@ const EditProfile = () => {
         return;
       }
       console.log(token);
-      const response = await fetch("http://192.168.31.183:5280/api/users/me", {
+      const response = await fetch("http://18.142.0.155:5001/api/users/me", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

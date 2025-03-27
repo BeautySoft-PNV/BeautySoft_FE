@@ -130,7 +130,7 @@ export default function Scan() {
     const token = await AsyncStorage.getItem("token");
     try {
       const response = await fetch(
-        "http://192.168.31.183:5280/api/MakeupItems/user/me",
+        "http://18.142.0.155:5001/api/MakeupItems/user/me",
         {
           method: "GET",
           headers: {

@@ -13,7 +13,7 @@ import {
   Pressable,
   Dimensions,
 } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Avatar from "@/components/avatar";
 import * as FileSystem from "expo-file-system";
@@ -22,6 +22,7 @@ import { Svg, Polygon } from "react-native-svg";
 import ModelAddMakeupStyle from "@/components/model-add-makeupstyle";
 import { Provider as PaperProvider } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MakeupItem from "./(tabs)/makeup-item";
 
 export default function Generate() {
   const params = useLocalSearchParams();
@@ -154,7 +155,8 @@ export default function Generate() {
       : params.request;
     formData.append(
       "TextPrompt",
-      `Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}. Focus on smooth, radiant skin with a natural glow, well-defined yet soft, straight eyebrows, subtle eyeshadow in warm peach or brown tones, soft pink or coral blush, and naturally tinted lips. Maintain Asian facial features, including almond-shaped brown eyes, a small and softly contoured nose, a gentle jawline, and warm golden or neutral undertones. Ensure a dewy, healthy complexion with a lightweight, hydrating base to enhance radiance. Use a sheer foundation or BB cream to even out skin tone while keeping a fresh, natural look. Apply concealer only where needed. Lightly set with translucent powder to control shine while maintaining soft, natural skin.For the eyes, choose warm, neutral shades like peach, terracotta, or light brown to subtly enhance their appearance. Use a soft, blended gradient technique to create natural depth without harsh lines. Apply a thin, natural eyeliner following the lash line, with a slight upward flick for a subtle lifting effect. Curl the lashes and apply mascara to lengthen and define without clumping.For the eyebrows, maintain a naturally straight or softly arched shape, filling in sparse areas using a brow pencil or powder for a natural look. Apply a peach or soft pink blush to the high points of the cheeks to create a youthful, lifted effect. Use a liquid or cream highlighter on the high points of the face (cheekbones, nose bridge, and cupid’s bow) for a fresh glow.For the lips, use soft pink, coral, or warm nude shades. Apply a gradient lip technique for a natural and youthful effect by concentrating color in the center and blending outward. Finish with a light, glossy tint to keep the lips hydrated and plump.Ensure the makeup remains lightweight and enhances natural beauty without altering distinct Asian facial features. Provide step-by-step instructions, such as Step 1, Step 2, Step 3, and so on, for easy application. Keep the overall look fresh, simple, and effortlessly enhancing the natural elegance of East Asian beauty.`
+      `Vietnamese people typically have distinctive facial features, including warm or neutral-toned skin, which can lean towards either warm or cool undertones depending on the individual. Their skin is usually thin, with small pores but prone to pigmentation due to environmental factors. Common face shapes include oval or round, with moderately high cheekbones. Vietnamese eyes are often elongated, with monolids or hooded lids, and slightly downturned outer corners. Their eyebrows are naturally shaped, not too thick, and tend to be lighter in color. The nose bridge is generally not very high, with a slightly rounded tip, while the lips are moderately full with soft, natural contours, unlike the sharper lip shapes often seen in Western features.
+Based on these characteristics, a bridal-inspired makeup look for Vietnamese features should focus on enhancing natural beauty while maintaining a soft, elegant appearance. The foundation should be lightweight with a natural, dewy finish to keep the skin looking fresh and radiant. Eyebrows should be groomed and shaped naturally without overly sharp lines. For eye makeup, soft and subtle shades work best, without overly emphasizing the crease to maintain harmony with the natural eye shape. A thin eyeliner application can add depth without overpowering the delicate features. Blush and lipstick shades such as warm peach, soft pink, or rosy red complement Asian skin tones, giving the face a vibrant yet natural glow. Apply the following makeup to me with the user request: ${textPrompt} ${imageDescription}, using the makeup products I have here: ${itemName}, with the description: ${itemDescription}, and guidance: ${itemGuidance}.`
     );
     try {
       const copyAssetToTemp = async () => {
@@ -213,7 +215,7 @@ export default function Generate() {
       const token = await AsyncStorage.getItem("token");
       try {
         const responseMain = await fetch(
-          "http://192.168.31.183:5280/api/combined/generate-and-inpaint",
+          "http://18.142.0.155:5001/api/combined/generate-and-inpaint",
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
@@ -432,7 +434,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderTopLeftRadius: 0,
   },
-  
+
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",

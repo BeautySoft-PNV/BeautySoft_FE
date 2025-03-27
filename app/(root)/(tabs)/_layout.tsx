@@ -29,8 +29,6 @@ const TabsLayout = () => {
           height: 70,
           flexDirection: "row",
           paddingTop: 15,
-          borderTopLeftRadius: 30, 
-          borderTopRightRadius: 30, 
         },
       }}
     >

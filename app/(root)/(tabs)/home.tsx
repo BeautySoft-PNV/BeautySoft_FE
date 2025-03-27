@@ -91,7 +91,7 @@ const Home = () => {
       const token = await AsyncStorage.getItem("token");
 
       if (token) {
-        await fetch("http://192.168.31.183:5280/api/auth/logout", {
+        await fetch("http://18.142.0.155:5001/api/auth/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -118,7 +118,7 @@ const Home = () => {
         }
 
         const response = await fetch(
-          "http://192.168.31.183:5280/api/users/me",
+          "http://18.142.0.155:5001/api/users/me",
           {
             method: "GET",
             headers: {
@@ -133,7 +133,7 @@ const Home = () => {
         setUser(responseData);
 
         const checkVip = await fetch(
-          "http://192.168.31.183:5280/api/managerstorage/check-user",
+          "http://18.142.0.155:5001/api/managerstorage/check-user",
           {
             method: "GET",
             headers: {
@@ -185,7 +185,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.31.183:5280/api/MakeupStyles/user/me",
+          "http://18.142.0.155:5001/api/MakeupStyles/user/me",
           {
             method: "GET",
             headers: {
@@ -221,7 +221,7 @@ const Home = () => {
           return;
         }
         const response = await fetch(
-          "http://192.168.31.183:5280/api/MakeupItems/user/me",
+          "http://18.142.0.155:5001/api/MakeupItems/user/me",
           {
             method: "GET",
             headers: {
@@ -327,7 +327,7 @@ const Home = () => {
         <View style={styles.scanContainer}>
           <Image
             source={{
-              uri: "https://veridas.com/wp-content/uploads/2025/01/Captura-de-pantalla-2025-01-14-a-las-10.47.58.png.webp",
+              uri: "https://neo-fin.com/media/site_content/page_blocks/main/portrait-of-a-young-beautiful-woman-and-face-recognition-s_L9fVTF5.png",
             }}
             style={styles.scanImage}
           />
