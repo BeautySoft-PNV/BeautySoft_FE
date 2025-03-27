@@ -262,16 +262,6 @@ Based on these characteristics, a bridal-inspired makeup look for Vietnamese fea
               <Avatar />
             </View>
           </View>
-          {generatedImage.length > 0 &&
-            generatedImage.map((image, index) => (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  value={input[index] || ""}
-                  editable={false}
-                />
-              </View>
-            ))}
         </View>
 
         <View style={styles.container}>
@@ -292,6 +282,16 @@ Based on these characteristics, a bridal-inspired makeup look for Vietnamese fea
                         source={require("../../assets/images/beautysoftlogo.png")}
                         style={styles.chatboxavatar}
                       />
+
+                      <View style={styles.inputWrapper}>
+                        <View style={styles.inputContainer}>
+                          <TextInput
+                            style={styles.input}
+                            value={input[index] || ""}
+                            editable={false}
+                          />
+                        </View>
+                      </View>
                     </View>
 
                     <Image source={{ uri: image }} style={styles.image} />
@@ -393,6 +393,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: 1,
   },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "85%",
+    marginBottom: "-8%",
+  },
 
   rowContainer: {
     flexDirection: "row",
@@ -433,8 +439,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#FFE2E2",
     width: "100%",
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
+    borderTopLeftRadius: 0,
   },
   iconStyle: {
     marginLeft: 10,
